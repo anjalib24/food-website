@@ -26,6 +26,11 @@ let ItemSchema = new Schema(
 );
 const CartSchema = new Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
     items: [ItemSchema],
     subTotal: {
       default: 0,

@@ -5,6 +5,9 @@ import { productValidation } from "../../utils/Validation.js";
 import { Product } from "../../models/product.model.js";
 import { Category } from "../../models/category.js";
 import { cartRepository, addItem } from "../../services/repository.js";
+import jwt from "jsonwebtoken";
+import { User } from "../../models/user.model.js";
+import { ObjectId } from "mongoose";
 
 //get product data -----------
 const getProductData = asyncHandler(async (req, res) => {
@@ -39,9 +42,21 @@ const getProductData = asyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
 
   const options = { page, limit };
-  const getProducts = await Product.paginate(filter, options, {
-    populate: "category",
+
+  const paginatedProducts = await Product.paginate(filter, options);
+
+  const categoryIds = paginatedProducts.docs.map((product) => product.category);
+
+  const categories = await Category.find({ _id: { $in: categoryIds } });
+
+  const productsWithCategories = paginatedProducts.docs.map((product) => {
+    const category = categories.find((category) =>
+      category._id.equals(product.category)
+    );
+    return { ...product.toObject(), category };
   });
+
+  const getProducts = { ...paginatedProducts, docs: productsWithCategories };
 
   return res
     .status(200)
@@ -185,6 +200,19 @@ const createCategory = asyncHandler(async (req, res) => {
 
 const addItemToCart = asyncHandler(async (req, res) => {
   const { productId } = req.body;
+  const token = req.cookies["cookie_token"];
+
+  if (!token) {
+    throw new ApiError(401, "Unauthorized user!");
+  }
+  const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
+
+  const existedUser = await User.findOne({ _id: userID });
+
+  if (!existedUser) {
+    throw new ApiError(404, "User Not Found!");
+  }
+
   const quantity = Number.parseInt(req.body.quantity);
   try {
     let cart = await cartRepository();
@@ -197,61 +225,72 @@ const addItemToCart = asyncHandler(async (req, res) => {
     }
     //--If Cart Exists ----
     if (cart) {
-      //---- Check if index exists ----
-      const indexFound = cart.items.findIndex(
-        (item) => item.productId.id == productId
-      );
-      //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
-      if (indexFound !== -1 && quantity <= 0) {
-        cart.items.splice(indexFound, 1);
-        if (cart.items.length == 0) {
-          cart.subTotal = 0;
-        } else {
+      //current user card
+
+      if (cart.user.equals(existedUser._id)) {
+        //---- Check if index exists ----
+        const indexFound = cart.items.findIndex(
+          (item) => item.productId.id == productId
+        );
+        //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
+        if (indexFound !== -1 && quantity <= 0) {
+          cart.items.splice(indexFound, 1);
+          if (cart.items.length == 0) {
+            cart.subTotal = 0;
+          } else {
+            cart.subTotal = cart.items
+              .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
+          }
+        }
+        //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
+        else if (indexFound !== -1) {
+          cart.items[indexFound].quantity =
+            cart.items[indexFound].quantity + quantity;
+          cart.items[indexFound].total =
+            cart.items[indexFound].quantity * productDetails.price;
+          cart.items[indexFound].price = productDetails.price;
           cart.subTotal = cart.items
             .map((item) => item.total)
             .reduce((acc, next) => acc + next);
         }
-      }
-      //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
-      else if (indexFound !== -1) {
-        cart.items[indexFound].quantity =
-          cart.items[indexFound].quantity + quantity;
-        cart.items[indexFound].total =
-          cart.items[indexFound].quantity * productDetails.price;
-        cart.items[indexFound].price = productDetails.price;
-        cart.subTotal = cart.items
-          .map((item) => item.total)
-          .reduce((acc, next) => acc + next);
-      }
-      //----Check if quantity is greater than 0 then add item to items array ----
-      else if (quantity > 0) {
-        cart.items.push({
-          productId: productId,
-          quantity: quantity,
-          price: productDetails.price,
-          total: parseInt(productDetails.price * quantity),
+        //----Check if quantity is greater than 0 then add item to items array ----
+        else if (quantity > 0) {
+          cart.items.push({
+            productId: productId,
+            quantity: quantity,
+            price: productDetails.price,
+            total: parseInt(productDetails.price * quantity),
+          });
+          cart.subTotal = cart.items
+            .map((item) => item.total)
+            .reduce((acc, next) => acc + next);
+        }
+        //----If quantity of price is 0 throw the error -------
+        else {
+          return res.status(400).json({
+            type: "Invalid",
+            msg: "Invalid request",
+          });
+        }
+        let data = await cart.save();
+        res.status(200).json({
+          type: "success",
+          mgs: "Process successful",
+          data: data,
         });
-        cart.subTotal = cart.items
-          .map((item) => item.total)
-          .reduce((acc, next) => acc + next);
-      }
-      //----If quantity of price is 0 throw the error -------
-      else {
-        return res.status(400).json({
-          type: "Invalid",
-          msg: "Invalid request",
+      } else {
+        // The cart user does not match the existedUser ID
+        return res.status(401).json({
+          type: "Unauthorized",
+          msg: "Cart does not belong to the authenticated user.",
         });
       }
-      let data = await cart.save();
-      res.status(200).json({
-        type: "success",
-        mgs: "Process successful",
-        data: data,
-      });
     }
     //------------ This creates a new cart and then adds the item to the cart that has been created------------
     else {
       const cartData = {
+        user: existedUser._id,
         items: [
           {
             productId: productId,

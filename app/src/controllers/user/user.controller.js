@@ -2,8 +2,8 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { User } from "../../models/user.model.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { userRegistrationValidation } from "../../utils/Validation.js";
 
 //User register part-
@@ -62,6 +62,10 @@ const loginUser = asyncHandler(async (req, res) => {
     };
 
     const accessToken = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET);
+
+    const expiresAt = new Date().setFullYear(new Date().getFullYear() + 1);
+
+    res.cookie("cookie_token", accessToken, { maxAge: expiresAt });
 
     res.status(201).json(new ApiResponse(200, accessToken, "User Logged In!"));
   } else {
