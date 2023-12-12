@@ -1,5 +1,4 @@
-import { Cart } from "../models/cart.model";
-import { Product } from "../models/product.model";
+import { Cart } from "../models/cart.model.js";
 
 export const cartRepository = async () => {
   const carts = await Cart.find().populate({

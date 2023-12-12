@@ -179,7 +179,7 @@ const createCategory = asyncHandler(async (req, res) => {
 
 // product add to cart -----------
 
-addItemToCart = asyncHandler(async (req, res) => {
+const addItemToCart = asyncHandler(async (req, res) => {
   const { productId } = req.body;
   const quantity = Number.parseInt(req.body.quantity);
   try {
