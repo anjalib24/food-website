@@ -5,9 +5,12 @@ import { productValidation } from "../../utils/Validation.js";
 import { Product } from "../../models/product.model.js";
 import { Category } from "../../models/category.js";
 
+// get product data part-
+const getProductData = asyncHandler(async (req, res) => {});
+
 //create product part-
 
-const product = asyncHandler(async (req, res) => {
+const createProductData = asyncHandler(async (req, res) => {
   const {
     title,
     short_description,
@@ -68,7 +71,7 @@ const product = asyncHandler(async (req, res) => {
 
 //createproduct category part-
 
-const category = asyncHandler(async (req, res) => {
+const createCategory = asyncHandler(async (req, res) => {
   const { name } = req.body.categoryData;
 
   if (!name) {
@@ -92,4 +95,4 @@ const category = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, newCategory, "Category created successfully"));
 });
 
-export { product, category };
+export { createProductData, createCategory };
