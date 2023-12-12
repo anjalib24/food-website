@@ -1,5 +1,32 @@
+import Layout from "@components/admin/Layout";
+import { AdminContext } from "@contexts/AdminContext";
+// import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Switch, useParams, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import ProductsPage from "./Products/Page";
+
 const Page = () => {
-  return <div>Admin Page</div>;
+  let match = useRouteMatch();
+  return (
+    <AdminContext>
+      <Layout Page={
+        <Switch>
+          <Route path={`${match.path}/products`}>
+            <ProductsPage />
+          </Route>
+
+          <Route path={`${match.path}/:id`}>
+            <Home />
+          </Route>
+        </Switch>
+      } />
+    </AdminContext>
+  );
 };
+
+function Home() {
+  const param = useParams();
+  console.log(param)
+  return <div>Home</div>
+}
 
 export default Page;
