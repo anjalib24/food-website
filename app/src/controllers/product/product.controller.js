@@ -88,7 +88,11 @@ const createProductData = asyncHandler(async (req, res) => {
   }
 
   const imageArray = req.files.map((file) => {
-    if (file.mimetype == "image/jpeg" || file.mimetype == "image/png") {
+    if (
+      file.mimetype == "image/jpeg" ||
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg"
+    ) {
       return file.path;
     }
   });
@@ -183,7 +187,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
   const { productId } = req.body;
   const quantity = Number.parseInt(req.body.quantity);
   try {
-    let cart = await cartRepository.cart();
+    let cart = await cartRepository();
     let productDetails = await Product.findById({ _id: productId });
     if (!productDetails) {
       return res.status(500).json({
@@ -259,7 +263,6 @@ const addItemToCart = asyncHandler(async (req, res) => {
         subTotal: parseInt(productDetails.price * quantity),
       };
       cart = await addItem(cartData);
-      // let data = await cart.save();
       res.json(cart);
     }
   } catch (err) {
@@ -272,6 +275,50 @@ const addItemToCart = asyncHandler(async (req, res) => {
   }
 });
 
+const getCart = async (req, res) => {
+  try {
+    let cart = await cartRepository();
+    if (!cart) {
+      return res.status(400).json({
+        type: "Invalid",
+        msg: "Cart not Found",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      data: cart,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      type: "Invalid",
+      msg: "Something went wrong",
+      err: err,
+    });
+  }
+};
+
+const emptyCart = async (req, res) => {
+  try {
+    let cart = await cartRepository();
+    cart.items = [];
+    cart.subTotal = 0;
+    let data = await cart.save();
+    res.status(200).json({
+      type: "success",
+      mgs: "Cart has been emptied",
+      data: data,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      type: "Invalid",
+      msg: "Something went wrong",
+      err: err,
+    });
+  }
+};
+
 export {
   createProductData,
   createCategory,
@@ -279,4 +326,6 @@ export {
   deleteProductData,
   updateProductData,
   addItemToCart,
+  getCart,
+  emptyCart,
 };
