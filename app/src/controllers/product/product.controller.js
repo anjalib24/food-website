@@ -93,7 +93,7 @@ const createProductData = asyncHandler(async (req, res) => {
       file.mimetype == "image/png" ||
       file.mimetype == "image/jpg"
     ) {
-      return file.path;
+      return `/images/${file.filename}`;
     }
   });
 
