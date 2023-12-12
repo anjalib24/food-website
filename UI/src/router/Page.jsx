@@ -1,14 +1,14 @@
 import Layout from "@components/admin/Layout";
 import { AdminContext } from "@contexts/AdminContext";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
-import Admin from "./Admin/Page";
-import Shop from "./Shop/Page";
+import AdminPage from "./Admin/Page";
+import ShopPage from "./Shop/Page";
 
 const Page = () => {
   return (
     <Switch>
       <Route path="/admin">
-        <Admin />
+        <AdminPage />
       </Route>
 
       {/* <Route path="/topics">
@@ -16,7 +16,7 @@ const Page = () => {
       </Route> */}
 
       <Route path="/">
-        <Shop />
+        <ShopPage />
       </Route>
 
     </Switch>

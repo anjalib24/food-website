@@ -5,6 +5,11 @@ export const links = [
         title: "Dashboard",
         links: [
             {
+                name: "Products",
+                to: "/admin/products",
+                icon: <FiShoppingBag />,
+            },
+            {
                 name: "users",
                 to: "/admin/users",
                 icon: <FiShoppingBag />,
