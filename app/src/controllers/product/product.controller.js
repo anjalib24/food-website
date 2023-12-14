@@ -7,7 +7,6 @@ import { Category } from "../../models/category.js";
 import { cartRepository, addItem } from "../../services/repository.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
-import { ObjectId } from "mongoose";
 
 //get product data -----------
 const getProductData = asyncHandler(async (req, res) => {
@@ -84,6 +83,11 @@ const createProductData = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No files were uploaded.");
   }
 
+  const images = req.files["images"];
+
+  let video =
+    (req.files["video"] && req.files["video"][0].filename) || "No video upload";
+
   let productData = {
     title,
     short_description,
@@ -102,17 +106,20 @@ const createProductData = asyncHandler(async (req, res) => {
     throw new ApiError(400, error.details[0].message);
   }
 
-  const imageArray = req.files.map((file) => {
-    if (
-      file.mimetype == "image/jpeg" ||
-      file.mimetype == "image/png" ||
-      file.mimetype == "image/jpg"
-    ) {
-      return `/images/${file.filename}`;
-    }
-  });
+  let imageArray = "No image upload";
 
-  productData = { ...productData, images: imageArray, best_seller };
+  if (images && images.length > 0) {
+    imageArray = images.map((file) => {
+      return `/images/${file.filename}`;
+    });
+  }
+
+  productData = {
+    ...productData,
+    images: imageArray,
+    best_seller,
+    video_url: `/videos/${video}`,
+  };
 
   const existingCategory = await Category.findById(categoryID);
   if (!existingCategory) {
@@ -203,7 +210,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
   const token = req.cookies["cookie_token"];
 
   if (!token) {
-    throw new ApiError(401, "Unauthorized user!");
+    throw new ApiError(400, "Unauthorized user!");
   }
   const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
 
@@ -214,14 +221,14 @@ const addItemToCart = asyncHandler(async (req, res) => {
   }
 
   const quantity = Number.parseInt(req.body.quantity);
+  if (quantity <= 0) {
+    throw new ApiError(500, "Quantity can not be less then or equal to zero");
+  }
   try {
     let cart = await cartRepository();
     let productDetails = await Product.findById({ _id: productId });
     if (!productDetails) {
-      return res.status(500).json({
-        type: "Not Found",
-        msg: "Invalid request",
-      });
+      throw new ApiError(404, "Product Not Found!");
     }
     //--If Cart Exists ----
     if (cart) {
@@ -268,23 +275,14 @@ const addItemToCart = asyncHandler(async (req, res) => {
         }
         //----If quantity of price is 0 throw the error -------
         else {
-          return res.status(400).json({
-            type: "Invalid",
-            msg: "Invalid request",
-          });
+          throw new ApiError(400, "Product Not Found!");
         }
         let data = await cart.save();
-        res.status(200).json({
-          type: "success",
-          mgs: "Process successful",
-          data: data,
-        });
+
+        res.status(200).json(new ApiResponse(200, data, "Process successful"));
       } else {
         // The cart user does not match the existedUser ID
-        return res.status(401).json({
-          type: "Unauthorized",
-          msg: "Cart does not belong to the authenticated user.",
-        });
+        throw new ApiError(401, "Unauthorized user!");
       }
     }
     //------------ This creates a new cart and then adds the item to the cart that has been created------------
@@ -302,15 +300,12 @@ const addItemToCart = asyncHandler(async (req, res) => {
         subTotal: parseInt(productDetails.price * quantity),
       };
       cart = await addItem(cartData);
-      res.json(cart);
+      res
+        .status(200)
+        .json(new ApiResponse(200, cart, "Items added successful"));
     }
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      type: "Invalid",
-      msg: "Something went wrong",
-      err: err,
-    });
+    throw new ApiError(400, "Something went wrong");
   }
 });
 
@@ -318,22 +313,11 @@ const getCart = async (req, res) => {
   try {
     let cart = await cartRepository();
     if (!cart) {
-      return res.status(400).json({
-        type: "Invalid",
-        msg: "Cart not Found",
-      });
+      throw new ApiError(400, "Cart not Found!");
     }
-    res.status(200).json({
-      status: true,
-      data: cart,
-    });
+    res.status(200).json(new ApiResponse(200, cart, "Items added successful"));
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      type: "Invalid",
-      msg: "Something went wrong",
-      err: err,
-    });
+    throw new ApiError(400, "Something went wrong");
   }
 };
 
@@ -343,18 +327,9 @@ const emptyCart = async (req, res) => {
     cart.items = [];
     cart.subTotal = 0;
     let data = await cart.save();
-    res.status(200).json({
-      type: "success",
-      mgs: "Cart has been emptied",
-      data: data,
-    });
+    res.status(200).json(new ApiResponse(200, data, "Cart has been emptied"));
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      type: "Invalid",
-      msg: "Something went wrong",
-      err: err,
-    });
+    throw new ApiError(400, "Something went wrong");
   }
 };
 

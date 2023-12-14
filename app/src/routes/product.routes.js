@@ -9,16 +9,19 @@ import {
   getCart,
   emptyCart,
 } from "../controllers/product/product.controller.js";
-import { imageUpload } from "../middlewares/imageUpload.js";
-import { videoUpload } from "../middlewares/videoUpload.js";
+import { upload } from "../middlewares/uploadMediaFile.js";
 
 const router = Router();
 
 router.route("/get-product").get(getProductData);
 
-router
-  .route("/create-product")
-  .post(imageUpload.array("images", 5), createProductData);
+router.route("/create-product").post(
+  upload.fields([
+    { name: "images", maxCount: 5 },
+    { name: "video", maxCount: 1 },
+  ]),
+  createProductData
+);
 
 router.route("/update-product/:id").put(updateProductData);
 
