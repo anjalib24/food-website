@@ -36,4 +36,3 @@ router.route("/get-cart").get(getCart);
 router.route("/remove-items-from-cart").get(emptyCart);
 
 export default router;
-//videoUpload.single("video")
