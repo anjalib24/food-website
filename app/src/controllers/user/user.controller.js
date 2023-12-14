@@ -6,6 +6,28 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userRegistrationValidation } from "../../utils/Validation.js";
 
+//get all user
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  const { username, email } = req.query;
+
+  const filter = {};
+
+  if (username) filter.username = username;
+  if (email) filter.email = email;
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const options = { page, limit };
+
+  const usersData = await User.paginate(filter, options);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, usersData, "Get all users data successfully"));
+});
+
 //User register part-
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password, confirmPassword } = req.body.userData;
@@ -73,4 +95,4 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser };
+export { registerUser, loginUser, getAllUsers };
