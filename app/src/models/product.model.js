@@ -15,7 +15,8 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
   origin_country: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Country",
     required: true,
   },
   images: [

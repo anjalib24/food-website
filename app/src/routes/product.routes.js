@@ -9,6 +9,8 @@ import {
   getCart,
   emptyCart,
   getAllCategory,
+  createCountry,
+  getAllCountry,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 
@@ -37,5 +39,9 @@ router.route("/add-to-cart").post(addItemToCart);
 router.route("/get-cart").get(getCart);
 
 router.route("/remove-items-from-cart").get(emptyCart);
+
+router.route("/create-country").post(createCountry);
+
+router.route("/get-all-country").get(getAllCountry);
 
 export default router;
