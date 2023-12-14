@@ -85,8 +85,7 @@ const createProductData = asyncHandler(async (req, res) => {
 
   const images = req.files["images"];
 
-  let video =
-    (req.files["video"] && req.files["video"][0].filename) || "No video upload";
+  let video = (req.files["video"] && req.files["video"][0].filename) || null;
 
   let productData = {
     title,
@@ -106,12 +105,14 @@ const createProductData = asyncHandler(async (req, res) => {
     throw new ApiError(400, error.details[0].message);
   }
 
-  let imageArray = "No image upload";
+  let imageArray = [];
 
   if (images && images.length > 0) {
     imageArray = images.map((file) => {
       return `/images/${file.filename}`;
     });
+  } else {
+    throw new ApiError(400, "Product image is required!");
   }
 
   productData = {
