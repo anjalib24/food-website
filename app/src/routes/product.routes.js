@@ -8,6 +8,7 @@ import {
   addItemToCart,
   getCart,
   emptyCart,
+  getAllCategory,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 
@@ -28,6 +29,8 @@ router.route("/update-product/:id").put(updateProductData);
 router.route("/delete-product/:id").delete(deleteProductData);
 
 router.route("/create-category").post(createCategory);
+
+router.route("/get-all-category").get(getAllCategory);
 
 router.route("/add-to-cart").post(addItemToCart);
 

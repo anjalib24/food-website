@@ -179,7 +179,7 @@ const updateProductData = asyncHandler(async (req, res) => {
   }
 });
 
-//createproduct category part-
+//create product category part-
 const createCategory = asyncHandler(async (req, res) => {
   const { name } = req.body.categoryData;
 
@@ -202,6 +202,17 @@ const createCategory = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json(new ApiResponse(200, newCategory, "Category created successfully"));
+});
+
+//get all product category part-
+const getAllCategory = asyncHandler(async (req, res) => {
+  const getAllCategory = await Category.find();
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(200, getAllCategory, "Get all category successfully")
+    );
 });
 
 // product add to cart -----------
@@ -337,6 +348,7 @@ const emptyCart = async (req, res) => {
 export {
   createProductData,
   createCategory,
+  getAllCategory,
   getProductData,
   deleteProductData,
   updateProductData,
