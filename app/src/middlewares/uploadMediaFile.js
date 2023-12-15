@@ -7,8 +7,16 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    if (file.fieldname == "images") {
+    if (
+      file.fieldname === "hero_section_image" ||
+      file.fieldname === "reviews_image" ||
+      file.fieldname === "about_us_image" ||
+      file.fieldname === "blog_image" ||
+      file.fieldname === "images"
+    ) {
       cb(null, path.join(__dirname, "../../public/images"));
+    } else if (file.fieldname === "logo") {
+      cb(null, path.join(__dirname, "../../public/logo"));
     } else {
       cb(null, path.join(__dirname, "../../public/videos"));
     }
