@@ -81,6 +81,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const tokenPayload = {
       _id: existedUser._id,
       email: existedUser.email,
+      role: existedUser.role,
     };
 
     const accessToken = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET);

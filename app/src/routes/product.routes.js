@@ -13,6 +13,7 @@ import {
   getAllCountry,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
+import { adminAuth } from "../middlewares/adminAuth.js";
 
 const router = Router();
 
