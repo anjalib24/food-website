@@ -27,7 +27,13 @@ router.route("/create-product").post(
   createProductData
 );
 
-router.route("/update-product/:id").put(updateProductData);
+router.route("/update-product/:id").put(
+  upload.fields([
+    { name: "images", maxCount: 5 },
+    { name: "video", maxCount: 1 },
+  ]),
+  updateProductData
+);
 
 router.route("/delete-product/:id").delete(deleteProductData);
 

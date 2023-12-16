@@ -190,11 +190,40 @@ const deleteProductData = asyncHandler(async (req, res) => {
 
 // update product data part-
 const updateProductData = asyncHandler(async (req, res) => {
+  let productData = { ...req.body };
+  const images = (req.files && req.files["images"]) || [];
+
+  let video =
+    (req.files && req.files["video"] && req.files["video"][0].filename) || null;
+
+  let imageArray = [];
+
+  if (images && images.length > 0) {
+    imageArray = images.map((file) => {
+      return `/images/${file.filename}`;
+    });
+  }
+
+  if (imageArray && imageArray.length > 0) {
+    productData = {
+      ...productData,
+      images: imageArray,
+    };
+  }
+
+  if (video) {
+    productData = {
+      ...productData,
+      video_url: `/videos/${video}`,
+    };
+  }
+
   const { id } = req.params;
+
   if (id) {
     const updateProduct = await Product.findByIdAndUpdate(
       { _id: id },
-      req.body
+      productData
     );
 
     if (!updateProduct) {
