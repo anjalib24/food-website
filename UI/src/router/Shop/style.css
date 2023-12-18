@@ -1,0 +1,344 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    overflow-x: hidden;
+}
+img.align-items-end {
+    width: 100%;
+}
+.bestselling img.text-center.m-2 {
+    width: 100%;
+    height: auto;
+}
+.about-text {
+    max-width: 70%;
+    float: right;
+}
+.img-text.text-justify p {
+    color: gray;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+div#review_card {
+    padding: 10px;
+    color: #fff;
+    background: #0F4E15;
+}
+button.accordion-button {
+    background: no-repeat !important;
+    border: 0;
+    font-size: 20px;
+    width: 100%;
+    text-align: left;
+    padding-bottom: 10px;
+}
+button.accordion-button.collapsed {
+    border-bottom: 1px solid #0F4E15 !important;
+}
+.accordion-collapse{
+    border-bottom: 1px solid #0F4E15;
+    padding-bottom: 10px;
+}
+.bestselling h3 {
+    font-size: 20px;
+    font-weight: 700;
+}
+#name p {
+    margin-bottom: 10px;
+}
+button.slick-prev.slick-arrow {
+    position: absolute;
+    left: -70px;
+    top: 140px;
+    border: 0;
+    color: transparent;
+    background-color: transparent;
+    background-image: url("./images/arrow_left.png");
+    background-repeat: no-repeat;
+    width: 39px;
+    height: 56px;
+}
+
+button.slick-next.slick-arrow {
+    position: absolute;
+    right: -70px;
+    top: 140px;
+    border: 0;
+    color: transparent;
+    background-color: transparent;
+    background-image: url("./images/arrow_right.png");
+    background-repeat: no-repeat;
+    width: 39px;
+    height: 56px;
+}
+div#accordionFlushExample {
+    position: relative;
+}
+button.accordion-button.collapsed:after {
+    content: "";
+    background-image: url("./images/arrow_bottom.png");
+    width: 31px;
+    height: 22px;
+    position: absolute;
+    right: 10px;
+}
+button.accordion-button:after {
+    content: "";
+    background-image: url("./images/arrow_top.png");
+    width: 31px;
+    height: 22px;
+    position: absolute;
+    right: 10px;
+}
+
+#search input.form-control {
+    border-radius: 80px 0 0 80px;
+    border-right: transparent;
+}
+#blog_main .single-box {
+    padding: 10px;
+}
+#blog_main .single-box img {
+    width: 100%;
+    height: auto;
+}
+#search h3 {
+    font-size: 20px;
+    margin-top: 13px;
+}
+button.btn.btn.border.rounded-end {
+    border: none !important;
+}
+button.btn.btn-success.btn-block {
+    background: #028A0F;
+    border: 0;
+    border-radius: 0;
+}
+button.btn.btn-white.btn-block.border.border-success.mb-1 {
+    border: 0;
+    border-radius: 0;
+}
+.bestselling .col-md-2.m-2 {
+    flex: 0 0 20%;
+    max-width: 18.55%;
+}
+.bestselling p {
+    font-size: 14px;
+}
+ nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: white;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 80px;
+}
+.logo{
+    width: auto;
+    height: 50px;
+}
+header {
+    height: 75px;
+}
+ nav ul li{
+    display: inline-block;
+    margin: 5px 15px;
+}
+
+ nav ul li a{
+    text-decoration: none;
+    color: black;
+    transition: 0.2s;
+}
+
+ nav ul li a:hover{
+    color: #0d0d0d;
+}
+
+ nav .icons i{
+    margin: 0 4px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+ nav .icons i:hover{
+    color: #a1a1a1;
+}
+ section.banner{ 
+     width: 100%;
+    height: 100vh;
+    background-image: url('./images/Banner-Ethnic-Foods.png');
+    background-size: cover;
+    background-position: center;
+    
+ }
+div.d-grid gap-2{
+    width: 25px;
+    height: 25px;
+}
+#Shopbtn{
+    margin: auto;
+    Background: #028A0F;
+    padding: 10px 40px 10px 40px;
+    border: 0;
+    border-radius: 0;
+    font-weight: bold;
+}
+/* #search{
+    width: 150px;
+    height: ;
+} */
+/* h1{
+    font-size: 2.5rem; */
+/* }
+button.banner{
+    margin: 20px;
+    width: 25px;
+    padding: 10px;
+    background-color: rgb(28, 241, 60);
+} */
+
+
+
+#review .review_box{
+    width: 95%;
+    position: relative;
+    top: 7%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+#review #profile #profile_image{
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    margin: 5px 0;
+    cursor: pointer;
+}
+#review #profile_image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+#review #profile{
+    display: flex;
+    align-items: center;
+}
+
+
+
+#review #review_box #review_card #card_top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#review #review_box #review_card #card_top #profile #name{
+    margin-left: 20px;
+    line-height: 22px;
+}
+
+#review #review_box #review_card #card_top #profile #name strong{
+    font-size: 20px;
+}
+
+#review #review_box #review_card #card_top #profile #name #like i{
+    color: orange;
+    display: inline-block;
+    font-size: 12px;
+}
+
+#review #review_box #review_card #comment p{
+    text-align: justify;
+    line-height: 22px;
+    margin-top: 15px;
+}
+#Contact p {
+    margin-bottom: 8px !important;
+}
+footer.bg-success.text-white.pt-5.pb-4.pe-3 {
+    background: #0F4E15 !important;
+}
+
+
+@media (max-width: 780px) {
+    .main-header ul {
+        display: none;
+    }
+    section.banner {
+        height: 460px;
+        background-size: 100%;
+        background-position: bottom;
+        background-repeat: no-repeat;
+    }
+    .bestselling .col-md-2.m-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    #search .col-md-10 {
+        margin: 0 15px;
+    }
+    #About .col-md-12.mt-5.mb-5.text-center {
+        margin-bottom: 0 !important;
+    }
+    #About .col-md-6.mt-5 {
+        margin-top: 0 !important;
+    }
+    .about-text {
+        max-width: 100%;
+        float: left;
+    }
+    section#review {
+        margin: 15px !important;
+    }
+    #review .col-md-12.m-4.text-center {
+        margin: 0 !important;
+    }
+    div#review_card {
+        margin-bottom: 30px;
+    }
+    button.slick-prev.slick-arrow {
+        position: absolute;
+        left: -15px;
+        top: 140px;
+        border: 0;
+        color: transparent;
+        background-color: transparent;
+        background-image: url("./images/arrow_left.png");
+        background-repeat: no-repeat;
+        width: 39px;
+        height: 56px;
+        background-size: 60%;
+    }
+    button.slick-next.slick-arrow {
+        position: absolute;
+        right: -12px;
+        top: 158px;
+        border: 0;
+        color: transparent;
+        background-color: transparent;
+        background-image: url("./images/arrow_right.png");
+        background-repeat: no-repeat;
+        width: 17px;
+        height: 56px;
+        background-size: 100%;
+    }
+    #Blog .col-md-12.m-4.text-center {
+        margin: 0 !important;
+    }
+    .bestselling .row {
+        max-width: 100%;
+    }
+}
