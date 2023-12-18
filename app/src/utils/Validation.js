@@ -19,4 +19,50 @@ const productValidation = Joi.object({
   category: Joi.string().required(),
 });
 
-export { userRegistrationValidation, productValidation };
+// views customization validation
+const heroSectionSchema = Joi.object({
+  title: Joi.string().required(),
+  subtitle: Joi.string().required(),
+  image: Joi.string().required(),
+});
+
+const aboutUsSchema = Joi.object({
+  text: Joi.string().required(),
+  video: Joi.string(),
+  image: Joi.string().required(),
+});
+
+const reviewsSchema = Joi.object({
+  name: Joi.string().required(),
+  image: Joi.string().required(),
+  reviews: Joi.string().required(),
+  rating: Joi.string().required(),
+});
+
+const blogSchema = Joi.object({
+  image: Joi.string().required(),
+  content: Joi.string().required(),
+  published: Joi.boolean().required(),
+});
+
+const faqSchema = Joi.object({
+  question: Joi.string().required(),
+  answer: Joi.string().required(),
+});
+
+const logoSchema = Joi.string().required();
+
+const viewsCustomiseValidationSchema = Joi.object({
+  hero_section: heroSectionSchema.required(),
+  about_us: aboutUsSchema.required(),
+  reviews: reviewsSchema.required(),
+  blog: blogSchema.required(),
+  faq: faqSchema.required(),
+  logo: logoSchema,
+});
+
+export {
+  userRegistrationValidation,
+  productValidation,
+  viewsCustomiseValidationSchema,
+};

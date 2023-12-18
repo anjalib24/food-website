@@ -3,66 +3,96 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { productValidation } from "../../utils/Validation.js";
 import { Product } from "../../models/product.model.js";
-import { Category } from "../../models/category.js";
+import { Category } from "../../models/category.model.js";
 import { cartRepository, addItem } from "../../services/repository.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
+import { Country } from "../../models/country.model.js";
 
 //get product data -----------
-const getProductData = asyncHandler(async (req, res) => {
-  let {
-    title,
-    short_description,
-    description,
-    origin_country,
-    expiry_date,
-    promotion_code,
-    rank,
-    best_seller,
-  } = req.query;
+const getProductData = async (req, res) => {
+  try {
+    let {
+      title,
+      short_description,
+      description,
+      origin_country,
+      expiry_date,
+      promotion_code,
+      rank,
+      best_seller,
+    } = req.query;
 
-  const price = req.body.price || 0;
+    const price = req.body.price || 0;
+    origin_country = origin_country && origin_country.toLowerCase();
 
-  const filter = {};
+    const filter = {};
 
-  if (origin_country) filter.origin_country = origin_country;
-  if (best_seller) filter.best_seller = best_seller;
+    if (origin_country) {
+      const country = await Country.findOne({ name: origin_country });
 
-  if (price) {
-    const numericPrice = parseFloat(price.slice(1));
-    if (!isNaN(numericPrice)) {
-      filter.price = price.startsWith("+")
-        ? { $gte: numericPrice }
-        : { $lte: numericPrice };
+      if (country) {
+        filter.origin_country = country._id;
+      } else {
+        return res
+          .status(404)
+          .json(new ApiResponse(404, null, "Country not found."));
+      }
     }
+
+    if (best_seller) filter.best_seller = best_seller;
+
+    if (price) {
+      const numericPrice = parseFloat(price.slice(1));
+      if (!isNaN(numericPrice)) {
+        filter.price = price.startsWith("+")
+          ? { $gte: numericPrice }
+          : { $lte: numericPrice };
+      }
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const options = { page, limit };
+
+    const paginatedProducts = await Product.paginate(filter, options);
+
+    const categoryIds = paginatedProducts.docs.map(
+      (product) => product.category
+    );
+    const countryIds = paginatedProducts.docs.map(
+      (product) => product.origin_country
+    );
+
+    const categories = await Category.find({ _id: { $in: categoryIds } });
+    const countries = await Country.find({ _id: { $in: countryIds } });
+
+    const productsWithCategories = paginatedProducts.docs.map((product) => {
+      const category = categories.find((cat) =>
+        cat._id.equals(product.category)
+      );
+      const country = countries.find((cntry) =>
+        cntry._id.equals(product.origin_country)
+      );
+
+      return { ...product.toObject(), category, country };
+    });
+
+    const getProducts = { ...paginatedProducts, docs: productsWithCategories };
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, getProducts, "Get all product data successfully")
+      );
+  } catch (error) {
+    console.error("Error:", error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
   }
-
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-
-  const options = { page, limit };
-
-  const paginatedProducts = await Product.paginate(filter, options);
-
-  const categoryIds = paginatedProducts.docs.map((product) => product.category);
-
-  const categories = await Category.find({ _id: { $in: categoryIds } });
-
-  const productsWithCategories = paginatedProducts.docs.map((product) => {
-    const category = categories.find((category) =>
-      category._id.equals(product.category)
-    );
-    return { ...product.toObject(), category };
-  });
-
-  const getProducts = { ...paginatedProducts, docs: productsWithCategories };
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, getProducts, "Get all product data successfully")
-    );
-});
+};
 
 //create product part-
 const createProductData = asyncHandler(async (req, res) => {
@@ -160,11 +190,40 @@ const deleteProductData = asyncHandler(async (req, res) => {
 
 // update product data part-
 const updateProductData = asyncHandler(async (req, res) => {
+  let productData = { ...req.body };
+  const images = (req.files && req.files["images"]) || [];
+
+  let video =
+    (req.files && req.files["video"] && req.files["video"][0].filename) || null;
+
+  let imageArray = [];
+
+  if (images && images.length > 0) {
+    imageArray = images.map((file) => {
+      return `/images/${file.filename}`;
+    });
+  }
+
+  if (imageArray && imageArray.length > 0) {
+    productData = {
+      ...productData,
+      images: imageArray,
+    };
+  }
+
+  if (video) {
+    productData = {
+      ...productData,
+      video_url: `/videos/${video}`,
+    };
+  }
+
   const { id } = req.params;
+
   if (id) {
     const updateProduct = await Product.findByIdAndUpdate(
       { _id: id },
-      req.body
+      productData
     );
 
     if (!updateProduct) {
@@ -179,7 +238,7 @@ const updateProductData = asyncHandler(async (req, res) => {
   }
 });
 
-//createproduct category part-
+//create product category part-
 const createCategory = asyncHandler(async (req, res) => {
   const { name } = req.body.categoryData;
 
@@ -202,6 +261,52 @@ const createCategory = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json(new ApiResponse(200, newCategory, "Category created successfully"));
+});
+
+//get all product category part-
+const getAllCategory = asyncHandler(async (req, res) => {
+  const getAllCategory = await Category.find();
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(200, getAllCategory, "Get all category successfully")
+    );
+});
+
+//create country part -
+const createCountry = asyncHandler(async (req, res) => {
+  let { name } = req.body.countryData;
+  name = name && name.toLowerCase();
+
+  if (!name) {
+    throw new ApiError(400, "Country name is required!");
+  }
+
+  const existingCountry = await Country.findOne({ name });
+
+  if (existingCountry) {
+    throw new ApiError(403, "Country already exists!");
+  }
+
+  const newCountry = await Country.create({ name });
+
+  if (!newCountry) {
+    throw new ApiError(500, "Something went wrong while creating the Country");
+  }
+
+  return res
+    .status(201)
+    .json(new ApiResponse(200, newCountry, "Country created successfully"));
+});
+
+//get all country part-
+const getAllCountry = asyncHandler(async (req, res) => {
+  const getAllCountry = await Country.find();
+
+  return res
+    .status(201)
+    .json(new ApiResponse(200, getAllCountry, "Get all country successfully"));
 });
 
 // product add to cart -----------
@@ -337,10 +442,13 @@ const emptyCart = async (req, res) => {
 export {
   createProductData,
   createCategory,
+  getAllCategory,
   getProductData,
   deleteProductData,
   updateProductData,
   addItemToCart,
   getCart,
   emptyCart,
+  getAllCountry,
+  createCountry,
 };

@@ -7,10 +7,23 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    if (file.fieldname == "images") {
+    if (
+      (file.fieldname === "hero_section_image" ||
+        file.fieldname === "reviews_image" ||
+        file.fieldname === "about_us_image" ||
+        file.fieldname === "blog_image" ||
+        file.fieldname === "images") &&
+      (file.mimetype === "image/jpeg" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/png")
+    ) {
       cb(null, path.join(__dirname, "../../public/images"));
-    } else {
+    } else if (file.fieldname === "logo" && file.mimetype === "image/png") {
+      cb(null, path.join(__dirname, "../../public/logo"));
+    } else if (file.mimetype === "video/mp4") {
       cb(null, path.join(__dirname, "../../public/videos"));
+    } else {
+      cb("Invalid file type.");
     }
   },
   filename: function (req, file, cb) {
