@@ -8,6 +8,9 @@ import {
   updateHeroSection,
   updateLogo,
   updateReviews,
+  createBlog,
+  createReviews,
+  createFAQ,
 } from "../controllers/viewsCustomization/views.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 
@@ -38,6 +41,10 @@ router
   .route("/update-reviews-views/:id")
   .put(upload.fields([{ name: "reviews_image", maxCount: 1 }]), updateReviews);
 
+router
+  .route("/create-reviews-views/:id")
+  .post(upload.fields([{ name: "reviews_image", maxCount: 1 }]), createReviews);
+
 router.route("/update-about-us/:id").put(
   upload.fields([
     { name: "about_us_image", maxCount: 1 },
@@ -50,6 +57,11 @@ router
   .route("/update-blog-views/:id")
   .put(upload.fields([{ name: "blog_image", maxCount: 1 }]), updateBlog);
 
+router
+  .route("/create-blog-views/:id")
+  .post(upload.fields([{ name: "blog_image", maxCount: 1 }]), createBlog);
+
+router.route("/create-faq-views/:id").post(createFAQ);
 router.route("/update-faq-views/:id").put(updateFAQ);
 
 router
