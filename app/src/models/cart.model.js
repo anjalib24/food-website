@@ -26,7 +26,7 @@ let ItemSchema = new Schema(
 );
 const CartSchema = new Schema(
   {
-    user: {
+    user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },

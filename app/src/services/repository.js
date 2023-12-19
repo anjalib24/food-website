@@ -1,7 +1,7 @@
 import { Cart } from "../models/cart.model.js";
 
-export const cartRepository = async () => {
-  const carts = await Cart.find().populate({
+export const cartRepository = async (userId) => {
+  const carts = await Cart.find({ user_id: userId }).populate({
     path: "items.productId",
     select: "name price total",
   });

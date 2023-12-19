@@ -331,70 +331,67 @@ const addItemToCart = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Quantity can not be less then or equal to zero");
   }
   try {
-    let cart = await cartRepository();
+    let cart = await cartRepository(existedUser._id);
+
     let productDetails = await Product.findById({ _id: productId });
     if (!productDetails) {
       throw new ApiError(404, "Product Not Found!");
     }
     //--If Cart Exists ----
     if (cart) {
-      //current user card
-
-      if (cart.user.equals(existedUser._id)) {
-        //---- Check if index exists ----
-        const indexFound = cart.items.findIndex(
-          (item) => item.productId.id == productId
-        );
-        //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
-        if (indexFound !== -1 && quantity <= 0) {
-          cart.items.splice(indexFound, 1);
-          if (cart.items.length == 0) {
-            cart.subTotal = 0;
-          } else {
-            cart.subTotal = cart.items
-              .map((item) => item.total)
-              .reduce((acc, next) => acc + next);
-          }
-        }
-        //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
-        else if (indexFound !== -1) {
-          cart.items[indexFound].quantity =
-            cart.items[indexFound].quantity + quantity;
-          cart.items[indexFound].total =
-            cart.items[indexFound].quantity * productDetails.price;
-          cart.items[indexFound].price = productDetails.price;
+      console.log("--------------------cart-----------", cart);
+      //---- Check if index exists ----
+      const indexFound = cart.items.findIndex(
+        (item) => item.productId.id == productId
+      );
+      //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
+      if (indexFound !== -1 && quantity <= 0) {
+        cart.items.splice(indexFound, 1);
+        if (cart.items.length == 0) {
+          cart.subTotal = 0;
+        } else {
           cart.subTotal = cart.items
             .map((item) => item.total)
             .reduce((acc, next) => acc + next);
         }
-        //----Check if quantity is greater than 0 then add item to items array ----
-        else if (quantity > 0) {
-          cart.items.push({
-            productId: productId,
-            quantity: quantity,
-            price: productDetails.price,
-            total: parseInt(productDetails.price * quantity),
-          });
-          cart.subTotal = cart.items
-            .map((item) => item.total)
-            .reduce((acc, next) => acc + next);
-        }
-        //----If quantity of price is 0 throw the error -------
-        else {
-          throw new ApiError(400, "Product Not Found!");
-        }
-        let data = await cart.save();
-
-        res.status(200).json(new ApiResponse(200, data, "Process successful"));
-      } else {
-        // The cart user does not match the existedUser ID
-        throw new ApiError(401, "Unauthorized user!");
       }
+      //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
+      else if (indexFound !== -1) {
+        cart.items[indexFound].quantity =
+          cart.items[indexFound].quantity + quantity;
+        cart.items[indexFound].total =
+          cart.items[indexFound].quantity * productDetails.price;
+        cart.items[indexFound].price = productDetails.price;
+        cart.subTotal = cart.items
+          .map((item) => item.total)
+          .reduce((acc, next) => acc + next);
+      }
+      //----Check if quantity is greater than 0 then add item to items array ----
+      else if (quantity > 0) {
+        cart.items.push({
+          productId: productId,
+          quantity: quantity,
+          price: productDetails.price,
+          total: parseInt(productDetails.price * quantity),
+        });
+        cart.subTotal = cart.items
+          .map((item) => item.total)
+          .reduce((acc, next) => acc + next);
+      }
+      //----If quantity of price is 0 throw the error -------
+      else {
+        throw new ApiError(400, "Product Not Found!");
+      }
+      let data = await cart.save();
+
+      res.status(200).json(new ApiResponse(200, data, "Process successful"));
     }
     //------------ This creates a new cart and then adds the item to the cart that has been created------------
     else {
+      console.log("----------fgggggggggggggggggggg----------");
+
       const cartData = {
-        user: existedUser._id,
+        user_id: existedUser._id,
         items: [
           {
             productId: productId,
@@ -411,7 +408,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, cart, "Items added successful"));
     }
   } catch (err) {
-    throw new ApiError(400, "Something went wrong");
+    throw new ApiError(400, err);
   }
 });
 

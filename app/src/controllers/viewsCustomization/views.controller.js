@@ -365,12 +365,12 @@ const updateAboutUs = asyncHandler(async (req, res) => {
   if (!updateReviews) {
     return res
       .status(404)
-      .json(new ApiResponse(404, null, "Reviews not found"));
+      .json(new ApiResponse(404, null, "About us not found"));
   }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updateReviews, "Reviews updated successfully"));
+    .json(new ApiResponse(200, updateReviews, "About us updated successfully"));
 });
 
 // ------------------------create blog------------------
