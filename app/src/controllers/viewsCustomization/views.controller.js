@@ -146,16 +146,11 @@ const getViews = asyncHandler(async (req, res) => {
 //---------------------update hero section------------------------
 const updateHeroSection = asyncHandler(async (req, res) => {
   const { title, subtitle } = req.body;
-  const { id } = req.params;
 
   const hero_section_image =
     (req.files["hero_section_image"] &&
       req.files["hero_section_image"][0].filename) ||
     "";
-
-  if (!id) {
-    throw new ApiError(400, "id is required!");
-  }
 
   if (!title) {
     throw new ApiError(400, "Title is required!");
@@ -169,13 +164,13 @@ const updateHeroSection = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Hero section image is required!");
   }
 
-  const updateViewsCustomise = await ViewsCustomise.findByIdAndUpdate(
-    id,
+  const updateViewsCustomise = await ViewsCustomise.findOneAndUpdate(
+    {},
     {
       $set: {
         "hero_section.title": title,
         "hero_section.subtitle": subtitle,
-        "hero_section.image": `/images${hero_section_image}`,
+        "hero_section.image": `/images/${hero_section_image}`,
       },
     },
     { new: true }
@@ -324,7 +319,6 @@ const updateReviews = asyncHandler(async (req, res) => {
 //---------------------update about us section------------------------
 const updateAboutUs = asyncHandler(async (req, res) => {
   const { text } = req.body;
-  const { id } = req.params;
 
   const about_us_image =
     (req.files["about_us_image"] && req.files["about_us_image"][0].filename) ||
@@ -333,10 +327,6 @@ const updateAboutUs = asyncHandler(async (req, res) => {
   const about_us_video =
     (req.files["about_us_video"] && req.files["about_us_video"][0].filename) ||
     "";
-
-  if (!id) {
-    throw new ApiError(400, "id is required!");
-  }
 
   if (!text) {
     throw new ApiError(400, "text is required!");
@@ -350,8 +340,8 @@ const updateAboutUs = asyncHandler(async (req, res) => {
     throw new ApiError(400, "About us video is required!");
   }
 
-  const updateReviews = await ViewsCustomise.findByIdAndUpdate(
-    id,
+  const updateReviews = await ViewsCustomise.findOneAndUpdate(
+    {},
     {
       $set: {
         "about_us.text": text,
@@ -548,20 +538,15 @@ const updateFAQ = asyncHandler(async (req, res) => {
 //---------------------update FAQ section------------------------
 const updateLogo = asyncHandler(async (req, res) => {
   const { question, answer } = req.body;
-  const { id } = req.params;
 
   const logo = (req.files["logo"] && req.files["logo"][0].filename) || "";
-
-  if (!id) {
-    throw new ApiError(400, "id is required!");
-  }
 
   if (!logo) {
     throw new ApiError(400, "logo is required!");
   }
 
-  const updateLogo = await ViewsCustomise.findByIdAndUpdate(
-    id,
+  const updateLogo = await ViewsCustomise.findOneAndUpdate(
+    {},
     {
       $set: {
         logo: `/logo/${logo}`,
