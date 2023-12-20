@@ -9,8 +9,19 @@ import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
 import { Country } from "../../models/country.model.js";
 
+//------------get best seller------------
+
+const getBestSeller = asyncHandler(async (req, res) => {
+  const getBestsellerData = await Product.find({
+    best_seller: true,
+  });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, getBestsellerData, "All best seller data."));
+});
+
 //get product data -----------
-const getProductData = async (req, res) => {
+const getProductData = asyncHandler(async (req, res) => {
   try {
     let {
       title,
@@ -22,6 +33,16 @@ const getProductData = async (req, res) => {
       rank,
       best_seller,
     } = req.query;
+
+    const countBestseller = await Product.find({
+      best_seller: true,
+    }).countDocuments();
+
+    if (countBestseller > 15) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Best seller can't be more then 15."));
+    }
 
     const price = req.body.price || 0;
     origin_country = origin_country && origin_country.toLowerCase();
@@ -39,8 +60,6 @@ const getProductData = async (req, res) => {
           .json(new ApiResponse(404, null, "Country not found."));
       }
     }
-
-    if (best_seller) filter.best_seller = best_seller;
 
     if (price) {
       const numericPrice = parseFloat(price.slice(1));
@@ -84,15 +103,15 @@ const getProductData = async (req, res) => {
     return res
       .status(200)
       .json(
-        new ApiResponse(200, getProducts, "Get all product data successfully")
+        new ApiResponse(200, getProducts, "Get all product data successfully.")
       );
   } catch (error) {
     console.error("Error:", error);
     return res
       .status(500)
-      .json(new ApiResponse(500, null, "Internal Server Error"));
+      .json(new ApiResponse(500, null, "Internal Server Error!"));
   }
-};
+});
 
 //create product part-
 const createProductData = asyncHandler(async (req, res) => {
@@ -108,6 +127,12 @@ const createProductData = asyncHandler(async (req, res) => {
     categoryID,
     best_seller,
   } = req.body;
+
+  const countBestseller = await Product.find({ best_seller }).countDocuments();
+
+  if (!newProduct) {
+    throw new ApiError(500, "Something went wrong while creating product data");
+  }
 
   if (!req.files || req.files.length === 0) {
     throw new ApiError(400, "No files were uploaded.");
@@ -448,4 +473,5 @@ export {
   emptyCart,
   getAllCountry,
   createCountry,
+  getBestSeller,
 };

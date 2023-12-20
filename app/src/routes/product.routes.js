@@ -11,11 +11,14 @@ import {
   getAllCategory,
   createCountry,
   getAllCountry,
+  getBestSeller,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
 
 const router = Router();
+
+router.route("/get-best-seller-product").get(getBestSeller);
 
 router.route("/get-product").get(getProductData);
 
