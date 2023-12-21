@@ -1,61 +1,69 @@
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-const productSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  short_description: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  origin_country: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Country",
-    required: true,
-  },
-  images: [
-    {
+const productSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    short_description: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    origin_country: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Country",
+      required: true,
+    },
+    images: [
+      {
+        type: String,
+      },
+    ],
+    rotate360lip: {
       type: String,
     },
-  ],
-  rotate360lip: {
-    type: String,
+    price: {
+      type: Number,
+      required: true,
+    },
+    video_url: {
+      type: String,
+    },
+    expiry_date: {
+      type: Date,
+      required: true,
+    },
+    promotion_code: {
+      type: String,
+      required: true,
+    },
+    rank: {
+      type: Number,
+      required: true,
+    },
+    best_seller: {
+      type: Boolean,
+      default: false,
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    zipFile_url: {
+      type: String,
+    },
   },
-  price: {
-    type: Number,
-    required: true,
-  },
-  video_url: {
-    type: String,
-  },
-  expiry_date: {
-    type: Date,
-    required: true,
-  },
-  promotion_code: {
-    type: String,
-    required: true,
-  },
-  rank: {
-    type: Number,
-    required: true,
-  },
-  best_seller: {
-    type: Boolean,
-    default: false,
-  },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-    required: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 productSchema.plugin(mongoosePaginate);
 

@@ -42,7 +42,7 @@ router
   .put(upload.fields([{ name: "reviews_image", maxCount: 1 }]), updateReviews);
 
 router
-  .route("/create-reviews-views/:id")
+  .route("/create-reviews-views")
   .post(upload.fields([{ name: "reviews_image", maxCount: 1 }]), createReviews);
 
 router.route("/update-about-us").put(
@@ -58,10 +58,10 @@ router
   .put(upload.fields([{ name: "blog_image", maxCount: 1 }]), updateBlog);
 
 router
-  .route("/create-blog-views/:id")
+  .route("/create-blog-views")
   .post(upload.fields([{ name: "blog_image", maxCount: 1 }]), createBlog);
 
-router.route("/create-faq-views/:id").post(createFAQ);
+router.route("/create-faq-views").post(createFAQ);
 router.route("/update-faq-views/:id").put(updateFAQ);
 
 router

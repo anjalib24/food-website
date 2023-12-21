@@ -8,6 +8,9 @@ import { cartRepository, addItem } from "../../services/repository.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
 import { Country } from "../../models/country.model.js";
+import AdmZip from "adm-zip";
+import path from "path";
+import fs from "fs";
 
 //------------get best seller------------
 
@@ -128,12 +131,6 @@ const createProductData = asyncHandler(async (req, res) => {
     best_seller,
   } = req.body;
 
-  const countBestseller = await Product.find({ best_seller }).countDocuments();
-
-  if (!newProduct) {
-    throw new ApiError(500, "Something went wrong while creating product data");
-  }
-
   if (!req.files || req.files.length === 0) {
     throw new ApiError(400, "No files were uploaded.");
   }
@@ -170,10 +167,40 @@ const createProductData = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Product image is required!");
   }
 
+  let zipFieldName =
+    (req.files["zipFile"] && req.files["zipFile"][0].fieldname) || null;
+  let extractedZipFilesPath = "";
+
+  if (zipFieldName === "zipFile") {
+    const zipPath = req.files["zipFile"][0].path;
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const parentDirectory = path.resolve(__dirname, "..", "..", "..");
+    const originalZipName = req.files["zipFile"][0].originalname;
+
+    const fileNameWithoutExtension = path.parse(originalZipName).name;
+
+    const uploadDir = path.join(
+      parentDirectory,
+      "/public/zipfiles",
+      `${fileNameWithoutExtension}_${Date.now()}`
+    );
+
+    const zip = new AdmZip(zipPath);
+    fs.unlinkSync(zipPath);
+
+    zip.extractAllTo(uploadDir, true);
+
+    const extractedZipFiles = fs.readdirSync(uploadDir);
+    const specificPath = path.join(uploadDir, extractedZipFiles[0]);
+
+    extractedZipFilesPath = path.relative(parentDirectory, specificPath);
+  }
+
   productData = {
     ...productData,
     images: imageArray,
     best_seller,
+    zipFile_url: extractedZipFilesPath,
     video_url: `/videos/${video}`,
   };
 
@@ -240,6 +267,42 @@ const updateProductData = asyncHandler(async (req, res) => {
     productData = {
       ...productData,
       video_url: `/videos/${video}`,
+    };
+  }
+
+  let zipFieldName =
+    (req.files["zipFile"] && req.files["zipFile"][0].fieldname) || null;
+  let extractedZipFilesPath = "";
+
+  if (zipFieldName === "zipFile") {
+    const zipPath = req.files["zipFile"][0].path;
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const parentDirectory = path.resolve(__dirname, "..", "..", "..");
+    const originalZipName = req.files["zipFile"][0].originalname;
+
+    const fileNameWithoutExtension = path.parse(originalZipName).name;
+
+    const uploadDir = path.join(
+      parentDirectory,
+      "/public/zipfiles",
+      `${fileNameWithoutExtension}_${Date.now()}`
+    );
+
+    const zip = new AdmZip(zipPath);
+    fs.unlinkSync(zipPath);
+
+    zip.extractAllTo(uploadDir, true);
+
+    const extractedZipFiles = fs.readdirSync(uploadDir);
+    const specificPath = path.join(uploadDir, extractedZipFiles[0]);
+
+    extractedZipFilesPath = path.relative(parentDirectory, specificPath);
+  }
+
+  if (extractedZipFilesPath) {
+    productData = {
+      ...productData,
+      zipFile_url: extractedZipFilesPath,
     };
   }
 

@@ -152,26 +152,33 @@ const updateHeroSection = asyncHandler(async (req, res) => {
       req.files["hero_section_image"][0].filename) ||
     "";
 
-  if (!title) {
-    throw new ApiError(400, "Title is required!");
+  let heroSectionAttribute = {};
+
+  if (title) {
+    heroSectionAttribute = {
+      ...heroSectionAttribute,
+      "hero_section.title": title,
+    };
   }
 
-  if (!subtitle) {
-    throw new ApiError(400, "Subtitle is required!");
+  if (subtitle) {
+    heroSectionAttribute = {
+      ...heroSectionAttribute,
+      "hero_section.subtitle": subtitle,
+    };
   }
 
-  if (!hero_section_image) {
-    throw new ApiError(400, "Hero section image is required!");
+  if (hero_section_image) {
+    heroSectionAttribute = {
+      ...heroSectionAttribute,
+      "hero_section.image": `/images/${hero_section_image}`,
+    };
   }
 
   const updateViewsCustomise = await ViewsCustomise.findOneAndUpdate(
     {},
     {
-      $set: {
-        "hero_section.title": title,
-        "hero_section.subtitle": subtitle,
-        "hero_section.image": `/images/${hero_section_image}`,
-      },
+      $set: heroSectionAttribute,
     },
     { new: true }
   );
@@ -196,15 +203,10 @@ const updateHeroSection = asyncHandler(async (req, res) => {
 //---------------------create reviews section------------------------
 const createReviews = asyncHandler(async (req, res) => {
   const { name, age, reviews, rating } = req.body;
-  const { id } = req.params;
 
   const reviews_image =
     (req.files["reviews_image"] && req.files["reviews_image"][0].filename) ||
     "";
-
-  if (!id) {
-    throw new ApiError(400, "id is required!");
-  }
 
   if (!name) {
     throw new ApiError(400, "name is required!");
@@ -227,7 +229,7 @@ const createReviews = asyncHandler(async (req, res) => {
   }
 
   const createReview = await ViewsCustomise.findOneAndUpdate(
-    { _id: id },
+    {},
     {
       $push: {
         reviews: {
@@ -366,14 +368,9 @@ const updateAboutUs = asyncHandler(async (req, res) => {
 // ------------------------create blog------------------
 const createBlog = asyncHandler(async (req, res) => {
   const { content, published = false } = req.body;
-  const { id } = req.params;
 
   const blog_image =
     (req.files["blog_image"] && req.files["blog_image"][0].filename) || "";
-
-  if (!id) {
-    throw new ApiError(400, "id is required!");
-  }
 
   if (!content) {
     throw new ApiError(400, "content is required!");
@@ -384,7 +381,7 @@ const createBlog = asyncHandler(async (req, res) => {
   }
 
   const createBlog = await ViewsCustomise.findOneAndUpdate(
-    { _id: id }, // Match the document based on its ID
+    {},
     {
       $push: {
         blog: {
@@ -456,12 +453,6 @@ const updateBlog = asyncHandler(async (req, res) => {
 const createFAQ = asyncHandler(async (req, res) => {
   const { question, answer } = req.body;
 
-  const { id } = req.params;
-
-  if (!id) {
-    throw new ApiError(400, "id is required!");
-  }
-
   if (!question) {
     throw new ApiError(400, "Question is required!");
   }
@@ -471,7 +462,7 @@ const createFAQ = asyncHandler(async (req, res) => {
   }
 
   const createFAQ = await ViewsCustomise.findOneAndUpdate(
-    { _id: id },
+    {},
     {
       $push: {
         faq: {

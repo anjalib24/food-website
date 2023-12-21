@@ -26,6 +26,7 @@ router.route("/create-product").post(
   upload.fields([
     { name: "images", maxCount: 5 },
     { name: "video", maxCount: 1 },
+    { name: "zipFile", maxCount: 1 },
   ]),
   createProductData
 );
@@ -34,6 +35,7 @@ router.route("/update-product/:id").put(
   upload.fields([
     { name: "images", maxCount: 5 },
     { name: "video", maxCount: 1 },
+    { name: "zipFile", maxCount: 1 },
   ]),
   updateProductData
 );
