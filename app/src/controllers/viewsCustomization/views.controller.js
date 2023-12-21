@@ -20,6 +20,50 @@ const createViews = asyncHandler(async (req, res) => {
     faq_answer,
   } = req.body;
 
+  if (!hero_section_title) {
+    throw new ApiError(400, "Hero section title is required!");
+  }
+
+  if (!hero_section_subtitle) {
+    throw new ApiError(400, "Hero section subtitle is required!");
+  }
+
+  if (!about_us_text) {
+    throw new ApiError(400, "About us text is required!");
+  }
+
+  if (!reviews_name) {
+    throw new ApiError(400, "Reviews name is required!");
+  }
+  if (!reviews_age) {
+    throw new ApiError(400, "Reviews age is required!");
+  }
+  if (!reviews_name) {
+    throw new ApiError(400, "Reviews name is required!");
+  }
+  if (!reviews_rating) {
+    throw new ApiError(400, "Reviews rating is required!");
+  }
+
+  if (!reviews) {
+    throw new ApiError(400, "Reviews is required!");
+  }
+  if (!blog_content) {
+    throw new ApiError(400, "Blog content is required!");
+  }
+
+  if (!blog_published) {
+    throw new ApiError(400, "Blog published is required!");
+  }
+
+  if (!faq_question) {
+    throw new ApiError(400, "Faq question is required!");
+  }
+
+  if (!faq_answer) {
+    throw new ApiError(400, "FAQ answer is required!");
+  }
+
   const hero_section_image =
     (req.files["hero_section_image"] &&
       req.files["hero_section_image"][0].filename) ||
@@ -268,24 +312,34 @@ const updateReviews = asyncHandler(async (req, res) => {
     throw new ApiError(400, "id is required!");
   }
 
-  if (!name) {
-    throw new ApiError(400, "name is required!");
+  let reviewsAttribute = {};
+  if (name) {
+    reviewsAttribute = { ...reviewsAttribute, "reviews.$[reviews].name": name };
   }
 
-  if (!age) {
-    throw new ApiError(400, "age is required!");
+  if (age) {
+    reviewsAttribute = { ...reviewsAttribute, "reviews.$[reviews].age": age };
   }
 
-  if (!reviews) {
-    throw new ApiError(400, "reviews is required!");
+  if (reviews) {
+    reviewsAttribute = {
+      ...reviewsAttribute,
+      "reviews.$[reviews].reviews": reviews,
+    };
   }
 
-  if (!rating) {
-    throw new ApiError(400, "rating is required!");
+  if (rating) {
+    reviewsAttribute = {
+      ...reviewsAttribute,
+      "reviews.$[reviews].rating": rating,
+    };
   }
 
-  if (!reviews_image) {
-    throw new ApiError(400, "Reviews image is required!");
+  if (reviews_image) {
+    reviewsAttribute = {
+      ...reviewsAttribute,
+      "reviews.$[reviews].image": reviews_image,
+    };
   }
 
   const updateReviews = await ViewsCustomise.findOneAndUpdate(
@@ -293,16 +347,10 @@ const updateReviews = asyncHandler(async (req, res) => {
       "reviews._id": id,
     },
     {
-      $set: {
-        "reviews.$[review].name": name,
-        "reviews.$[review].age": age,
-        "reviews.$[review].reviews": reviews,
-        "reviews.$[review].rating": rating,
-        "reviews.$[review].image": `/images/${reviews_image}`,
-      },
+      $set: reviewsAttribute,
     },
     {
-      arrayFilters: [{ "review._id": id }],
+      arrayFilters: [{ "reviews._id": id }],
       new: true,
     }
   );
@@ -330,31 +378,35 @@ const updateAboutUs = asyncHandler(async (req, res) => {
     (req.files["about_us_video"] && req.files["about_us_video"][0].filename) ||
     "";
 
-  if (!text) {
-    throw new ApiError(400, "text is required!");
+  let aboutAttribute = {};
+
+  if (text) {
+    aboutAttribute = { ...aboutAttribute, "about_us.text": text };
   }
 
-  if (!about_us_image) {
-    throw new ApiError(400, "About us image is required!");
+  if (about_us_image) {
+    aboutAttribute = {
+      ...aboutAttribute,
+      "about_us.image": `/images/${about_us_image}`,
+    };
   }
 
-  if (!about_us_video) {
-    throw new ApiError(400, "About us video is required!");
+  if (about_us_video) {
+    aboutAttribute = {
+      ...aboutAttribute,
+      "about_us.video": `/videos/${about_us_video}`,
+    };
   }
 
-  const updateReviews = await ViewsCustomise.findOneAndUpdate(
+  const updateAbout = await ViewsCustomise.findOneAndUpdate(
     {},
     {
-      $set: {
-        "about_us.text": text,
-        "about_us.video": `/videos/${about_us_video}`,
-        "about_us.image": `/images/${about_us_image}`,
-      },
+      $set: aboutAttribute,
     },
     { new: true }
   );
 
-  if (!updateReviews) {
+  if (!updateAbout) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "About us not found"));
@@ -362,7 +414,7 @@ const updateAboutUs = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updateReviews, "About us updated successfully"));
+    .json(new ApiResponse(200, updateAbout, "About us updated successfully"));
 });
 
 // ------------------------create blog------------------
@@ -414,13 +466,21 @@ const updateBlog = asyncHandler(async (req, res) => {
   if (!id) {
     throw new ApiError(400, "id is required!");
   }
+  let blogAttribute = {};
 
-  if (!content) {
-    throw new ApiError(400, "content is required!");
+  if (content) {
+    blogAttribute = { ...blogAttribute, "blog.$[blog].content": content };
   }
 
-  if (!blog_image) {
-    throw new ApiError(400, "Blog image is required!");
+  if (published) {
+    blogAttribute = { ...blogAttribute, "blog.$[blog].published": published };
+  }
+
+  if (blog_image) {
+    blogAttribute = {
+      ...blogAttribute,
+      "blog.$[blog].image": `/images/${blog_image}`,
+    };
   }
 
   const updateBlog = await ViewsCustomise.findOneAndUpdate(
@@ -428,11 +488,7 @@ const updateBlog = asyncHandler(async (req, res) => {
       "blog._id": id,
     },
     {
-      $set: {
-        "blog.$[blog].content": content,
-        "blog.$[blog].published": published,
-        "blog.$[blog].image": `/images/${blog_image}`,
-      },
+      $set: blogAttribute,
     },
     {
       arrayFilters: [{ "blog._id": id }],
@@ -493,12 +549,14 @@ const updateFAQ = asyncHandler(async (req, res) => {
     throw new ApiError(400, "id is required!");
   }
 
-  if (!question) {
-    throw new ApiError(400, "Question is required!");
+  let faqAttribute = {};
+
+  if (question) {
+    faqAttribute = { ...faqAttribute, "faq.$[faq].question": question };
   }
 
-  if (!answer) {
-    throw new ApiError(400, "Answer is required!");
+  if (answer) {
+    faqAttribute = { ...faqAttribute, "faq.$[faq].answer": answer };
   }
 
   const updateFAQ = await ViewsCustomise.findOneAndUpdate(
@@ -506,10 +564,7 @@ const updateFAQ = asyncHandler(async (req, res) => {
       "faq._id": id,
     },
     {
-      $set: {
-        "faq.$[faq].question": question,
-        "faq.$[faq].answer": answer,
-      },
+      $set: faqAttribute,
     },
     {
       arrayFilters: [{ "faq._id": id }],
@@ -531,17 +586,15 @@ const updateLogo = asyncHandler(async (req, res) => {
   const { question, answer } = req.body;
 
   const logo = (req.files["logo"] && req.files["logo"][0].filename) || "";
-
-  if (!logo) {
-    throw new ApiError(400, "logo is required!");
+  let logoImage = {};
+  if (logo) {
+    logoImage = { ...logoImage, logo: `/logo/${logo}` };
   }
 
   const updateLogo = await ViewsCustomise.findOneAndUpdate(
     {},
     {
-      $set: {
-        logo: `/logo/${logo}`,
-      },
+      $set: logoImage,
     },
     { new: true }
   );
