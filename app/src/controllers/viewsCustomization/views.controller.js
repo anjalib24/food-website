@@ -338,7 +338,7 @@ const updateReviews = asyncHandler(async (req, res) => {
   if (reviews_image) {
     reviewsAttribute = {
       ...reviewsAttribute,
-      "reviews.$[reviews].image": reviews_image,
+      "reviews.$[reviews].image": `/images/${reviews_image}`,
     };
   }
 
@@ -364,6 +364,32 @@ const updateReviews = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, updateReviews, "Reviews updated successfully"));
+});
+
+// ------------------------delete reviews------------------
+const deleteReviews = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json(new ApiResponse(400, null, "Invalid id"));
+  }
+
+  const deleteReviews = await ViewsCustomise.findOneAndUpdate(
+    {},
+    {
+      $pull: { reviews: { _id: id } },
+    },
+    { new: true }
+  );
+  if (!deleteReviews) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Reviews  not found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, deleteReviews, "Reviews deleted successfully"));
 });
 
 //---------------------update about us section------------------------
@@ -505,6 +531,31 @@ const updateBlog = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updateBlog, "blog updated successfully"));
 });
 
+// ------------------------delete blog------------------
+const deleteBlog = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json(new ApiResponse(400, null, "Invalid id"));
+  }
+
+  const deleteBlog = await ViewsCustomise.findOneAndUpdate(
+    {},
+    {
+      $pull: { blog: { _id: id } },
+    },
+    { new: true }
+  );
+
+  if (!deleteBlog) {
+    return res.status(404).json(new ApiResponse(404, null, "blog not found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, deleteBlog, "blog deleted successfully"));
+});
+
 //---------------------create FAQ section------------------------
 const createFAQ = asyncHandler(async (req, res) => {
   const { question, answer } = req.body;
@@ -581,6 +632,31 @@ const updateFAQ = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updateFAQ, "faq updated successfully"));
 });
 
+// ------------------------delete blog------------------
+const deleteFAQ = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json(new ApiResponse(400, null, "Invalid id"));
+  }
+
+  const deleteFAQ = await ViewsCustomise.findOneAndUpdate(
+    {},
+    {
+      $pull: { faq: { _id: id } },
+    },
+    { new: true }
+  );
+
+  if (!deleteFAQ) {
+    return res.status(404).json(new ApiResponse(404, null, "FAQ not found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, deleteFAQ, "FAQ deleted successfully"));
+});
+
 //---------------------update FAQ section------------------------
 const updateLogo = asyncHandler(async (req, res) => {
   const { question, answer } = req.body;
@@ -620,4 +696,7 @@ export {
   createBlog,
   createFAQ,
   createReviews,
+  deleteBlog,
+  deleteFAQ,
+  deleteReviews,
 };
