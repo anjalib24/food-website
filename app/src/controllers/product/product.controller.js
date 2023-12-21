@@ -17,7 +17,7 @@ import fs from "fs";
 const getBestSeller = asyncHandler(async (req, res) => {
   const getBestsellerData = await Product.find({
     best_seller: true,
-  });
+  }).populate("origin_country");
   return res
     .status(200)
     .json(new ApiResponse(200, getBestsellerData, "All best seller data."));
