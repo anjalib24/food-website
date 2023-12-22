@@ -1,148 +1,106 @@
-import React from 'react'
-import "./style.css"
-import person1 from "./images/image 28.png"
-import person2 from "./images/image 28 (1).png"
-import person3 from "./images/image 28 (2).png"
+import React, { useState, useRef, useEffect } from 'react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import './style.css';
 
-export const Reviews = () => {
+ const Reviews = (props) => {
+  const [index, setIndex] = useState(0);
+  const sliderRef = useRef(null);
+  useEffect(() => {
+    setIndex(0);
+  }, [props.reviews]);
+
+  const settings = {
+    dots: false,
+    arrows: true,
+    infinite: true,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          arrows: false,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
+
+  const handleSelect = (selectedIndex) => {
+    setIndex(selectedIndex);
+  };
+
   return (
-<>
-<section id="review" className="m-5 mb-5">
-            <div className="col-md-12 m-4 text-center">
-                <h1>Reviews</h1>
-            </div>
-            <div className="container">
-                <div className="row align-items-center">
-                    <div className="col-md-3 ">
-                        <div id="review_card">
-                            <div id="card_top">
-                                <div id="profile" className="">
-                                    <div id="profile_image">
-                                        <img src={person1} className=""/>
-                                    </div>
-                                    <div id="name" className="m-2">
-                                        <strong>Stan Johnson</strong>
-                                        <p>29 years</p>
-                                        <div id="like" className=" text-warning">
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                        </div>
-                                    </div>
+    <>
+      <section id="review" className="m-5 mb-5">
+        <div className="col-md-12 m-4 text-center">
+          <h1>Reviews</h1>
+        </div>
+        <div className="container">
 
-                                </div>
-                            </div>
-                            <div id="comment" className="m-2 ">
-                                <p>
-                                    EthnicFoods.com has been a delightful discovery! It's a treasure trove of culinary
-                                    adventures from various cultures. The recipes are easy to follow, and the selection of
-                                    ingredients is impressive. I've enjoyed exploring new flavors and dishes from around the
-                                    world. Highly recommended.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div id="review_card">
-                            <div id="card_top">
-                                <div id="profile">
-                                    <div id="profile_image">
-                                        <img src={person2} className=""/>
-                                    </div>
-                                    <div id="name" className="m-2">
-                                        <strong>Stan Johnson</strong>
-                                        <p>29 years</p>
-                                        <div id="like" className=" text-warning">
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                        </div>
-                                    </div>
 
-                                </div>
-                            </div>
-                            <div id="comment" className="m-2 ">
-                                <p>EthnicFoods.com has been a delightful discovery! It's a treasure trove of culinary
-                                    adventures
-                                    from various cultures. The recipes are easy to follow, and the selection of ingredients
-                                    is
-                                    impressive. I've enjoyed exploring new flavors and dishes from around the world. Highly
-                                    recommended.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div id="review_card">
-                            <div id="card_top">
-                                <div id="profile">
-                                    <div id="profile_image">
-                                        <img src={person3} className=""/>
-                                    </div>
-                                    <div id="name" className="m-2">
-                                        <strong>Stan Johnson</strong>
-                                        <p>29 years</p>
-                                        <div id="like" className=" text-warning">
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                        </div>
-                                    </div>
+          <Slider
+            {...settings}
+            ref={sliderRef}
+            beforeChange={(oldIndex, newIndex) => handleSelect(newIndex)}
+          >
 
-                                </div>
-                            </div>
-                            <div id="comment" className="m-2 ">
-                                <p>EthnicFoods.com has been a delightful discovery! It's a treasure trove of culinary
-                                    adventures
-                                    from various cultures. The recipes are easy to follow, and the selection of ingredients
-                                    is
-                                    impressive. I've enjoyed exploring new flavors and dishes from around the world. Highly
-                                    recommended.
-                                </p>
-                            </div>
+            {props?.reviews?.map((item, reviewIndex) => (
+              <>
+                 <div key={reviewIndex}  style={{
+                  marginRight: '10px'
+                }}>
+                <div id="review_card">
+                  <div id="card_top" >
+                    <div id="profile" className="">
+                      <div id="profile_image">
+                        <img src={`/api${item.image}`} alt="Item" />
+                      </div>
+                      <div id="name" className="m-2">
+                        <div>
+                        <strong>{item.name}</strong>
+                        <p>29 years</p>
                         </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div id="review_card">
-                            <div id="card_top">
-                                <div id="profile">
-                                    <div id="profile_image">
-                                        <img src={person2} className=""/>
-                                    </div>
-                                    <div id="name" className="m-2">
-                                        <strong>Stan Johnson</strong>
-                                        <p>29 years</p>
-                                        <div id="like" className=" text-warning">
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                            <i className="fa-solid fa-star"></i>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div id="comment" className="m-2 ">
-                                <p>EthnicFoods.com has been a delightful discovery! It's a treasure trove of culinary
-                                    adventures
-                                    from various cultures. The recipes are easy to follow, and the selection of ingredients
-                                    is
-                                    impressive. I've enjoyed exploring new flavors and dishes from around the world. Highly
-                                    recommended.
-                                </p>
-                            </div>
+                        
+                        <div id="like" className=" text-warning">
+                          {Array.from({ length: parseInt(item.rating, 10) }, (_, i) => (
+                            <i key={i} className="fa-solid fa-star"></i>
+                          ))}
+                          <i className="fa-solid fa-star"></i>
                         </div>
+                      </div>
                     </div>
+                  </div>
+                  <div id="comment" className="m-2 overflow-auto" style={{height:"330px"}}>
+                    <p>{item.reviews}</p>
+                  </div>
                 </div>
-            </div>
-        </section>
-</>
-  )
-}
+                </div>
+
+              </>
+
+            ))}
+
+          </Slider>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Reviews;
+

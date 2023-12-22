@@ -2,12 +2,25 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*":["./src/*"],
-      "@contexts/*": ["./src/contexts/*"],
-      "@components/*": ["./src/components/*"],
-      "@assets/*": ["./src/assets/*"],
+      "@/*": [
+        "./src/*"
+      ],
+      "@contexts/*": [
+        "./src/contexts/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
       // "@/*": ["./src/*"],
-    }
+    },
+    "module": "esnext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

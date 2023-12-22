@@ -52,7 +52,6 @@ button.accordion-button.collapsed {
 button.slick-prev.slick-arrow {
     position: absolute;
     left: -70px;
-    top: 140px;
     border: 0;
     color: transparent;
     background-color: transparent;
@@ -65,7 +64,6 @@ button.slick-prev.slick-arrow {
 button.slick-next.slick-arrow {
     position: absolute;
     right: -70px;
-    top: 140px;
     border: 0;
     color: transparent;
     background-color: transparent;
@@ -242,6 +240,7 @@ button.banner{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 15px;
 }
 
 #review #review_box #review_card #card_top #profile #name{
@@ -341,4 +340,35 @@ footer.bg-success.text-white.pt-5.pb-4.pe-3 {
     .bestselling .row {
         max-width: 100%;
     }
+  
+    
+}
+.description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Number of lines to show */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 4em; /* Adjust this value based on your design */
+}
+.card-container {
+    display: flex;
+}
+
+.card-content {
+    flex-grow: 1;
+}
+
+.clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Ensure consistent height for all cards */
+.d-flex {
+    height: 100%;
+    flex-direction: column;
 }

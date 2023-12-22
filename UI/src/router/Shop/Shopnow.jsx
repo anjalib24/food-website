@@ -1,7 +1,13 @@
 import React from 'react'
 import "./style.css"
 
-export const Shopnow = () => {
+export const Shopnow = (props) => {
+  console.log(props,"propss");
+  const sectionStyle = {
+    backgroundImage: `url('/api${props?.herosection?.image}')`,
+  };
+  console.log(sectionStyle);
+  // style={{ backgroundImage: {sectionStyle}}}
   return (
 <>
 <section className="banner">
