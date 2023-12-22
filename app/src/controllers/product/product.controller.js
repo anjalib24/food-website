@@ -96,6 +96,7 @@ const getProductData = async (req, res) => {
 
 //create product part-
 const createProductData = asyncHandler(async (req, res) => {
+  console.log(111)
   const {
     title,
     short_description,

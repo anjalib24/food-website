@@ -62,7 +62,6 @@ const AddProduct = () => {
         setCategories(dataCategories.data);
         setCountries(dataCountries.data);
 
-        console.log({ categories, countries });
       } catch (error) {
         console.error(error);
       }
@@ -92,7 +91,6 @@ const AddProduct = () => {
       }
     });
 
-    console.log(formData);
 
     try {
       const response = await fetch("/api/api/v1/products/create-product", {
@@ -104,7 +102,6 @@ const AddProduct = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error(error);
     }
