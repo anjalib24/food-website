@@ -118,7 +118,6 @@ const getProductData = asyncHandler(async (req, res) => {
 
 //create product part-
 const createProductData = asyncHandler(async (req, res) => {
-  console.log(111)
   const {
     title,
     short_description,
@@ -193,16 +192,23 @@ const createProductData = asyncHandler(async (req, res) => {
     zip.extractAllTo(uploadDir, true);
 
     const extractedZipFiles = fs.readdirSync(uploadDir);
+
     const specificPath = path.join(uploadDir, extractedZipFiles[0]);
 
     extractedZipFilesPath = path.relative(parentDirectory, specificPath);
   }
 
+  const publicIndex = extractedZipFilesPath.indexOf("public");
+  const modifiedPath =
+    publicIndex !== -1
+      ? extractedZipFilesPath.slice(publicIndex + "public".length)
+      : extractedZipFilesPath;
+
   productData = {
     ...productData,
     images: imageArray,
     best_seller,
-    zipFile_url: extractedZipFilesPath,
+    zipFile_url: modifiedPath,
     video_url: `/videos/${video}`,
   };
 
@@ -300,11 +306,16 @@ const updateProductData = asyncHandler(async (req, res) => {
 
     extractedZipFilesPath = path.relative(parentDirectory, specificPath);
   }
+  const publicIndex = extractedZipFilesPath.indexOf("public");
+  const modifiedPath =
+    publicIndex !== -1
+      ? extractedZipFilesPath.slice(publicIndex + "public".length)
+      : extractedZipFilesPath;
 
   if (extractedZipFilesPath) {
     productData = {
       ...productData,
-      zipFile_url: extractedZipFilesPath,
+      zipFile_url: modifiedPath,
     };
   }
 
