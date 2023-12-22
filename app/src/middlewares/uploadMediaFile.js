@@ -1,7 +1,7 @@
 import multer from "multer";
 import path from "path";
 
-const allowedFileTypes = [".jpg", ".jpeg", ".png", ".mp4"];
+const allowedFileTypes = [".jpg", ".jpeg", ".png", ".mp4", ".zip"];
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -22,6 +22,8 @@ const storage = multer.diskStorage({
       cb(null, path.join(__dirname, "../../public/logo"));
     } else if (file.mimetype === "video/mp4") {
       cb(null, path.join(__dirname, "../../public/videos"));
+    } else if (file.mimetype === "application/zip") {
+      cb(null, path.join(__dirname, "../../public/zipfiles"));
     } else {
       cb("Invalid file type.");
     }

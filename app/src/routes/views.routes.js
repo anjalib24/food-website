@@ -8,6 +8,12 @@ import {
   updateHeroSection,
   updateLogo,
   updateReviews,
+  createBlog,
+  createReviews,
+  createFAQ,
+  deleteReviews,
+  deleteBlog,
+  deleteFAQ,
 } from "../controllers/viewsCustomization/views.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 
@@ -28,17 +34,23 @@ router.route("/create-views").post(
 router.route("/get-views").get(getViews);
 
 router
-  .route("/update-hero-section-views/:id")
+  .route("/update-hero-section-views")
   .put(
     upload.fields([{ name: "hero_section_image", maxCount: 1 }]),
     updateHeroSection
   );
 
 router
+  .route("/create-reviews-views")
+  .post(upload.fields([{ name: "reviews_image", maxCount: 1 }]), createReviews);
+
+router
   .route("/update-reviews-views/:id")
   .put(upload.fields([{ name: "reviews_image", maxCount: 1 }]), updateReviews);
 
-router.route("/update-about-us/:id").put(
+router.route("/delete-reviews-views/:id").delete(deleteReviews);
+
+router.route("/update-about-us").put(
   upload.fields([
     { name: "about_us_image", maxCount: 1 },
     { name: "about_us_video", maxCount: 1 },
@@ -47,13 +59,23 @@ router.route("/update-about-us/:id").put(
 );
 
 router
+  .route("/create-blog-views")
+  .post(upload.fields([{ name: "blog_image", maxCount: 1 }]), createBlog);
+
+router
   .route("/update-blog-views/:id")
   .put(upload.fields([{ name: "blog_image", maxCount: 1 }]), updateBlog);
 
+router.route("/delete-blog-views/:id").delete(deleteBlog);
+
+router.route("/create-faq-views").post(createFAQ);
+
 router.route("/update-faq-views/:id").put(updateFAQ);
 
+router.route("/delete-faq-views/:id").delete(deleteFAQ);
+
 router
-  .route("/update-logo-views/:id")
+  .route("/update-logo-views")
   .put(upload.fields([{ name: "logo", maxCount: 1 }]), updateLogo);
 
 export default router;

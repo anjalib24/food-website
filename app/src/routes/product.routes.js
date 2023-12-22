@@ -11,11 +11,14 @@ import {
   getAllCategory,
   createCountry,
   getAllCountry,
+  getBestSeller,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
 
 const router = Router();
+
+router.route("/get-best-seller-product").get(getBestSeller);
 
 router.route("/get-product").get(getProductData);
 
@@ -23,6 +26,7 @@ router.route("/create-product").post(
   upload.fields([
     { name: "images", maxCount: 5 },
     { name: "video", maxCount: 1 },
+    { name: "zipFile", maxCount: 1 },
   ]),
   createProductData
 );
@@ -31,6 +35,7 @@ router.route("/update-product/:id").put(
   upload.fields([
     { name: "images", maxCount: 5 },
     { name: "video", maxCount: 1 },
+    { name: "zipFile", maxCount: 1 },
   ]),
   updateProductData
 );

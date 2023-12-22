@@ -1,5 +1,69 @@
 import mongoose, { Schema } from "mongoose";
 
+let reviewsSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    age: {
+      type: Number,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    reviews: {
+      type: String,
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+let blogSchema = new Schema(
+  {
+    image: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    published: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+let faqSchema = new Schema(
+  {
+    question: {
+      type: String,
+      required: true,
+    },
+    answer: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const viewsCustomiseSchema = new Schema(
   {
     hero_section: {
@@ -32,50 +96,11 @@ const viewsCustomiseSchema = new Schema(
       },
     },
 
-    reviews: {
-      name: {
-        type: String,
-        required: true,
-      },
-      image: {
-        type: String,
-        required: true,
-      },
-      reviews: {
-        type: String,
-        required: true,
-      },
-      rating: {
-        type: String,
-        required: true,
-      },
-    },
+    reviews: [reviewsSchema],
 
-    blog: {
-      image: {
-        type: String,
-        required: true,
-      },
-      content: {
-        type: String,
-        required: true,
-      },
-      published: {
-        type: Boolean,
-        required: true,
-      },
-    },
+    blog: [blogSchema],
 
-    faq: {
-      question: {
-        type: String,
-        required: true,
-      },
-      answer: {
-        type: String,
-        required: true,
-      },
-    },
+    faq: [faqSchema],
 
     logo: {
       type: String,

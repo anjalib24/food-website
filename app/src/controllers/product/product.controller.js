@@ -8,9 +8,23 @@ import { cartRepository, addItem } from "../../services/repository.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
 import { Country } from "../../models/country.model.js";
+import AdmZip from "adm-zip";
+import path from "path";
+import fs from "fs";
+
+//------------get best seller------------
+
+const getBestSeller = asyncHandler(async (req, res) => {
+  const getBestsellerData = await Product.find({
+    best_seller: true,
+  }).populate("origin_country");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, getBestsellerData, "All best seller data."));
+});
 
 //get product data -----------
-const getProductData = async (req, res) => {
+const getProductData = asyncHandler(async (req, res) => {
   try {
     let {
       title,
@@ -22,6 +36,16 @@ const getProductData = async (req, res) => {
       rank,
       best_seller,
     } = req.query;
+
+    const countBestseller = await Product.find({
+      best_seller: true,
+    }).countDocuments();
+
+    if (countBestseller > 15) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Best seller can't be more then 15."));
+    }
 
     const price = req.body.price || 0;
     origin_country = origin_country && origin_country.toLowerCase();
@@ -39,8 +63,6 @@ const getProductData = async (req, res) => {
           .json(new ApiResponse(404, null, "Country not found."));
       }
     }
-
-    if (best_seller) filter.best_seller = best_seller;
 
     if (price) {
       const numericPrice = parseFloat(price.slice(1));
@@ -84,15 +106,15 @@ const getProductData = async (req, res) => {
     return res
       .status(200)
       .json(
-        new ApiResponse(200, getProducts, "Get all product data successfully")
+        new ApiResponse(200, getProducts, "Get all product data successfully.")
       );
   } catch (error) {
     console.error("Error:", error);
     return res
       .status(500)
-      .json(new ApiResponse(500, null, "Internal Server Error"));
+      .json(new ApiResponse(500, null, "Internal Server Error!"));
   }
-};
+});
 
 //create product part-
 const createProductData = asyncHandler(async (req, res) => {
@@ -146,10 +168,41 @@ const createProductData = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Product image is required!");
   }
 
+  let zipFieldName =
+    (req.files && req.files["zipFile"] && req.files["zipFile"][0].fieldname) ||
+    null;
+  let extractedZipFilesPath = "";
+
+  if (zipFieldName === "zipFile") {
+    const zipPath = req.files["zipFile"][0].path;
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const parentDirectory = path.resolve(__dirname, "..", "..", "..");
+    const originalZipName = req.files["zipFile"][0].originalname;
+
+    const fileNameWithoutExtension = path.parse(originalZipName).name;
+
+    const uploadDir = path.join(
+      parentDirectory,
+      "/public/zipfiles",
+      `${fileNameWithoutExtension}_${Date.now()}`
+    );
+
+    const zip = new AdmZip(zipPath);
+    fs.unlinkSync(zipPath);
+
+    zip.extractAllTo(uploadDir, true);
+
+    const extractedZipFiles = fs.readdirSync(uploadDir);
+    const specificPath = path.join(uploadDir, extractedZipFiles[0]);
+
+    extractedZipFilesPath = path.relative(parentDirectory, specificPath);
+  }
+
   productData = {
     ...productData,
     images: imageArray,
     best_seller,
+    zipFile_url: extractedZipFilesPath,
     video_url: `/videos/${video}`,
   };
 
@@ -216,6 +269,42 @@ const updateProductData = asyncHandler(async (req, res) => {
     productData = {
       ...productData,
       video_url: `/videos/${video}`,
+    };
+  }
+
+  let zipFieldName =
+    (req.files["zipFile"] && req.files["zipFile"][0].fieldname) || null;
+  let extractedZipFilesPath = "";
+
+  if (zipFieldName === "zipFile") {
+    const zipPath = req.files["zipFile"][0].path;
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const parentDirectory = path.resolve(__dirname, "..", "..", "..");
+    const originalZipName = req.files["zipFile"][0].originalname;
+
+    const fileNameWithoutExtension = path.parse(originalZipName).name;
+
+    const uploadDir = path.join(
+      parentDirectory,
+      "/public/zipfiles",
+      `${fileNameWithoutExtension}_${Date.now()}`
+    );
+
+    const zip = new AdmZip(zipPath);
+    fs.unlinkSync(zipPath);
+
+    zip.extractAllTo(uploadDir, true);
+
+    const extractedZipFiles = fs.readdirSync(uploadDir);
+    const specificPath = path.join(uploadDir, extractedZipFiles[0]);
+
+    extractedZipFilesPath = path.relative(parentDirectory, specificPath);
+  }
+
+  if (extractedZipFilesPath) {
+    productData = {
+      ...productData,
+      zipFile_url: extractedZipFilesPath,
     };
   }
 
@@ -332,70 +421,67 @@ const addItemToCart = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Quantity can not be less then or equal to zero");
   }
   try {
-    let cart = await cartRepository();
+    let cart = await cartRepository(existedUser._id);
+
     let productDetails = await Product.findById({ _id: productId });
     if (!productDetails) {
       throw new ApiError(404, "Product Not Found!");
     }
     //--If Cart Exists ----
     if (cart) {
-      //current user card
-
-      if (cart.user.equals(existedUser._id)) {
-        //---- Check if index exists ----
-        const indexFound = cart.items.findIndex(
-          (item) => item.productId.id == productId
-        );
-        //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
-        if (indexFound !== -1 && quantity <= 0) {
-          cart.items.splice(indexFound, 1);
-          if (cart.items.length == 0) {
-            cart.subTotal = 0;
-          } else {
-            cart.subTotal = cart.items
-              .map((item) => item.total)
-              .reduce((acc, next) => acc + next);
-          }
-        }
-        //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
-        else if (indexFound !== -1) {
-          cart.items[indexFound].quantity =
-            cart.items[indexFound].quantity + quantity;
-          cart.items[indexFound].total =
-            cart.items[indexFound].quantity * productDetails.price;
-          cart.items[indexFound].price = productDetails.price;
+      console.log("--------------------cart-----------", cart);
+      //---- Check if index exists ----
+      const indexFound = cart.items.findIndex(
+        (item) => item.productId.id == productId
+      );
+      //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
+      if (indexFound !== -1 && quantity <= 0) {
+        cart.items.splice(indexFound, 1);
+        if (cart.items.length == 0) {
+          cart.subTotal = 0;
+        } else {
           cart.subTotal = cart.items
             .map((item) => item.total)
             .reduce((acc, next) => acc + next);
         }
-        //----Check if quantity is greater than 0 then add item to items array ----
-        else if (quantity > 0) {
-          cart.items.push({
-            productId: productId,
-            quantity: quantity,
-            price: productDetails.price,
-            total: parseInt(productDetails.price * quantity),
-          });
-          cart.subTotal = cart.items
-            .map((item) => item.total)
-            .reduce((acc, next) => acc + next);
-        }
-        //----If quantity of price is 0 throw the error -------
-        else {
-          throw new ApiError(400, "Product Not Found!");
-        }
-        let data = await cart.save();
-
-        res.status(200).json(new ApiResponse(200, data, "Process successful"));
-      } else {
-        // The cart user does not match the existedUser ID
-        throw new ApiError(401, "Unauthorized user!");
       }
+      //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
+      else if (indexFound !== -1) {
+        cart.items[indexFound].quantity =
+          cart.items[indexFound].quantity + quantity;
+        cart.items[indexFound].total =
+          cart.items[indexFound].quantity * productDetails.price;
+        cart.items[indexFound].price = productDetails.price;
+        cart.subTotal = cart.items
+          .map((item) => item.total)
+          .reduce((acc, next) => acc + next);
+      }
+      //----Check if quantity is greater than 0 then add item to items array ----
+      else if (quantity > 0) {
+        cart.items.push({
+          productId: productId,
+          quantity: quantity,
+          price: productDetails.price,
+          total: parseInt(productDetails.price * quantity),
+        });
+        cart.subTotal = cart.items
+          .map((item) => item.total)
+          .reduce((acc, next) => acc + next);
+      }
+      //----If quantity of price is 0 throw the error -------
+      else {
+        throw new ApiError(400, "Product Not Found!");
+      }
+      let data = await cart.save();
+
+      res.status(200).json(new ApiResponse(200, data, "Process successful"));
     }
     //------------ This creates a new cart and then adds the item to the cart that has been created------------
     else {
+      console.log("----------fgggggggggggggggggggg----------");
+
       const cartData = {
-        user: existedUser._id,
+        user_id: existedUser._id,
         items: [
           {
             productId: productId,
@@ -412,7 +498,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, cart, "Items added successful"));
     }
   } catch (err) {
-    throw new ApiError(400, "Something went wrong");
+    throw new ApiError(400, err);
   }
 });
 
@@ -452,4 +538,5 @@ export {
   emptyCart,
   getAllCountry,
   createCountry,
+  getBestSeller,
 };
