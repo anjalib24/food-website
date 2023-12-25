@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -61,7 +61,6 @@ const AddProduct = () => {
 
         setCategories(dataCategories.data);
         setCountries(dataCountries.data);
-
       } catch (error) {
         console.error(error);
       }
@@ -90,7 +89,6 @@ const AddProduct = () => {
         formData.append(key, product[key]);
       }
     });
-
 
     try {
       const response = await fetch("/api/api/v1/products/create-product", {
