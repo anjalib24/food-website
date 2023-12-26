@@ -135,9 +135,10 @@ const createProductData = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No files were uploaded.");
   }
 
-  const images = req.files["images"];
+  const images = req.files && req.files["images"];
 
-  let video = (req.files["video"] && req.files["video"][0].filename) || null;
+  let video =
+    (req.files && req.files["video"] && req.files["video"][0].filename) || null;
 
   let productData = {
     title,
@@ -160,9 +161,10 @@ const createProductData = asyncHandler(async (req, res) => {
   let imageArray = [];
 
   if (images && images.length > 0) {
-    imageArray = images.map((file) => {
-      return `/images/${file.filename}`;
-    });
+    imageArray =
+      images?.map((file) =>
+        file.filename ? `/images/${file.filename}` : null
+      ) || [];
   } else {
     throw new ApiError(400, "Product image is required!");
   }
@@ -170,7 +172,7 @@ const createProductData = asyncHandler(async (req, res) => {
   let zipFieldName =
     (req.files && req.files["zipFile"] && req.files["zipFile"][0].fieldname) ||
     null;
-  let extractedZipFilesPath = "";
+  let extractedZipFilesPath = null;
 
   if (zipFieldName === "zipFile") {
     const zipPath = req.files["zipFile"][0].path;
@@ -197,19 +199,22 @@ const createProductData = asyncHandler(async (req, res) => {
 
     extractedZipFilesPath = path.relative(parentDirectory, specificPath);
   }
+  const publicIndex =
+    extractedZipFilesPath && extractedZipFilesPath.indexOf("public");
 
-  const publicIndex = extractedZipFilesPath.indexOf("public");
   const modifiedPath =
-    publicIndex !== -1
+    extractedZipFilesPath && publicIndex !== -1
       ? extractedZipFilesPath.slice(publicIndex + "public".length)
       : extractedZipFilesPath;
+
+  video = video && `/videos/${video}`;
 
   productData = {
     ...productData,
     images: imageArray,
     best_seller,
     zipFile_url: modifiedPath,
-    video_url: `/videos/${video}`,
+    video_url: video,
   };
 
   const existingCategory = await Category.findById(categoryID);
@@ -258,11 +263,10 @@ const updateProductData = asyncHandler(async (req, res) => {
 
   let imageArray = [];
 
-  if (images && images.length > 0) {
-    imageArray = images.map((file) => {
-      return `/images/${file.filename}`;
-    });
-  }
+  imageArray =
+    images?.map((file) =>
+      file.filename ? `/images/${file.filename}` : null
+    ) || [];
 
   if (imageArray && imageArray.length > 0) {
     productData = {
@@ -271,10 +275,12 @@ const updateProductData = asyncHandler(async (req, res) => {
     };
   }
 
+  video = video && `/videos/${video}`;
+
   if (video) {
     productData = {
       ...productData,
-      video_url: `/videos/${video}`,
+      video_url: video,
     };
   }
 
