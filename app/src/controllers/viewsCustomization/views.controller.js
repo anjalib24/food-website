@@ -64,27 +64,27 @@ const createViews = asyncHandler(async (req, res) => {
     throw new ApiError(400, "FAQ answer is required!");
   }
 
-  const hero_section_image =
+  let hero_section_image =
     (req.files["hero_section_image"] &&
       req.files["hero_section_image"][0].filename) ||
     "";
 
-  const reviews_image =
+  let reviews_image =
     (req.files["reviews_image"] && req.files["reviews_image"][0].filename) ||
     "";
 
-  const about_us_image =
+  let about_us_image =
     (req.files["about_us_image"] && req.files["about_us_image"][0].filename) ||
     "";
 
-  const about_us_video =
+  let about_us_video =
     (req.files["about_us_video"] && req.files["about_us_video"][0].filename) ||
     "";
 
-  const blog_image =
+  let blog_image =
     (req.files["blog_image"] && req.files["blog_image"][0].filename) || "";
 
-  const logo = (req.files["logo"] && req.files["logo"][0].filename) || "";
+  let logo = (req.files["logo"] && req.files["logo"][0].filename) || "";
 
   if (!hero_section_image) {
     throw new ApiError(400, "Hero section image is required!");
@@ -110,29 +110,40 @@ const createViews = asyncHandler(async (req, res) => {
     throw new ApiError(400, "logo is required!");
   }
 
+  hero_section_image = hero_section_image && `/images/${hero_section_image}`;
+
+  about_us_video = about_us_video && `/videos/${about_us_video}`;
+
+  about_us_image = about_us_image && `/images/${about_us_image}`;
+
+  reviews_image = reviews_image && `/images/${reviews_image}`;
+
+  blog_image = blog_image && `/images/${blog_image}`;
+  logo = logo && `/logo/${logo}`;
+
   const viewsObject = {
     hero_section: {
       title: hero_section_title,
       subtitle: hero_section_subtitle,
-      image: `/images/${hero_section_image}`,
+      image: hero_section_image,
     },
     about_us: {
       text: about_us_text,
-      video: `/videos/${about_us_video}`,
-      image: `/images/${about_us_image}`,
+      video: about_us_video,
+      image: about_us_image,
     },
     reviews: [
       {
         name: reviews_name,
         age: reviews_age,
-        image: `/images/${reviews_image}`,
+        image: reviews_image,
         reviews: reviews,
         rating: reviews_rating,
       },
     ],
     blog: [
       {
-        image: `/images/${blog_image}`,
+        image: blog_image,
         content: blog_content,
         published: blog_published,
       },
@@ -143,7 +154,7 @@ const createViews = asyncHandler(async (req, res) => {
         answer: faq_answer,
       },
     ],
-    logo: `/logo/${logo}`,
+    logo: logo,
   };
 
   // const { error } = viewsCustomiseValidationSchema.validate(viewsObject);
@@ -248,7 +259,7 @@ const updateHeroSection = asyncHandler(async (req, res) => {
 const createReviews = asyncHandler(async (req, res) => {
   const { name, age, reviews, rating } = req.body;
 
-  const reviews_image =
+  let reviews_image =
     (req.files["reviews_image"] && req.files["reviews_image"][0].filename) ||
     "";
 
@@ -272,6 +283,8 @@ const createReviews = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Reviews image is required!");
   }
 
+  reviews_image = reviews_image && `/images/${reviews_image}`;
+
   const createReview = await ViewsCustomise.findOneAndUpdate(
     {},
     {
@@ -281,7 +294,7 @@ const createReviews = asyncHandler(async (req, res) => {
           age: age,
           reviews: reviews,
           rating: rating,
-          image: `/images/${reviews_image}`,
+          image: reviews_image,
         },
       },
     },
@@ -447,7 +460,7 @@ const updateAboutUs = asyncHandler(async (req, res) => {
 const createBlog = asyncHandler(async (req, res) => {
   const { content, published = false } = req.body;
 
-  const blog_image =
+  let blog_image =
     (req.files["blog_image"] && req.files["blog_image"][0].filename) || "";
 
   if (!content) {
@@ -458,6 +471,8 @@ const createBlog = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Blog image is required!");
   }
 
+  blog_image = blog_image && `/images/${blog_image}`;
+
   const createBlog = await ViewsCustomise.findOneAndUpdate(
     {},
     {
@@ -465,7 +480,7 @@ const createBlog = asyncHandler(async (req, res) => {
         blog: {
           content: content,
           published: published,
-          image: `/images/${blog_image}`,
+          image: blog_image,
         },
       },
     },
