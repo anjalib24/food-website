@@ -24,6 +24,34 @@ const Page = () => {
 
   if (products.length === 0) return <Loader />;
 
+  function addToBestSeller(id) {
+    fetch(`/api/api/v1/products/update-product/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        best_seller: true,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((updatedProduct) => {
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product._id === id ? { ...product, best_seller: true } : product
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   return (
     <Switch>
       <Route path={match.path + "/new"}>
@@ -81,6 +109,13 @@ const Page = () => {
                     className="w-full text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium"
                   >
                     Edit
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className="w-full text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium"
+                    onClick={() => addToBestSeller(product._id)}
+                  >
+                    Make best seller
                   </Button>
                 </Paper>
               </Box>
