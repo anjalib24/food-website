@@ -89,7 +89,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const expiresAt = new Date().setFullYear(new Date().getFullYear() + 1);
     const options = {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "None",
       maxAge: expiresAt,
     };
