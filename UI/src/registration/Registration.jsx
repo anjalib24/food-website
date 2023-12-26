@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import "./registration.css";
 import { Button } from "react-bootstrap";
 import * as Yup from "yup";
 import axios from "axios";
+import Alert from "@/router/Shop/Alert";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const registrationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -32,7 +34,6 @@ const Registration = () => {
     initialValues,
     validationSchema: registrationSchema,
     onSubmit: async (values, action) => {
-
       const requestData = {
         userData: {
           username: values.username,
@@ -41,27 +42,37 @@ const Registration = () => {
           confirmPassword: values.repassword,
         },
       };
+    
       try {
-        // Assuming you have an API endpoint to send the data to
         const apiUrl = "http://127.0.0.1:8000/api/v1/users/register";
-        
-        // Sending a POST request with form data
         const response = await axios.post(apiUrl, requestData);
-
-        // Handle the response as needed
-
-        // Reset the form after a successful submission
-        action.resetForm();
+    console.log(response);
+        // Check the response and show the appropriate alert
+        if (response.status === 201) {
+          showAlert("success", "Registration successful!");
+          action.resetForm();
+        } else {
+          showAlert("danger", "Registration failed. Please try again.");
+        }
       } catch (error) {
-        // Handle errors, e.g., show an error message to the user
+        showAlert("danger", "Error submitting the form. Please try again.");
         console.error("Error submitting the form:", error);
       }
     },
   });
+  const [alert, setAlert] = useState(null);
 
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000); // Hide the alert after 5 seconds
+  };
 
   return (
     <div>
+         {alert && <Alert type={alert.type} message={alert.message} />}
+
       <section
         className="p-5 w-100"
         style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}
@@ -177,7 +188,7 @@ const Registration = () => {
                       <div className="row mt-3">
                         <br />
                         <div className="col text-right">
-                          Already have an account? <a href="/">Sign in</a>
+                          Already have an account? <Link to="/login">Login</Link>
                         </div>
                       </div>
                     </form>

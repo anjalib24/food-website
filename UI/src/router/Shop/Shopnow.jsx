@@ -6,7 +6,7 @@ export const Shopnow = (props) => {
   const sectionStyle = {
     backgroundImage: `url('/api${props?.herosection?.image}')`,
   };
-  console.log(sectionStyle);
+  
   // style={{ backgroundImage: {sectionStyle}}}
   return (
 <>

@@ -5,6 +5,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Login from "@/Login/Login";
 import Registration from "@/registration/Registration";
+import Cart from "./Shop/Cart";
+import { Home } from "./Shop/Home";
 
 const Page = () => {
   return (
@@ -21,8 +23,11 @@ const Page = () => {
       <Route path="/shop">
         <ShopPage />
       </Route>
+      <Route path="/cart">
+        <Cart/>
+      </Route>
       <Route path="/">
-        <ShopPage />
+        <Home/>
       </Route>
     </Switch>
   );

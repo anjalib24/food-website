@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import { Button, Alert } from "react-bootstrap";
+import { Button} from "react-bootstrap";
 import * as Yup from "yup";
 import axios from "axios";
 import { Link, useHistory } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import Alert from "@/router/Shop/Alert";
 const initialValues = {
   email: "",
   password: "",
@@ -20,44 +21,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
-  // const {
-  //   values,
-  //   errors,
-  //   touched,
-  //   handleBlur,
-  //   handleChange,
-  //   handleSubmit,
-  //   resetForm,
-  // } = useFormik({
-  //   initialValues,
-  //   validationSchema: loginSchema,
-  //   onSubmit: async (values) => {
-  //     setLoginError(null);
-  //     setLoading(true);
+  const showAlert = (type, message) => {
+    setLoginError({ type, message });
+    setTimeout(() => {
+      setLoginError(null);
+    }, 5000); // Hide the alert after 5 seconds
+  };
 
-  //     const requestData = {
-  //       userData: {
-  //         email: values.email,
-  //         password: values.password,
-  //       },
-  //     };
-
-  //     try {
-  //       const apiUrl = "http://localhost:8000/api/v1/users/login";
-  //       const response = await axios.post(apiUrl, requestData);
-
-  //       const authToken = response.data.data;
-  //       localStorage.setItem('token', authToken);
-
-  //       history.push('/shop');
-  //     } catch (error) {
-  //       console.error("Error submitting the form:", error);
-  //       setLoginError("Invalid email or password");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   },
-  // });
   const { values, errors, touched, handleBlur, handleChange, handleSubmit, resetForm } = useFormik({
     initialValues,
     validationSchema: loginSchema,
@@ -91,20 +61,17 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error submitting the form:", error);
-        setLoginError("Invalid email or password");
+        showAlert("danger", "Invalid email or password");
       } finally {
         setSubmitting(false);
       }
     },
   });
-  
 
   return (
     <div>
-      <section
-        className="p-5 w-100"
-        style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}
-      >
+      {loginError && <Alert variant="danger">{loginError.message}</Alert>}
+      <section className="p-5 w-100" style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}>
         <div className="row">
           <div className="col-12">
             <div className="card text-black" style={{ borderRadius: "25px" }}>
@@ -115,7 +82,7 @@ const Login = () => {
                     <form onSubmit={handleSubmit}>
                       {loginError && (
                         <Alert variant="danger">
-                          {loginError}
+                          {loginError.message}
                         </Alert>
                       )}
                       <div className="row mt-3">
