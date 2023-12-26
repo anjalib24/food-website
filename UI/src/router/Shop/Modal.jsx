@@ -11,7 +11,9 @@ const Modal = ({ showModal, setShowModal, data }) => {
     infinite: true,
     speed: 400,
     slidesToShow: 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
+    
+
   };
 
   return (
@@ -20,14 +22,14 @@ const Modal = ({ showModal, setShowModal, data }) => {
       <div className="modal-dialog modal-dialog-centered" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <button type="button" className="close" onClick={() => setShowModal(false)} aria-label="Close">
+            <button type="button" className="close" data-dismiss="modal" onClick={() => setShowModal(false)} aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
 
           </div>
           <div className="modal-body">
 
-            <Slider {...settings}>
+            <Slider {...settings} className='slick-arrow with-background'>
               {data?.images?.map((image, index) => (
                 <div key={index}>
                   <img src={"/api" + image} alt={`Modal Image $`} style={{ width: '50%', height: 'auto', margin: '0 auto' }} />
@@ -47,7 +49,7 @@ const Modal = ({ showModal, setShowModal, data }) => {
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: "10px" }}>
-            <Button style={{ backgroundColor: '#4CAF50', color: '#fff', border: '1px solid #4CAF50', borderRadius: '5px', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
+            <Button style={{ backgroundColor: '#4CAF50', color: '#fff', border: '1px solid #4CAF50', borderRadius: '5px', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', margin:"3px" }}>
               Buy
             </Button>
           </div>

@@ -1,23 +1,23 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import blogimg from "./images/image 9.png";
 
 export const Blog = (props) => {
-   const slickRef = useRef(null);
 
-  useEffect(() => {
-    const slickInstance = slickRef.current;
+  const slickRef = useRef(null);
 
-    slickInstance.slickGoTo(0); 
+  // useEffect(() => {
+  //   const slickInstance = slickRef.current;
 
-    return () => {
-      
-      slickInstance.slickGoTo(0); 
-      slickInstance.slickPause(); 
-    };
-  }, [props.blog]);
+  //   slickInstance.slickGoTo(0);
+
+  //   return () => {
+
+  //     slickInstance.slickGoTo(0);
+  //     slickInstance.slickPause();
+  //   };
+  // }, [props.blog]);
 
   const settings = {
     dots: false,
@@ -62,10 +62,15 @@ export const Blog = (props) => {
                   {props?.blog?.map((blogItem, index) => (
                     <div key={index} className="single-box">
                       <div className="img-area">
-                        <img src={"/api"+blogItem.image} alt="" />
+                        <img src={"/api" + blogItem.image} />
                       </div>
-                      <div className="">
-                        <p>{blogItem.createdAt}</p>
+                      <div className="mt-3"><p>
+                          {new Date(blogItem.createdAt).toLocaleDateString('en-US', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </p>
                         <h6 className='text-break'>{blogItem.content}</h6>
                       </div>
                     </div>

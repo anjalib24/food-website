@@ -3,16 +3,14 @@ import "./style.css"
 import { fetchData } from './services/Api'
 import ProductCard from './ProductCard';
 import Slider from 'react-slick';
+import Loader from '@/components/Loader';
 
 const BestSellers = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
 
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
+  
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
@@ -33,8 +31,7 @@ const BestSellers = () => {
   const settings = {
     dots: false,
     arrows: true,
-    infinite: false,
-    speed: 500,
+    infinite: true,
     slidesToShow: 5,
     slidesToScroll: 1,
     responsive: [
@@ -70,7 +67,7 @@ const BestSellers = () => {
           <div className="row">
             {loading ? ( 
               <div className="col-md-12 text-center">
-                <p>Loading...</p>
+<Loader/>
               </div>
             ) : data && data.length ?
               (

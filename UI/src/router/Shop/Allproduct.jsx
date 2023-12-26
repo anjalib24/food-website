@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import "./style.css"
-import productimg from "./images/image 6.png"
 import png360 from "./images/360.png"
 import usflag from "./images/USA_Flag_icon.png"
 import vectorimg from "./images/Vector.png"
 import { fetchData } from './services/Api'
 import Modal from './Modal'
 import Modal360 from './Modal360';
+import Socialmedia from './Socialmedia'
+import Loader from '@/components/Loader'
+import videoimg from "./images/Group.png"
+import VideoModal from './VideoModal'
+import Alert from './Alert'
 
 
 export const Allproduct = () => {
@@ -19,7 +23,17 @@ export const Allproduct = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [show360Modal, setShow360Modal] = useState(false);
+  const [socialmedia, setSocialMedia] = useState(null)
+  const [showsocial, setShowSocial] = useState(false)
+  const [showcard, setShowCard] = useState(false)
+  const [cart, setCart] = useState([]);
+  const [showvideomodal,setShowvideomodal]=useState(null);
+  const [videodata,setVideoData] = useState()
+  const [showAlert, setShowAlert] = useState(false);
 
+
+
+  console.log(show360Modal, "All product show360modal");
 
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -30,6 +44,7 @@ export const Allproduct = () => {
     const fetchDataFromApi = async () => {
       try {
         const result = await fetchData("products/get-product", { limit: 25 });
+        setLoading(true)
         setData(result.data.docs);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -80,12 +95,46 @@ export const Allproduct = () => {
     setSelectedItem(item);
     setShow360Modal(true);
   };
+  const handleSocialmedia = () => {
 
-console.log(show360Modal,"modal 360  setshow");
+    setShowSocial(true);
+  };
+  const handleVideomodal = (item) => {
+    setVideoData(item);
+    setShowvideomodal(true);
+  };
+  const handleaddtocard = async (item) => {
+    try {
+      const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
+      const isItemInCart = existingCart.some((cartItem) => cartItem._id === item._id);
+  
+      if (!isItemInCart) {
+        const newCart = [...existingCart, item];
+        localStorage.setItem('cart', JSON.stringify(newCart));
+        setCart(newCart);
+        setShowCard(true);
+        setShowAlert(true); 
+        setTimeout(() => {
+          setShowAlert(false); 
+        }, 3000);
+      } else {
+        console.log('Item is already in the cart');
+      }
+    } catch (error) {
+      console.error('Error handling add to cart:', error);
+    }
+  };
+  
+
+
   return (
     <>
-      {/* <Modal showModal={showModal} setShowModal={setShowModal} data={selectedItem} /> */}
-<Modal360 showModal={show360Modal} setShowModal={setShow360Modal} data={selectedItem}  />
+        {showAlert && <Alert type="success" message="Product added to the cart" />}
+
+      <Socialmedia showModal={showsocial} setShowModal={setSocialMedia} />
+      <Modal showModal={showModal} setShowModal={setShowModal} data={selectedItem} />
+      {show360Modal && <Modal360 showModal={show360Modal} setShowModal={setShow360Modal} data={selectedItem} />}
+{showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata}/>}
       <div className='container'>
         <section id="search" className="mt-5">
           <div className="col-md-12 pr-0 pl-0 mb-5" >
@@ -193,7 +242,7 @@ console.log(show360Modal,"modal 360  setshow");
 
                 {loading && (
                   <div className="col-md-12 text-center">
-                    <p>Loading...</p>
+                    <Loader />
                   </div>
                 )}
                 {!loading && data && data.length === 0 && (
@@ -221,7 +270,7 @@ console.log(show360Modal,"modal 360  setshow");
                     item.title.toLowerCase().includes(searchInput.toLowerCase())
                   )
                 )?.map(item => (
-                  <div key={item.id} className="col-md-3 mb-4 border border-success card-container">
+                  <div key={item.id} className="col-md-3 mb-4 border border-success card-container justify-content-center">
                     <div className="d-flex flex-column h-100">
                       <div>
                         <img src={"/api" + item.images[0]} className="text-center m-2" alt="#" />
@@ -237,21 +286,32 @@ console.log(show360Modal,"modal 360  setshow");
                                 alt="png360"
                                 onClick={() => handleExploreClicks(item)}
                                 data-toggle="modal"
-                                data-target="#explore360Modal"  
-                                
+                                data-target="#explore360Modal"
                                 style={{ cursor: 'pointer' }}
                               />
                             </div>
-
-
-                            
                             <div>
-                              <a href="/" className="mr-3">
-                                <img alt='vector' src={vectorimg} />
-                              </a>
+                              <div className="mr-3">
+                                <img alt='vector' src={vectorimg}
+                                  onClick={() => handleSocialmedia()}
+                                  data-toggle="modal"
+                                  data-target="#socialmedia"
+                                  style={{ cursor: 'pointer' }}
+                                />
+                              </div>
                             </div>
-                          </div>
+                            {item.video_url && <div>
+                              <div className="mr-3">
+                                <img alt='vector' src={videoimg}
+                                  onClick={() => handleVideomodal(item)}
+                                  data-toggle="modal"
+                                  data-target="#videomodal"
+                                  style={{ cursor: 'pointer', width: "22px", height: "20p" }}
+                                />
+                              </div>
+                            </div>}
 
+                          </div>
                         </div>
                       </div>
                       <div className="flex-grow-1 d-flex flex-column justify-content-between">
@@ -259,8 +319,14 @@ console.log(show360Modal,"modal 360  setshow");
                           <h3 className="text-center">{formatter.format(item.price)}</h3>
                         </div>
                         <div className="d-grid gap-3">
-                          <button className="btn btn-success btn-block ">Add to Cart</button>
-                          <button className="btn btn-success btn-block ">Buy Now</button>
+                          <button
+                            className="btn btn-success btn-block"
+                            onClick={() => handleaddtocard(item)}
+                            data-target="#myModal2"
+                            data-toggle="modal"
+                          >
+                            Add to cart
+                          </button>
                           <button
                             className="btn btn-white btn-block border border-success mb-1"
                             onClick={() => handleExploreClick(item)}

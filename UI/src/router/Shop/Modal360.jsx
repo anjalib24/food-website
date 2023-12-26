@@ -1,109 +1,49 @@
-import React, { useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
-
+import React, { useState } from 'react';
+import WR360 from "@webrotate360/imagerotator";
+import "@webrotate360/imagerotator/build/css/all.css";
+import { useEffect } from "react";
 
 const Modal360 = ({ show360Modal, setShow360Modal, data }) => {
-  
-    const [currentImage, setCurrentImage] = useState(1);
-    const containerRef = useRef(null);
-    const startXRef = useRef(0);
-  
+
+console.log(show360Modal,"modal 360 showmoda;");
     useEffect(() => {
-      const num = 36;
-  
-      for (let i = 1; i <= num; i++) {
-        const img = document.createElement('img');
-        img.src = `${ "/api"+data?.images[0]}`;
-        document.getElementById('preload-imgs').appendChild(img);
-      }
-  
-      const container = containerRef.current;
-  
-      if (container) {
-        container.addEventListener('touchstart', handleTouchStart);
-        container.addEventListener('touchmove', handleTouchMove);
-  
-        return () => {
-          container.removeEventListener('touchstart', handleTouchStart);
-          container.removeEventListener('touchmove', handleTouchMove);
+
+        console.log("useeffect run");
+        const viewer = WR360.ImageRotator.Create("webrotate360");
+        viewer.licenseCode = "your-license-code";
+        viewer.settings.configFileURL = "http://localhost:8000/zipfiles/example_1703078272760/example/example.xml"
+        viewer.settings.graphicsPath = "http://localhost:8000/zipfiles/example_1703078272760/example/images";
+
+        viewer.settings.alt = "Your alt image description";
+        viewer.settings.responsiveBaseWidth = 800;
+        viewer.settings.responsiveMinHeight = 300;
+
+        viewer.settings.apiReadyCallback = (api, isFullScreen) => {
+            api.images.onDrag((event) => {
+                console.log(
+                    `${event.action
+                    }; current image index = ${api.images.getCurrentImageIndex()}`
+                );
+            });
         };
-      }
-    }, [data?.images[0]]);
-  
-    const handleTouchStart = (e) => {
-      startXRef.current = e.touches[0].clientX;
-    };
-  
-    const handleTouchMove = (e) => {
-        console.log("workingggg");
-      const distance = e.touches[0].clientX - startXRef.current;
-      const num = 36;
-      const imgNum = Math.floor(distance / 8);
-  
-      if (distance > 0) {
-        changeImg(imgNum);
-      } else if (distance < 0) {
-        changeImgR(-imgNum);
-      }
-    };
-  
-    const changeImg = (imgNum) => {
-      const num = 36;
-      imgNum = Math.floor(imgNum / 8);
-  
-      if (imgNum < 1) {
-        imgNum += num;
-      }
-      if (imgNum > num) {
-        imgNum -= num;
-      }
-  
-      setCurrentImage(imgNum);
-    };
-  
-    const changeImgR = (imgNum) => {
-      const num = 36;
-      imgNum = Math.floor(imgNum / 8);
-  
-      const num2 = -Math.abs(num);
-      if (imgNum > num2) {
-        imgNum += num;
-      }
-      if (imgNum <= num2) {
-        imgNum += num * 2;
-      }
-  
-      setCurrentImage(imgNum);
-    };
-  
+
+        viewer.runImageRotator();
+    },[show360Modal]);
     return (
         <div className={`modal fade ${show360Modal ? 'show' : ''}`} id="explore360Modal" tabIndex="-1" role="dialog" aria-labelledby="explore360ModalLabel" aria-hidden={!show360Modal}>
 
             <div className="modal-dialog modal-dialog-centered" role="document">
-                <div className="modal-content">
+                <div className="modal-content" style={{minHeight:"400px"}}>
                     <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">360 view of product</h5>
 
-                        <button type="button" className="close" onClick={() => setShow360Modal(false)} aria-label="Close">
+                        <button type="button" className="close" data-dismiss="modal" onClick={() => setShow360Modal(false)} aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
 
                     </div>
                     <div className="modal-body">
-                  
-
-                    <div style={{ width: '100%', height: '100%', maxWidth: '726px', minWidth: '320px', margin: '0 auto' }} className="container">
-    <div style={{ border: '1px solid #ccc', width: '100%', maxWidth: '640px', margin: '0 auto', padding: '0', cursor: 'ew-resize' }} className="img-container">
-        <div style={{ width: '100%', margin: '0', padding: '0', lineHeight: '0' }} className="img360">
-            <img id="myImg" src={"/api"+data?.images[0]} />
-        </div>
-    </div>
-    <div style={{}} className="caption">
-      
-    </div>
-    <div id="preload-imgs" style={{ display: 'none' }}></div>
-</div>
-
-
+                        <div id="webrotate360"></div>;
 
                     </div>
 

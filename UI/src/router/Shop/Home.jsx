@@ -12,18 +12,22 @@ import Reviews from './Reviews'
 
 export const Home = () => {
   const [show, setShow] = useState()
+
   useEffect(() => {
-    const fetchDataFromApi = async () => {
-      try {
-        const result = await getshowingdata("views/get-views");
-        setShow(result.data[0]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+ 
 
     fetchDataFromApi();
   }, []);
+  const fetchDataFromApi = async () => {
+    try {
+      const result = await getshowingdata("views/get-views");
+      setShow(result.data[0]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      
+    }
+  };
+  
   return (
     <>
       <Header />

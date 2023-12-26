@@ -72,6 +72,16 @@ button.slick-next.slick-arrow {
     width: 39px;
     height: 56px;
 }
+.modal-content.button.slick-next.slick-arrow {
+    position: absolute;
+    right: -70px;
+    border: 0;
+    color: transparent;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    width: 39px;
+    height: 56px;
+}
 div#accordionFlushExample {
     position: relative;
 }
@@ -355,9 +365,7 @@ footer.bg-success.text-white.pt-5.pb-4.pe-3 {
     display: flex;
 }
 
-.card-content {
-    flex-grow: 1;
-}
+
 
 .clamp-2 {
     display: -webkit-box;

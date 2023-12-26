@@ -3,10 +3,12 @@ import { AdminContext } from "@contexts/AdminContext";
 // import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { Route, Switch, useParams, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import ProductsPage from "./Products/Page";
+import WithAuth from "@/components/WithAuth";
 
 const Page = () => {
   let match = useRouteMatch();
   return (
+    <WithAuth>
     <AdminContext>
       <Layout Page={
         <Switch>
@@ -19,7 +21,7 @@ const Page = () => {
           </Route>
         </Switch>
       } />
-    </AdminContext>
+    </AdminContext></WithAuth>
   );
 };
 
