@@ -4,7 +4,7 @@ import { User } from "../models/user.model.js";
 
 const adminAuth = async (req, res, next) => {
   try {
-    const token = req.cookies["cookie_token"];
+    const token = req.headers["Authorization"] || req.cookies["cookie_token"];
 
     if (!token) {
       throw new ApiError(401, "Token not found");

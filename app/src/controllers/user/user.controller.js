@@ -87,8 +87,14 @@ const loginUser = asyncHandler(async (req, res) => {
     const accessToken = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET);
 
     const expiresAt = new Date().setFullYear(new Date().getFullYear() + 1);
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: expiresAt,
+    };
 
-    res.cookie("cookie_token", accessToken, { maxAge: expiresAt });
+    res.cookie("cookie_token", accessToken, options);
 
     res.status(201).json(new ApiResponse(200, accessToken, "User Logged In!"));
   } else {
