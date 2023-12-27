@@ -12,6 +12,7 @@ import {
   createCountry,
   getAllCountry,
   getBestSeller,
+  getProductById,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
@@ -21,6 +22,7 @@ const router = Router();
 router.route("/get-best-seller-product").get(getBestSeller);
 
 router.route("/get-product").get(getProductData);
+router.route("/get-single-product/:id").get(getProductById);
 
 router.route("/create-product").post(
   upload.fields([

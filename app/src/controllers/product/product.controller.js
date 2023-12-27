@@ -23,6 +23,20 @@ const getBestSeller = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, getBestsellerData, "All best seller data."));
 });
 
+//------------get single order------------
+
+const getProductById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const getProduct = await Product.findById(id)
+    .populate("origin_country")
+    .populate("category");
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, getProduct, "Single order data get successfully.")
+    );
+});
+
 //get product data -----------
 const getProductData = asyncHandler(async (req, res) => {
   try {
@@ -419,129 +433,147 @@ const getAllCountry = asyncHandler(async (req, res) => {
 // product add to cart -----------
 
 const addItemToCart = asyncHandler(async (req, res) => {
-  const { productId } = req.body;
+  const productsData = req.body;
+
+  if (
+    !Array.isArray(productsData) ||
+    productsData.length === 0 ||
+    Object.keys(productsData[0]).length === 0
+  ) {
+    throw new ApiError(400, "At least one non-empty product is required!");
+  }
+
+  for (let data of productsData) {
+    const { productId } = data;
+
+    const token = req.cookies["cookie_token"];
+
+    if (!token) {
+      throw new ApiError(400, "Unauthorized user!");
+    }
+    const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
+
+    const existedUser = await User.findOne({ _id: userID });
+
+    if (!existedUser) {
+      throw new ApiError(404, "User Not Found!");
+    }
+
+    const quantity = Number.parseInt(req.body.quantity);
+    if (quantity <= 0) {
+      throw new ApiError(500, "Quantity can not be less then or equal to zero");
+    }
+    try {
+      let cart = await cartRepository(existedUser._id);
+
+      let productDetails = await Product.findById({ _id: productId });
+      if (!productDetails) {
+        throw new ApiError(404, "Product Not Found!");
+      }
+      //--If Cart Exists ----
+      if (cart) {
+        //---- Check if index exists ----
+        const indexFound = cart.items.findIndex(
+          (item) => item.productId.id == productId
+        );
+        //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
+        if (indexFound !== -1 && quantity <= 0) {
+          cart.items.splice(indexFound, 1);
+          if (cart.items.length == 0) {
+            cart.subTotal = 0;
+          } else {
+            cart.subTotal = cart.items
+              .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
+          }
+        }
+        //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
+        else if (indexFound !== -1) {
+          cart.items[indexFound].quantity =
+            cart.items[indexFound].quantity + quantity;
+          cart.items[indexFound].total =
+            cart.items[indexFound].quantity * productDetails.price;
+          cart.items[indexFound].price = productDetails.price;
+          cart.subTotal = cart.items
+            .map((item) => item.total)
+            .reduce((acc, next) => acc + next);
+        }
+        //----Check if quantity is greater than 0 then add item to items array ----
+        else if (quantity > 0) {
+          cart.items.push({
+            productId: productId,
+            quantity: quantity,
+            price: productDetails.price,
+            total: parseInt(productDetails.price * quantity),
+          });
+          cart.subTotal = cart.items
+            .map((item) => item.total)
+            .reduce((acc, next) => acc + next);
+        }
+        //----If quantity of price is 0 throw the error -------
+        else {
+          throw new ApiError(400, "Product Not Found!");
+        }
+        let data = await cart.save();
+
+        res.status(200).json(new ApiResponse(200, data, "Process successful"));
+      }
+      //------------ This creates a new cart and then adds the item to the cart that has been created------------
+      else {
+        console.log("----------fgggggggggggggggggggg----------");
+
+        const cartData = {
+          user_id: existedUser._id,
+          items: [
+            {
+              productId: productId,
+              quantity: quantity,
+              total: parseInt(productDetails.price * quantity),
+              price: productDetails.price,
+            },
+          ],
+          subTotal: parseInt(productDetails.price * quantity),
+        };
+        cart = await addItem(cartData);
+        res
+          .status(200)
+          .json(new ApiResponse(200, cart, "Items added successful"));
+      }
+    } catch (err) {
+      throw new ApiError(400, err);
+    }
+  }
+});
+
+const getCart = asyncHandler(async (req, res) => {
+  const token = req.cookies["cookie_token"];
+  if (!token) {
+    throw new ApiError(400, "Unauthorized user!");
+  }
+
+  const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
+
+  let cart = await cartRepository(userID);
+  if (!cart) {
+    throw new ApiError(400, "Cart not Found!");
+  }
+  res.status(200).json(new ApiResponse(200, cart, "Items added successful"));
+});
+
+const emptyCart = asyncHandler(async (req, res) => {
   const token = req.cookies["cookie_token"];
 
   if (!token) {
     throw new ApiError(400, "Unauthorized user!");
   }
+
   const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-
-  const existedUser = await User.findOne({ _id: userID });
-
-  if (!existedUser) {
-    throw new ApiError(404, "User Not Found!");
-  }
-
-  const quantity = Number.parseInt(req.body.quantity);
-  if (quantity <= 0) {
-    throw new ApiError(500, "Quantity can not be less then or equal to zero");
-  }
-  try {
-    let cart = await cartRepository(existedUser._id);
-
-    let productDetails = await Product.findById({ _id: productId });
-    if (!productDetails) {
-      throw new ApiError(404, "Product Not Found!");
-    }
-    //--If Cart Exists ----
-    if (cart) {
-      console.log("--------------------cart-----------", cart);
-      //---- Check if index exists ----
-      const indexFound = cart.items.findIndex(
-        (item) => item.productId.id == productId
-      );
-      //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
-      if (indexFound !== -1 && quantity <= 0) {
-        cart.items.splice(indexFound, 1);
-        if (cart.items.length == 0) {
-          cart.subTotal = 0;
-        } else {
-          cart.subTotal = cart.items
-            .map((item) => item.total)
-            .reduce((acc, next) => acc + next);
-        }
-      }
-      //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
-      else if (indexFound !== -1) {
-        cart.items[indexFound].quantity =
-          cart.items[indexFound].quantity + quantity;
-        cart.items[indexFound].total =
-          cart.items[indexFound].quantity * productDetails.price;
-        cart.items[indexFound].price = productDetails.price;
-        cart.subTotal = cart.items
-          .map((item) => item.total)
-          .reduce((acc, next) => acc + next);
-      }
-      //----Check if quantity is greater than 0 then add item to items array ----
-      else if (quantity > 0) {
-        cart.items.push({
-          productId: productId,
-          quantity: quantity,
-          price: productDetails.price,
-          total: parseInt(productDetails.price * quantity),
-        });
-        cart.subTotal = cart.items
-          .map((item) => item.total)
-          .reduce((acc, next) => acc + next);
-      }
-      //----If quantity of price is 0 throw the error -------
-      else {
-        throw new ApiError(400, "Product Not Found!");
-      }
-      let data = await cart.save();
-
-      res.status(200).json(new ApiResponse(200, data, "Process successful"));
-    }
-    //------------ This creates a new cart and then adds the item to the cart that has been created------------
-    else {
-      console.log("----------fgggggggggggggggggggg----------");
-
-      const cartData = {
-        user_id: existedUser._id,
-        items: [
-          {
-            productId: productId,
-            quantity: quantity,
-            total: parseInt(productDetails.price * quantity),
-            price: productDetails.price,
-          },
-        ],
-        subTotal: parseInt(productDetails.price * quantity),
-      };
-      cart = await addItem(cartData);
-      res
-        .status(200)
-        .json(new ApiResponse(200, cart, "Items added successful"));
-    }
-  } catch (err) {
-    throw new ApiError(400, err);
-  }
+  let cart = await cartRepository(userID);
+  cart.items = [];
+  cart.subTotal = 0;
+  let data = await cart.save();
+  res.status(200).json(new ApiResponse(200, data, "Cart has been emptied"));
 });
-
-const getCart = async (req, res) => {
-  try {
-    let cart = await cartRepository();
-    if (!cart) {
-      throw new ApiError(400, "Cart not Found!");
-    }
-    res.status(200).json(new ApiResponse(200, cart, "Items added successful"));
-  } catch (err) {
-    throw new ApiError(400, "Something went wrong");
-  }
-};
-
-const emptyCart = async (req, res) => {
-  try {
-    let cart = await cartRepository();
-    cart.items = [];
-    cart.subTotal = 0;
-    let data = await cart.save();
-    res.status(200).json(new ApiResponse(200, data, "Cart has been emptied"));
-  } catch (err) {
-    throw new ApiError(400, "Something went wrong");
-  }
-};
 
 export {
   createProductData,
@@ -556,4 +588,5 @@ export {
   getAllCountry,
   createCountry,
   getBestSeller,
+  getProductById,
 };

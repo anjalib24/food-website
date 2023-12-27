@@ -4,7 +4,9 @@ import { ApiError } from "../utils/ApiError.js";
 
 const userAuth = async (req, res, next) => {
   try {
-    const token = req.headers["Authorization"] || req.cookies["cookie_token"];
+    const token =
+      req.headers["authorization"]?.replace("Bearer", "").trim() ||
+      req.cookies["cookie_token"];
 
     if (!token) {
       throw new ApiError(401, "Token not found");

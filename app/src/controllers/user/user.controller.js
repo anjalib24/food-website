@@ -68,8 +68,11 @@ const registerUser = asyncHandler(async (req, res) => {
 // User login part-
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body.userData;
+  if (!email) {
+    throw new ApiError(400, "Email and password fields are required!");
+  }
 
-  if (!email && !password) {
+  if (!password) {
     throw new ApiError(400, "Email and password fields are required!");
   }
 
@@ -98,7 +101,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     res.status(201).json(new ApiResponse(200, accessToken, "User Logged In!"));
   } else {
-    throw new ApiError(400, "Email and password fields are required!");
+    throw new ApiError(400, "Email and password fields are incorrect!");
   }
 });
 

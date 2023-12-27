@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    orderId: {
+    pyamentOrderId: {
       type: String,
       required: true,
     },

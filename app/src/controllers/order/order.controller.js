@@ -57,7 +57,7 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       username: existedUser.username,
       email: existedUser.email,
       products: productIds,
-      orderId: stripeOrderData.id,
+      pyamentOrderId: stripeOrderData.id,
       status: "pending",
     });
     orderData = await order.save();
@@ -68,7 +68,7 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       );
     }
   }
-  orderData = { ...orderData, paymentUrl: stripeOrderData.url };
+  orderData = { ...orderData, sessionID: stripeOrderData?.id };
   return res
     .status(201)
     .json(new ApiResponse(200, orderData, "Stipe Process successfully"));
