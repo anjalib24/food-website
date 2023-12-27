@@ -444,9 +444,11 @@ const addItemToCart = asyncHandler(async (req, res) => {
   }
 
   for (let data of productsData) {
-    const { productId } = data;
+    const { productId, quantity: productQuantity } = data;
 
-    const token = req.cookies["cookie_token"];
+    const token =
+      req.headers["authorization"]?.replace("Bearer", "").trim() ||
+      req.cookies["cookie_token"];
 
     if (!token) {
       throw new ApiError(400, "Unauthorized user!");
@@ -459,7 +461,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
       throw new ApiError(404, "User Not Found!");
     }
 
-    const quantity = Number.parseInt(req.body.quantity);
+    const quantity = Number.parseInt(productQuantity);
     if (quantity <= 0) {
       throw new ApiError(500, "Quantity can not be less then or equal to zero");
     }
@@ -546,7 +548,9 @@ const addItemToCart = asyncHandler(async (req, res) => {
 });
 
 const getCart = asyncHandler(async (req, res) => {
-  const token = req.cookies["cookie_token"];
+  const token =
+    req.headers["authorization"]?.replace("Bearer", "").trim() ||
+    req.cookies["cookie_token"];
   if (!token) {
     throw new ApiError(400, "Unauthorized user!");
   }
@@ -561,8 +565,9 @@ const getCart = asyncHandler(async (req, res) => {
 });
 
 const emptyCart = asyncHandler(async (req, res) => {
-  const token = req.cookies["cookie_token"];
-
+  const token =
+    req.headers["authorization"]?.replace("Bearer", "").trim() ||
+    req.cookies["cookie_token"];
   if (!token) {
     throw new ApiError(400, "Unauthorized user!");
   }
