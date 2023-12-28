@@ -32,6 +32,10 @@ const CartSchema = new Schema(
     },
 
     items: [ItemSchema],
+    shippingCharge: {
+      type: Number,
+      default: 0,
+    },
     subTotal: {
       default: 0,
       type: Number,

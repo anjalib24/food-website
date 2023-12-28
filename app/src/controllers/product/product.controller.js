@@ -11,6 +11,7 @@ import { Country } from "../../models/country.model.js";
 import AdmZip from "adm-zip";
 import path from "path";
 import fs from "fs";
+import { Cart } from "../../models/cart.model.js";
 
 //------------get best seller------------
 
@@ -123,7 +124,6 @@ const getProductData = asyncHandler(async (req, res) => {
         new ApiResponse(200, getProducts, "Get all product data successfully.")
       );
   } catch (error) {
-    console.error("Error:", error);
     return res
       .status(500)
       .json(new ApiResponse(500, null, "Internal Server Error!"));
@@ -444,7 +444,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
   }
 
   for (let data of productsData) {
-    const { productId, quantity: productQuantity } = data;
+    const { productId, quantity: productQuantity, shippingCharge } = data;
 
     const token =
       req.headers["authorization"]?.replace("Bearer", "").trim() ||
@@ -476,17 +476,20 @@ const addItemToCart = asyncHandler(async (req, res) => {
       if (cart) {
         //---- Check if index exists ----
         const indexFound = cart.items.findIndex(
-          (item) => item.productId.id == productId
+          (item) => item.productId == productId
         );
         //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
         if (indexFound !== -1 && quantity <= 0) {
           cart.items.splice(indexFound, 1);
           if (cart.items.length == 0) {
+            cart.shippingCharge = 0;
             cart.subTotal = 0;
           } else {
-            cart.subTotal = cart.items
-              .map((item) => item.total)
-              .reduce((acc, next) => acc + next);
+            cart.shippingCharge = shippingCharge;
+            cart.subTotal =
+              cart.items
+                .map((item) => item.total)
+                .reduce((acc, next) => acc + next) + shippingCharge;
           }
         }
         //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
@@ -496,9 +499,11 @@ const addItemToCart = asyncHandler(async (req, res) => {
           cart.items[indexFound].total =
             cart.items[indexFound].quantity * productDetails.price;
           cart.items[indexFound].price = productDetails.price;
-          cart.subTotal = cart.items
-            .map((item) => item.total)
-            .reduce((acc, next) => acc + next);
+          cart.shippingCharge = shippingCharge;
+          cart.subTotal =
+            cart.items
+              .map((item) => item.total)
+              .reduce((acc, next) => acc + next) + shippingCharge;
         }
         //----Check if quantity is greater than 0 then add item to items array ----
         else if (quantity > 0) {
@@ -508,9 +513,11 @@ const addItemToCart = asyncHandler(async (req, res) => {
             price: productDetails.price,
             total: parseInt(productDetails.price * quantity),
           });
-          cart.subTotal = cart.items
-            .map((item) => item.total)
-            .reduce((acc, next) => acc + next);
+          cart.shippingCharge = shippingCharge;
+          cart.subTotal =
+            cart.items
+              .map((item) => item.total)
+              .reduce((acc, next) => acc + next) + shippingCharge;
         }
         //----If quantity of price is 0 throw the error -------
         else {
@@ -518,12 +525,12 @@ const addItemToCart = asyncHandler(async (req, res) => {
         }
         let data = await cart.save();
 
-        res.status(200).json(new ApiResponse(200, data, "Process successful"));
+        return res
+          .status(200)
+          .json(new ApiResponse(200, data, "Process successful"));
       }
       //------------ This creates a new cart and then adds the item to the cart that has been created------------
       else {
-        console.log("----------fgggggggggggggggggggg----------");
-
         const cartData = {
           user_id: existedUser._id,
           items: [
@@ -534,10 +541,11 @@ const addItemToCart = asyncHandler(async (req, res) => {
               price: productDetails.price,
             },
           ],
+          shippingCharge,
           subTotal: parseInt(productDetails.price * quantity),
         };
         cart = await addItem(cartData);
-        res
+        return res
           .status(200)
           .json(new ApiResponse(200, cart, "Items added successful"));
       }
@@ -559,9 +567,11 @@ const getCart = asyncHandler(async (req, res) => {
 
   let cart = await cartRepository(userID);
   if (!cart) {
-    throw new ApiError(400, "Cart not Found!");
+    return res.status(200).json(new ApiResponse(200, {}, "Cart not Found!"));
   }
-  res.status(200).json(new ApiResponse(200, cart, "Items added successful"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, cart, "Items added successful"));
 });
 
 const emptyCart = asyncHandler(async (req, res) => {
@@ -576,8 +586,168 @@ const emptyCart = asyncHandler(async (req, res) => {
   let cart = await cartRepository(userID);
   cart.items = [];
   cart.subTotal = 0;
+  cart.shippingCharge = 0;
   let data = await cart.save();
-  res.status(200).json(new ApiResponse(200, data, "Cart has been emptied"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, data, "Cart has been emptied"));
+});
+
+const removeItemsFromCart = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    let { quantityToReduce = 1, shippingCharge = 0 } = req.query;
+
+    if (!id) {
+      throw new ApiError(400, "Product ID is required!");
+    }
+
+    const token =
+      req.headers["authorization"]?.replace("Bearer", "").trim() ||
+      req.cookies["cookie_token"];
+
+    if (!token) {
+      throw new ApiError(401, "Unauthorized user! Token not found.");
+    }
+
+    const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
+
+    if (!userID) {
+      throw new ApiError(401, "Invalid user token.");
+    }
+
+    const user = await User.findById(userID);
+    if (!user) {
+      throw new ApiError(404, "User not found!");
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      throw new ApiError(404, "Product not found!");
+    }
+
+    let cart = await Cart.findOne({ user_id: userID });
+
+    if (!cart) {
+      throw new ApiError(404, "Cart not found for the user.");
+    }
+
+    if (cart.items.length === 0) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, cart, "There is no product in the cart."));
+    }
+
+    const matchingItem = cart.items.find(
+      (item) => item.productId.toString() === product._id.toString()
+    );
+
+    if (!matchingItem) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, cart, "Product not found in the cart."));
+    }
+
+    if (typeof shippingCharge === "string") {
+      shippingCharge = parseInt(shippingCharge);
+    }
+
+    const currentQuantity = matchingItem.quantity;
+    const newQuantity = Math.max(currentQuantity - quantityToReduce, 0);
+
+    let newSubTotal = cart.subTotal - (product.price || 0);
+    console.log("------1-------", shippingCharge);
+
+    if (shippingCharge) {
+      newSubTotal =
+        cart.subTotal +
+        shippingCharge -
+        ((product.price || 0) + cart.shippingCharge);
+    }
+
+    let update;
+
+    if (currentQuantity === 1) {
+      update = {
+        $pull: {
+          items: {
+            productId: product._id,
+          },
+        },
+        $set: {
+          subTotal: newSubTotal,
+          shippingCharge,
+        },
+      };
+
+      const updatedCartData = await Cart.findOneAndUpdate(
+        {
+          _id: cart._id,
+        },
+        update,
+        {
+          new: true,
+        }
+      );
+
+      if (!updatedCartData) {
+        throw new ApiError(500, "Update failed or document not found");
+      }
+
+      res
+        .status(200)
+        .json(
+          new ApiResponse(200, updatedCartData, "Product removed from cart.")
+        );
+    } else {
+      if (isNaN(newSubTotal)) {
+        throw new ApiError(500, "Invalid product price or quantityToReduce");
+      }
+
+      const reduceProductTotalPrice = matchingItem.total - product.price;
+
+      await Cart.findOneAndUpdate(
+        {
+          "items.productId": product._id,
+        },
+        {
+          $set: {
+            "items.$[items].quantity": newQuantity,
+            "items.$[items].total": reduceProductTotalPrice,
+            subTotal: newSubTotal,
+            shippingCharge,
+          },
+        },
+        {
+          arrayFilters: [{ "items.productId": product._id }],
+          new: true,
+        }
+      );
+
+      const updatedCartData = await Cart.findById(cart._id);
+
+      if (!updatedCartData) {
+        throw new ApiError(500, "Update failed or document not found");
+      }
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            updatedCartData,
+            "Updated product quantity in cart."
+          )
+        );
+    }
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(
+      error.status || 500,
+      error.message || "Internal Server Error"
+    );
+  }
 });
 
 export {
@@ -594,4 +764,5 @@ export {
   createCountry,
   getBestSeller,
   getProductById,
+  removeItemsFromCart,
 };

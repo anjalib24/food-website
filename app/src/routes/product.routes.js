@@ -13,6 +13,7 @@ import {
   getAllCountry,
   getBestSeller,
   getProductById,
+  removeItemsFromCart,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
@@ -52,7 +53,8 @@ router.route("/add-to-cart").post(addItemToCart);
 
 router.route("/get-cart").get(getCart);
 
-router.route("/remove-items-from-cart").get(emptyCart);
+router.route("/remove-all-items-from-cart").get(emptyCart);
+router.route("/remove-items-from-cart/:id").get(removeItemsFromCart);
 
 router.route("/create-country").post(createCountry);
 

@@ -18,8 +18,6 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
 
   const orderDate = new Date().getDate();
 
-  console.log("orderDate->", orderDate);
-
   if (!cartId) {
     throw new ApiError(400, "Cart id is required");
   }
@@ -41,7 +39,8 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
   const stripeOrderData = await orderWithStripeCheckOutPayment(
     existedUser.username,
     existedUser.email,
-    cartData
+    cartData,
+    cartData.shippingCharge
   );
 
   if (!stripeOrderData.id) {

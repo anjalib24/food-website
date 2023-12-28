@@ -5,6 +5,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userRegistrationValidation } from "../../utils/Validation.js";
+import { sendUserRegistrationConfirmationEmail } from "../../utils/mail.js";
 
 //get all user
 
@@ -58,6 +59,16 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering the user");
+  } else {
+    try {
+      if (createdUser && createdUser.email) {
+        const name = createdUser.username || createdUser.email.split("@")[0];
+
+        await sendUserRegistrationConfirmationEmail(createdUser.email, name);
+      }
+    } catch (error) {
+      throw new ApiError(500, "Error sending email to the registered user");
+    }
   }
 
   return res
