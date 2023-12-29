@@ -7,6 +7,11 @@ const userRegistrationValidation = Joi.object({
     .pattern(/^[a-zA-Z0-9!@#$%^&*]{6,16}$/)
     .required(),
   confirmPassword: Joi.string().required(),
+  address: Joi.string().required(),
+  city: Joi.string().required(),
+  state: Joi.string().required(),
+  country: Joi.string().required(),
+  zipcode: Joi.string().required(),
 });
 
 const productValidation = Joi.object({

@@ -31,7 +31,17 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 //User register part-
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, confirmPassword } = req.body.userData;
+  const {
+    username,
+    email,
+    password,
+    confirmPassword,
+    address,
+    city,
+    state,
+    country,
+    zipcode,
+  } = req.body.userData;
 
   const { error } = userRegistrationValidation.validate(req.body.userData);
 
@@ -53,6 +63,11 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     email,
     password,
+    address,
+    city,
+    state,
+    country,
+    zipcode,
   });
 
   const createdUser = await User.findById(user._id).select("-password");
