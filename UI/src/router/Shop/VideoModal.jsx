@@ -1,14 +1,12 @@
 import React from 'react';
 
-const VideoModal = ({ show360Modal, setShow360Modal, data }) => {
-
-  console.log(data,"video Data");
+const VideoModal = ({ show360Modal, setShow360Modal, data , title }) => {
   return (
     <div className={`modal fade ${show360Modal ? 'show' : ''}`} id="videomodal" tabIndex="-1" role="dialog" aria-labelledby="explore360ModalLabel" aria-hidden={!show360Modal}>
       <div className="modal-dialog modal-dialog-centered" role="document">
         <div className="modal-content" style={{ height: "450px" }}>
           <div className="modal-header">
-          <h5 className="modal-title" id="exampleModalLabel">Product Video</h5>
+          <h5 className="modal-title" id="exampleModalLabel">{title}</h5>
 
             <button type="button" className="close" data-dismiss="modal" onClick={() => setShow360Modal(false)} aria-label="Close">
               <span aria-hidden="true">&times;</span>

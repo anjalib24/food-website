@@ -361,9 +361,7 @@ footer.bg-success.text-white.pt-5.pb-4.pe-3 {
     text-overflow: ellipsis;
     max-height: 4em; /* Adjust this value based on your design */
 }
-.card-container {
-    display: flex;
-}
+
 
 
 

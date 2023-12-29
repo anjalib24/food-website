@@ -4,13 +4,13 @@ import png360 from "./images/360.png"
 import usflag from "./images/USA_Flag_icon.png"
 import vectorimg from "./images/Vector.png"
 import { fetchData } from './services/Api'
-import Modal from './Modal'
 import Modal360 from './Modal360';
 import Socialmedia from './Socialmedia'
 import Loader from '@/components/Loader'
 import videoimg from "./images/Group.png"
 import VideoModal from './VideoModal'
 import Alert from './Alert'
+import axios from 'axios'
 
 
 export const Allproduct = () => {
@@ -20,20 +20,18 @@ export const Allproduct = () => {
   const [selectedOrigin, setSelectedOrigin] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [show360Modal, setShow360Modal] = useState(false);
-  const [socialmedia, setSocialMedia] = useState(null)
   const [showsocial, setShowSocial] = useState(false)
   const [showcard, setShowCard] = useState(false)
   const [cart, setCart] = useState([]);
-  const [showvideomodal,setShowvideomodal]=useState(null);
-  const [videodata,setVideoData] = useState()
+  const [showvideomodal, setShowvideomodal] = useState(null);
+  const [videodata, setVideoData] = useState()
   const [showAlert, setShowAlert] = useState(false);
+  const [alertmsg, setAlertMsg] = useState()
 
 
 
-  console.log(show360Modal, "All product show360modal");
 
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -55,7 +53,7 @@ export const Allproduct = () => {
 
     fetchDataFromApi();
   }, []);
-
+  console.log(data, "allproductData");
   const handleOriginCheckboxChange = (value) => {
     setSelectedOrigin((prevSelected) => {
       if (prevSelected.includes(value)) {
@@ -87,10 +85,7 @@ export const Allproduct = () => {
     }
   };
 
-  const handleExploreClick = (item) => {
-    setSelectedItem(item);
-    setShowModal(true);
-  };
+
   const handleExploreClicks = (item) => {
     setSelectedItem(item);
     setShow360Modal(true);
@@ -104,37 +99,81 @@ export const Allproduct = () => {
     setShowvideomodal(true);
   };
   const handleaddtocard = async (item) => {
+
     try {
-      const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
-      const isItemInCart = existingCart.some((cartItem) => cartItem._id === item._id);
-  
-      if (!isItemInCart) {
-        const newCart = [...existingCart, item];
-        localStorage.setItem('cart', JSON.stringify(newCart));
-        setCart(newCart);
-        setShowCard(true);
-        setShowAlert(true); 
-        setTimeout(() => {
-          setShowAlert(false); 
-        }, 3000);
+      const token = localStorage.getItem('token');
+      if (token) {
+        const response = await axios.get('http://127.0.0.1:8000/api/v1/products/get-cart', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });        
+        const cartItems = response?.data?.data?.items;
+        const isItemInCart = cartItems?.some(cartItem => cartItem.productId === item._id);
+       console.log(isItemInCart);
+        if (isItemInCart) {
+          setAlertMsg('Item is already in the cart');
+          setShowAlert(true);
+          setTimeout(() => {
+            setAlertMsg("");
+            setShowAlert(false);
+          }, 3000);
+        }else {
+          console.log("add to cart run");
+          const response = await axios.post('http://127.0.0.1:8000/api/v1/products/add-to-cart', [{
+            productId: item._id,
+            quantity: 1,
+            shippingCharge: 20
+          }], {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          setAlertMsg("Product added to the cart");
+          setShowAlert(true);
+          setTimeout(() => {
+            setAlertMsg("");
+            setShowAlert(false);
+          }, 3000);
+        }    
       } else {
-        console.log('Item is already in the cart');
+        const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
+        const isItemInCart = existingCart.some((cartItem) => cartItem._id === item._id);
+        if (!isItemInCart) {
+          const newCart = [...existingCart, item];
+          localStorage.setItem('cart', JSON.stringify(newCart));
+          localStorage.setItem('CartType', JSON.stringify("WithoutLogin"));
+          setCart(newCart);
+          setShowCard(true);
+          setAlertMsg("Product added to the cart")
+          setShowAlert(true);
+          setTimeout(() => {
+            setAlertMsg("")
+            setShowAlert(false);
+          }, 3000);
+        } else {
+          setAlertMsg('Item is already in the cart');
+          setShowAlert(true)
+          setTimeout(() => {
+            setAlertMsg("")
+            setShowAlert(false);
+          }, 3000);
+        }
       }
     } catch (error) {
       console.error('Error handling add to cart:', error);
     }
+
   };
-  
+
 
 
   return (
     <>
-        {showAlert && <Alert type="success" message="Product added to the cart" />}
-
-      <Socialmedia showModal={showsocial} setShowModal={setSocialMedia} />
-      <Modal showModal={showModal} setShowModal={setShowModal} data={selectedItem} />
+      {showAlert && <Alert type="success" message={alertmsg} />}
+      {showsocial && <Socialmedia showModal={showsocial} setShowModal={setShowSocial} />}
       {show360Modal && <Modal360 showModal={show360Modal} setShowModal={setShow360Modal} data={selectedItem} />}
-{showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata}/>}
+      {showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata} />}
       <div className='container'>
         <section id="search" className="mt-5">
           <div className="col-md-12 pr-0 pl-0 mb-5" >
@@ -270,17 +309,22 @@ export const Allproduct = () => {
                     item.title.toLowerCase().includes(searchInput.toLowerCase())
                   )
                 )?.map(item => (
-                  <div key={item.id} className="col-md-3 mb-4 border border-success card-container justify-content-center">
+                  <div key={item.id} className="col-md-3 mb-4 border border-success">
                     <div className="d-flex flex-column h-100">
-                      <div>
-                        <img src={"/api" + item.images[0]} className="text-center m-2" alt="#" />
+                      
+                        <div className="image-container">
+                          <img
+                            src={"/api" + item.images[0]}
+                            alt="#"
+                          />
+                        </div>
                         <div className="card-content">
                           <h3 className="clamp-2">{item.title}</h3>
                           <p className="description clamp-2">{item.description}</p>
                           <h5>Origin County: <img src={usflag} alt="#" /></h5>
 
                           <div className='d-flex flex-row '>
-                            <div className="mr-3">
+                            {item.zipfile_url && <div className="mr-3">
                               <img
                                 src={png360}
                                 alt="png360"
@@ -289,7 +333,7 @@ export const Allproduct = () => {
                                 data-target="#explore360Modal"
                                 style={{ cursor: 'pointer' }}
                               />
-                            </div>
+                            </div>}
                             <div>
                               <div className="mr-3">
                                 <img alt='vector' src={vectorimg}
@@ -313,7 +357,6 @@ export const Allproduct = () => {
 
                           </div>
                         </div>
-                      </div>
                       <div className="flex-grow-1 d-flex flex-column justify-content-between">
                         <div>
                           <h3 className="text-center">{formatter.format(item.price)}</h3>
@@ -329,7 +372,7 @@ export const Allproduct = () => {
                           </button>
                           <button
                             className="btn btn-white btn-block border border-success mb-1"
-                            onClick={() => handleExploreClick(item)}
+                            onClick={() => ""}
                             data-toggle="modal"
                             data-target="#exploreModal"
                           >

@@ -66,8 +66,7 @@ const Header = () => {
                 <i className="fa badge fa-lg" value={basketCount}>
                   &#xf290;
                 </i>
-                <div>
-                </div>
+               
               </div>
             </nav>
           </div>

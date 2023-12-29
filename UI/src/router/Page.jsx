@@ -7,10 +7,14 @@ import Login from "@/Login/Login";
 import Registration from "@/registration/Registration";
 import Cart from "./Shop/Cart";
 import { Home } from "./Shop/Home";
+import Strip from "./Shop/strip/Strip";
 
 const Page = () => {
   return (
     <Switch>
+       <Route path="/strip">
+        <Strip/>
+      </Route>
       <Route path="/login">
         <Login />
       </Route>
@@ -29,6 +33,7 @@ const Page = () => {
       <Route path="/">
         <Home/>
       </Route>
+   
     </Switch>
   );
 };

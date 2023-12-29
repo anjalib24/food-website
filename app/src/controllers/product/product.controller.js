@@ -434,7 +434,7 @@ const getAllCountry = asyncHandler(async (req, res) => {
 
 const addItemToCart = asyncHandler(async (req, res) => {
   const productsData = req.body;
-
+console.log("--productsData---",productsData)
   if (
     !Array.isArray(productsData) ||
     productsData.length === 0 ||

@@ -25,7 +25,7 @@ const Login = () => {
     setLoginError({ type, message });
     setTimeout(() => {
       setLoginError(null);
-    }, 5000); // Hide the alert after 5 seconds
+    }, 5000); 
   };
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit, resetForm } = useFormik({
@@ -49,8 +49,35 @@ const Login = () => {
         // Decode the token to get user information
         const decodedToken = jwtDecode(authToken);
         const userType = decodedToken.role;
-    
-        // Redirect based on user type
+   
+        const token = localStorage.getItem('token');
+
+        // Check for cart items in local storage
+        const cart = JSON.parse(localStorage.getItem('cart'));
+        if (cart && cart.length > 0) {
+        
+          // Prepare the data to be sent
+          const data = cart.map(item => ({
+            productId: item._id,
+            quantity: item.quantity,
+          }));
+        
+          // Send a POST request to the add-to-cart endpoint
+          const response = await axios.post('http://127.0.0.1:8000/api/v1/products/add-to-cart', data, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        
+          // Handle the response
+          console.log(response.data);
+        
+          
+          // Clear the cart from local storage
+          localStorage.removeItem('cart');
+        } else {
+          console.log('No items in cart.');
+        }
         if (userType === 'user') {
           history.push('/shop');
         } else if (userType === 'admin') {
@@ -59,12 +86,15 @@ const Login = () => {
           // Handle other user types or scenarios
           console.error('Invalid user type:', userType);
         }
+      
       } catch (error) {
         console.error("Error submitting the form:", error);
         showAlert("danger", "Invalid email or password");
       } finally {
         setSubmitting(false);
+        
       }
+      
     },
   });
 

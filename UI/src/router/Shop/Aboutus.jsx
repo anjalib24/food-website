@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import "./style.css"
 import videos from "./images/Group.png"
-import food from "./images/image 7.png"
+import AboutusDefaultimg from "./images/image 7.png"
 import DOMPurify from "dompurify";
 import VideoModal from './VideoModal';
 
 export const Aboutus = (props) => {
-
+console.log(props ," about us ");
     const [showvideomodal,setShowvideomodal]=useState(null);
     const [videodata,setVideoData] = useState()
-
     const handleVideomodal = (item) => {
         setVideoData(item);
         setShowvideomodal(true);
@@ -17,10 +16,9 @@ export const Aboutus = (props) => {
     const createMarkup = (htmlContent) => {
         return { __html: DOMPurify.sanitize(htmlContent) };
     };
-    return (
+    return(
         <>
-        {showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata}/>}
-
+        {showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata} title="About us video"/>}
             <section id="About">
                 <div className="col-md-12 mt-5 mb-5 text-center">
                     <h1>About us</h1>
@@ -30,12 +28,9 @@ export const Aboutus = (props) => {
                         <div className="about-text">
                             <div className=" m-5 justify-content-center" dangerouslySetInnerHTML={createMarkup(props?.aboutus?.text)}
                             >
-
-
                             </div>
                             {props?.aboutus?.video && (
-                                <img alt="youtube_logo" src={videos} className="px-5"
-                                
+                                <img alt="youtube_logo" src={videos} className="px-5"          
                                 onClick={() => handleVideomodal(props?.aboutus?.video)}
                                 data-toggle="modal"
                                 data-target="#videomodal"
@@ -44,7 +39,7 @@ export const Aboutus = (props) => {
                         </div>
                     </div>
                     <div className="col-md-6">
-                        <img alt="food_image" src={food} className=" align-items-end" />
+                        <img alt="food_image" src={props.image ? "/api" +props?.image :AboutusDefaultimg} className=" align-items-end" />  
                     </div>
                 </div>
             </section>
