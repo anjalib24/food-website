@@ -462,8 +462,8 @@ const addItemToCart = asyncHandler(async (req, res) => {
     }
 
     const quantity = Number.parseInt(productQuantity);
-    if (quantity <= 0) {
-      throw new ApiError(500, "Quantity can not be less then or equal to zero");
+    if (quantity == 0) {
+      throw new ApiError(500, "Quantity can not be equal to zero");
     }
     try {
       let cart = await cartRepository(existedUser._id);
@@ -474,54 +474,62 @@ const addItemToCart = asyncHandler(async (req, res) => {
       }
       //--If Cart Exists ----
       if (cart) {
-        //---- Check if index exists ----
-        const indexFound = cart.items.findIndex(
-          (item) => item.productId == productId
-        );
-        //------This removes an item from the the cart if the quantity is set to zero, We can use this method to remove an item from the list  -------
-        if (indexFound !== -1 && quantity <= 0) {
-          cart.items.splice(indexFound, 1);
-          if (cart.items.length == 0) {
-            cart.shippingCharge = 0;
-            cart.subTotal = 0;
-          } else {
+        if (quantity < 0) {
+          // Handle case where quantity is less than 0 (decrease quantity)
+          const existingItemIndex = cart.items.findIndex(
+            (item) => item.productId == productId
+          );
+
+          if (
+            cart.items[existingItemIndex].quantity > 1 &&
+            existingItemIndex !== -1
+          ) {
+            cart.items[existingItemIndex].quantity += quantity;
+            cart.items[existingItemIndex].total =
+              cart.items[existingItemIndex].quantity * productDetails.price;
+
+            // Update shipping charge and subtotal
             cart.shippingCharge = shippingCharge;
             cart.subTotal =
               cart.items
                 .map((item) => item.total)
                 .reduce((acc, next) => acc + next) + shippingCharge;
+          } else {
+            throw new ApiError(404, "Can not decrease quantity anymore.");
           }
-        }
-        //----------Check if product exist, just add the previous quantity with the new quantity and update the total price-------
-        else if (indexFound !== -1) {
-          cart.items[indexFound].quantity =
-            cart.items[indexFound].quantity + quantity;
-          cart.items[indexFound].total =
-            cart.items[indexFound].quantity * productDetails.price;
-          cart.items[indexFound].price = productDetails.price;
-          cart.shippingCharge = shippingCharge;
-          cart.subTotal =
-            cart.items
-              .map((item) => item.total)
-              .reduce((acc, next) => acc + next) + shippingCharge;
-        }
-        //----Check if quantity is greater than 0 then add item to items array ----
-        else if (quantity > 0) {
-          cart.items.push({
-            productId: productId,
-            quantity: quantity,
-            price: productDetails.price,
-            total: parseInt(productDetails.price * quantity),
-          });
-          cart.shippingCharge = shippingCharge;
-          cart.subTotal =
-            cart.items
-              .map((item) => item.total)
-              .reduce((acc, next) => acc + next) + shippingCharge;
-        }
-        //----If quantity of price is 0 throw the error -------
-        else {
-          throw new ApiError(400, "Product Not Found!");
+        } else {
+          // Handle other cases (quantity > 0 or quantity === 0)
+          const indexFound = cart.items.findIndex(
+            (item) => item.productId == productId
+          );
+
+          if (indexFound !== -1) {
+            cart.items[indexFound].quantity += quantity;
+            cart.items[indexFound].total =
+              cart.items[indexFound].quantity * productDetails.price;
+            cart.items[indexFound].price = productDetails.price;
+            cart.shippingCharge = shippingCharge;
+            cart.subTotal =
+              cart.items
+                .map((item) => item.total)
+                .reduce((acc, next) => acc + next) + shippingCharge;
+          } else if (quantity > 0) {
+            // If the item is not found and quantity is greater than 0, add a new item
+            cart.items.push({
+              productId: productId,
+              quantity: quantity,
+              price: productDetails.price,
+              total: parseInt(productDetails.price * quantity),
+            });
+            cart.shippingCharge = shippingCharge;
+            cart.subTotal =
+              cart.items
+                .map((item) => item.total)
+                .reduce((acc, next) => acc + next) + shippingCharge;
+          } else {
+            // If quantity is 0, throw an error
+            throw new ApiError(400, "Product Not Found!");
+          }
         }
         let data = await cart.save();
 
@@ -542,7 +550,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
             },
           ],
           shippingCharge,
-          subTotal: parseInt(productDetails.price * quantity),
+          subTotal: parseInt(productDetails.price * quantity) + shippingCharge,
         };
         cart = await addItem(cartData);
         return res
