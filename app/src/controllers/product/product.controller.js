@@ -444,7 +444,7 @@ console.log("--productsData---",productsData)
   }
 
   for (let data of productsData) {
-    const { productId, quantity: productQuantity, shippingCharge } = data;
+    const { productId, quantity: productQuantity } = data;
 
     const token =
       req.headers["authorization"]?.replace("Bearer", "").trim() ||
@@ -488,12 +488,9 @@ console.log("--productsData---",productsData)
             cart.items[existingItemIndex].total =
               cart.items[existingItemIndex].quantity * productDetails.price;
 
-            // Update shipping charge and subtotal
-            cart.shippingCharge = shippingCharge;
-            cart.subTotal =
-              cart.items
-                .map((item) => item.total)
-                .reduce((acc, next) => acc + next) + shippingCharge;
+            cart.subTotal = cart.items
+              .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
           } else {
             throw new ApiError(404, "Can not decrease quantity anymore.");
           }
@@ -508,11 +505,9 @@ console.log("--productsData---",productsData)
             cart.items[indexFound].total =
               cart.items[indexFound].quantity * productDetails.price;
             cart.items[indexFound].price = productDetails.price;
-            cart.shippingCharge = shippingCharge;
-            cart.subTotal =
-              cart.items
-                .map((item) => item.total)
-                .reduce((acc, next) => acc + next) + shippingCharge;
+            cart.subTotal = cart.items
+              .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
           } else if (quantity > 0) {
             // If the item is not found and quantity is greater than 0, add a new item
             cart.items.push({
@@ -521,11 +516,9 @@ console.log("--productsData---",productsData)
               price: productDetails.price,
               total: parseInt(productDetails.price * quantity),
             });
-            cart.shippingCharge = shippingCharge;
-            cart.subTotal =
-              cart.items
-                .map((item) => item.total)
-                .reduce((acc, next) => acc + next) + shippingCharge;
+            cart.subTotal = cart.items
+              .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
           } else {
             // If quantity is 0, throw an error
             throw new ApiError(400, "Product Not Found!");
@@ -549,8 +542,7 @@ console.log("--productsData---",productsData)
               price: productDetails.price,
             },
           ],
-          shippingCharge,
-          subTotal: parseInt(productDetails.price * quantity) + shippingCharge,
+          subTotal: parseInt(productDetails.price * quantity),
         };
         cart = await addItem(cartData);
         return res
@@ -594,7 +586,6 @@ const emptyCart = asyncHandler(async (req, res) => {
   let cart = await cartRepository(userID);
   cart.items = [];
   cart.subTotal = 0;
-  cart.shippingCharge = 0;
   let data = await cart.save();
   return res
     .status(200)
@@ -604,8 +595,6 @@ const emptyCart = asyncHandler(async (req, res) => {
 const removeItemsFromCart = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-
-    let { quantityToReduce = 1, shippingCharge = 0 } = req.query;
 
     if (!id) {
       throw new ApiError(400, "Product ID is required!");
@@ -657,98 +646,44 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, cart, "Product not found in the cart."));
     }
 
-    if (typeof shippingCharge === "string") {
-      shippingCharge = parseInt(shippingCharge);
+    const productTotalPrice = matchingItem.total;
+
+    let newSubTotal = cart.subTotal - productTotalPrice;
+
+    let update = {
+      $pull: {
+        items: {
+          productId: product._id,
+        },
+      },
+      $set: {
+        subTotal: newSubTotal,
+      },
+    };
+
+    const updatedCartData = await Cart.findOneAndUpdate(
+      {
+        _id: cart._id,
+      },
+      update,
+      {
+        new: true,
+      }
+    );
+    if (!updatedCartData) {
+      throw new ApiError(500, "Update failed or document not found");
     }
 
-    const currentQuantity = matchingItem.quantity;
-    const newQuantity = Math.max(currentQuantity - quantityToReduce, 0);
-
-    let newSubTotal = cart.subTotal - (product.price || 0);
-    console.log("------1-------", shippingCharge);
-
-    if (shippingCharge) {
-      newSubTotal =
-        cart.subTotal +
-        shippingCharge -
-        ((product.price || 0) + cart.shippingCharge);
+    if (updatedCartData?.items.length === 0) {
+      updatedCartData.subTotal = 0;
+      await updatedCartData.save();
     }
 
-    let update;
-
-    if (currentQuantity === 1) {
-      update = {
-        $pull: {
-          items: {
-            productId: product._id,
-          },
-        },
-        $set: {
-          subTotal: newSubTotal,
-          shippingCharge,
-        },
-      };
-
-      const updatedCartData = await Cart.findOneAndUpdate(
-        {
-          _id: cart._id,
-        },
-        update,
-        {
-          new: true,
-        }
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedCartData, "Product removed from cart.")
       );
-
-      if (!updatedCartData) {
-        throw new ApiError(500, "Update failed or document not found");
-      }
-
-      res
-        .status(200)
-        .json(
-          new ApiResponse(200, updatedCartData, "Product removed from cart.")
-        );
-    } else {
-      if (isNaN(newSubTotal)) {
-        throw new ApiError(500, "Invalid product price or quantityToReduce");
-      }
-
-      const reduceProductTotalPrice = matchingItem.total - product.price;
-
-      await Cart.findOneAndUpdate(
-        {
-          "items.productId": product._id,
-        },
-        {
-          $set: {
-            "items.$[items].quantity": newQuantity,
-            "items.$[items].total": reduceProductTotalPrice,
-            subTotal: newSubTotal,
-            shippingCharge,
-          },
-        },
-        {
-          arrayFilters: [{ "items.productId": product._id }],
-          new: true,
-        }
-      );
-
-      const updatedCartData = await Cart.findById(cart._id);
-
-      if (!updatedCartData) {
-        throw new ApiError(500, "Update failed or document not found");
-      }
-
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            updatedCartData,
-            "Updated product quantity in cart."
-          )
-        );
-    }
   } catch (error) {
     console.error(error);
     throw new ApiError(
