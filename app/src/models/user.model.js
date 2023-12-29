@@ -27,6 +27,36 @@ const userSchema = new Schema(
       lowecase: true,
       trim: true,
     },
+    address: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    city: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    state: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    country: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    zipcode: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
   },
   {
     timestamps: true,
