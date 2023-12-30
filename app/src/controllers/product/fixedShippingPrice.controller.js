@@ -6,7 +6,6 @@ import { ApiError } from "../../utils/ApiError.js";
 export const createFixedShippingPrice = async (req, res) => {
   try {
     const { fixed_shipping_price } = req.body;
-    console.log("fixed_shipping_price--", fixed_shipping_price);
     const isFixedShippingPriceExist = await FixedShippingPrice.findOne({
       fixed_shipping_price,
     });
@@ -26,7 +25,6 @@ export const createFixedShippingPrice = async (req, res) => {
       fixed_shipping_price,
     });
     const savedFixedShippingPrice = await newFixedShippingPrice.save();
-    console.log("savedFixedShippingPrice->", savedFixedShippingPrice);
 
     return res
       .status(200)
@@ -73,12 +71,11 @@ export const getOneFixedShippingPrice = async (req, res) => {
 export const updateFixedShippingPrice = async (req, res) => {
   try {
     const { fixed_shipping_price } = req.body;
-    const updatedFixedShippingPrice =
-      await FixedShippingPrice.findByIdAndUpdate(
-        req.params.id,
-        { fixed_shipping_price },
-        { new: true }
-      );
+    const updatedFixedShippingPrice = await FixedShippingPrice.findOneAndUpdate(
+      {},
+      { fixed_shipping_price },
+      { new: true }
+    );
     if (!updatedFixedShippingPrice) {
       return res
         .status(404)

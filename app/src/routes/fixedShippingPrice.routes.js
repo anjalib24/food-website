@@ -10,11 +10,11 @@ import {
 const router = Router();
 
 router.route("/").post(createFixedShippingPrice).get(getAllFixedShippingPrices);
+router.route("/").put(updateFixedShippingPrice);
 
 router
   .route("/:id")
   .get(getOneFixedShippingPrice)
-  .put(updateFixedShippingPrice)
   .delete(deleteFixedShippingPrice);
 
 export default router;
