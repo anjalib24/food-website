@@ -20,6 +20,7 @@ const AddProduct = () => {
     images: [],
     price: "",
     video: "",
+    zipFile: "",
     expiry_date: "",
     promotion_code: "",
     rank: "",
@@ -38,9 +39,6 @@ const AddProduct = () => {
   const [countries, setCountries] = useState(null);
 
   useEffect(() => {
-    // country api: /api/api/v1/products/get-all-country
-    // country api: /api/api/v1/products/get-all-category
-
     const fetchCategoriesAndCountries = async () => {
       try {
         const responseCategories = await fetch(
@@ -236,8 +234,8 @@ const AddProduct = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
-            {product.images.length > 0 && (
+          {product.images.length > 0 && (
+            <Grid item xs={12}>
               <Grid container gap={2}>
                 {Array.from(product.images).map((image, index) => (
                   <img
@@ -248,7 +246,20 @@ const AddProduct = () => {
                   />
                 ))}
               </Grid>
-            )}
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <TextField
+              name="zipFile"
+              label="360 Zip File"
+              type="file"
+              onChange={(e) =>
+                setProduct((prev) => ({ ...prev, zipFile: e.target.files[0] }))
+              }
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ accept: ".zip" }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField

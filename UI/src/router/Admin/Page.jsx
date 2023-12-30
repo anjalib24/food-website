@@ -9,7 +9,7 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import ProductsPage from "./Products/Page";
 import CustomizationPage from "./Customizations/Page";
-// import "./styles.css";
+import "./styles.css";
 import BestSellerProduct from "./BestSellerProduct/Page";
 import Reviews from "./Reviews/Page";
 import FAQs from "./Faqs/Page";
