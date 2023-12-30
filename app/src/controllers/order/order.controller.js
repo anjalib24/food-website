@@ -18,8 +18,6 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
 
   const orderDate = new Date().getDate();
 
-  console.log("orderDate->", orderDate);
-
   if (!cartId) {
     throw new ApiError(400, "Cart id is required");
   }
@@ -41,7 +39,8 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
   const stripeOrderData = await orderWithStripeCheckOutPayment(
     existedUser.username,
     existedUser.email,
-    cartData
+    cartData,
+    cartData.shippingCharge
   );
 
   if (!stripeOrderData.id) {
@@ -57,7 +56,7 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       username: existedUser.username,
       email: existedUser.email,
       products: productIds,
-      orderId: stripeOrderData.id,
+      pyamentOrderId: stripeOrderData.id,
       status: "pending",
     });
     orderData = await order.save();
@@ -68,7 +67,7 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       );
     }
   }
-  orderData = { ...orderData, paymentUrl: stripeOrderData.url };
+  orderData = { ...orderData, sessionID: stripeOrderData?.id };
   return res
     .status(201)
     .json(new ApiResponse(200, orderData, "Stipe Process successfully"));

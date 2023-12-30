@@ -9,7 +9,6 @@ const userSchema = new Schema(
       required: true,
       lowecase: true,
       trim: true,
-      index: true,
     },
     email: {
       type: String,
@@ -25,6 +24,36 @@ const userSchema = new Schema(
     role: {
       type: String,
       default: "user",
+      lowecase: true,
+      trim: true,
+    },
+    address: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    city: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    state: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    country: {
+      type: String,
+      required: true,
+      lowecase: true,
+      trim: true,
+    },
+    zipcode: {
+      type: String,
+      required: true,
       lowecase: true,
       trim: true,
     },

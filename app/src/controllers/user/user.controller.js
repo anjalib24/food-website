@@ -5,6 +5,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userRegistrationValidation } from "../../utils/Validation.js";
+import { sendUserRegistrationConfirmationEmail } from "../../utils/mail.js";
 
 //get all user
 
@@ -30,7 +31,17 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 //User register part-
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, confirmPassword } = req.body.userData;
+  const {
+    username,
+    email,
+    password,
+    confirmPassword,
+    address,
+    city,
+    state,
+    country,
+    zipcode,
+  } = req.body.userData;
 
   const { error } = userRegistrationValidation.validate(req.body.userData);
 
@@ -52,12 +63,27 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     email,
     password,
+    address,
+    city,
+    state,
+    country,
+    zipcode,
   });
 
   const createdUser = await User.findById(user._id).select("-password");
 
   if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering the user");
+  } else {
+    try {
+      if (createdUser && createdUser.email) {
+        const name = createdUser.username || createdUser.email.split("@")[0];
+
+        await sendUserRegistrationConfirmationEmail(createdUser.email, name);
+      }
+    } catch (error) {
+      throw new ApiError(500, "Error sending email to the registered user");
+    }
   }
 
   return res
@@ -68,8 +94,11 @@ const registerUser = asyncHandler(async (req, res) => {
 // User login part-
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body.userData;
+  if (!email) {
+    throw new ApiError(400, "Email and password fields are required!");
+  }
 
-  if (!email && !password) {
+  if (!password) {
     throw new ApiError(400, "Email and password fields are required!");
   }
 
@@ -98,7 +127,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     res.status(201).json(new ApiResponse(200, accessToken, "User Logged In!"));
   } else {
-    throw new ApiError(400, "Email and password fields are required!");
+    throw new ApiError(400, "Email and password fields are incorrect!");
   }
 });
 

@@ -23,11 +23,15 @@ import userRouter from "./routes/user.routes.js";
 import productRouter from "./routes/product.routes.js";
 import orderRouter from "./routes/order.routes.js";
 import viewsRouter from "./routes/views.routes.js";
+import freeZipCodeRoutes from "./routes/freeZipCode.routes.js";
+import benchmarkRoutes from "./routes/benchmark.routes.js";
 
 //routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/views", viewsRouter);
+app.use("/api/v1/free-zip-codes", freeZipCodeRoutes);
+app.use("/api/v1/benchmarks", benchmarkRoutes);
 
 export { app };
