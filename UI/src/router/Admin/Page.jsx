@@ -14,6 +14,7 @@ import BestSellerProduct from "./BestSellerProduct/Page";
 import Reviews from "./Reviews/Page";
 import FAQs from "./Faqs/Page";
 import Blogs from "./Blogs/Page";
+import Charges from "./Charges/Page";
 import WithAuth from "@/components/WithAuth";
 
 const Page = () => {
@@ -49,7 +50,13 @@ const Page = () => {
                 <Blogs />
               </Route>
 
-              <Route path={`${match.path}/:id`}>{/* <Editor /> */}</Route>
+              <Route path={`${match.path}/charges`}>
+                <Charges />
+              </Route>
+
+              <Route path={`${match.path}/:ids`}>
+                <Test />
+              </Route>
             </Switch>
           }
         />
@@ -57,5 +64,15 @@ const Page = () => {
     </WithAuth>
   );
 };
+
+function Test() {
+  const { ids } = useParams();
+
+  return (
+    <div>
+      <h1>Test {ids}</h1>
+    </div>
+  );
+}
 
 export default Page;

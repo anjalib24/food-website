@@ -36,6 +36,11 @@ export const links = [
         icon: <FiShoppingBag />,
       },
       {
+        name: "Charges",
+        to: "/admin/charges",
+        icon: <FiShoppingBag />,
+      },
+      {
         name: "users",
         to: "/admin/users",
         icon: <FiShoppingBag />,
