@@ -34,7 +34,6 @@ const Page = () => {
   }, []);
 
   if (!data) return <Loader />;
-  else console.log(data);
 
   return (
     <Switch>
@@ -58,7 +57,7 @@ const Page = () => {
           </div>
         </div>
 
-        <Accordion>
+        <Accordion expanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel3a-content"
@@ -71,7 +70,7 @@ const Page = () => {
           </AccordionDetails>
         </Accordion>
 
-        <Accordion>
+        <Accordion expanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -83,7 +82,7 @@ const Page = () => {
             <HeroSection data={data["hero_section"]} />
           </AccordionDetails>
         </Accordion>
-        <Accordion>
+        <Accordion expanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel2a-content"

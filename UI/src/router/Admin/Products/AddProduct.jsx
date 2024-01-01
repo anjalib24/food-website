@@ -1,3 +1,4 @@
+import Editor from "@/components/Editor";
 import { useAdminState } from "@/contexts/AdminContext";
 import {
   Button,
@@ -9,6 +10,7 @@ import {
   Select,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -38,39 +40,14 @@ const AddProduct = () => {
     }));
   };
 
-  // const [categories, setCategories] = useState(null);
-  // const [countries, setCountries] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchCategoriesAndCountries = async () => {
-  //     try {
-  //       const responseCategories = await fetch(
-  //         "/api/api/v1/products/get-all-category"
-  //       );
-  //       const responseCountries = await fetch(
-  //         "/api/api/v1/products/get-all-country"
-  //       );
-
-  //       if (!responseCategories.ok || !responseCountries.ok) {
-  //         throw new Error(
-  //           `HTTP error! status: ${responseCategories.status}, ${responseCountries.status}`
-  //         );
-  //       }
-
-  //       const dataCategories = await responseCategories.json();
-  //       const dataCountries = await responseCountries.json();
-
-  //       setCategories(dataCategories.data);
-  //       setCountries(dataCountries.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchCategoriesAndCountries();
-  // }, []);
-
   const handleChange = (event) => {
+    if (typeof event === "string") {
+      setProduct({
+        ...product,
+        description: event,
+      });
+      return;
+    }
     setProduct({
       ...product,
       [event.target.name]: event.target.value,
@@ -105,6 +82,10 @@ const AddProduct = () => {
       console.error(error);
     }
   };
+
+  function temp(argv) {
+    console.log(argv);
+  }
 
   return (
     <Paper className="w-full p-4 space-y-1">
@@ -153,7 +134,7 @@ const AddProduct = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <TextField
               name="description"
               label="Description"
@@ -162,7 +143,15 @@ const AddProduct = () => {
               onChange={handleChange}
               fullWidth
             />
+          </Grid> */}
+          <Grid item xs={12}>
+            <Box
+              component={Editor}
+              content={product.description}
+              setContent={handleChange}
+            />
           </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               name="price"

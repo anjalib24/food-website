@@ -13,12 +13,6 @@ const HeroSection = ({ data }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
-    // if (!title || !subtitle || !image) {
-    //   alert("Please fill in all fields");
-    //   return;
-    // }
-    console.log(title, subtitle, image);
 
     const formData = new FormData();
     formData.append("title", title);
@@ -44,7 +38,6 @@ const HeroSection = ({ data }) => {
   };
 
   const img = image || data.image;
-  console.log(img, data.image);
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>

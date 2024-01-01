@@ -44,20 +44,6 @@ const AboutSection = ({ data }) => {
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate>
-      {/* <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        id="title"
-        label="Title"
-        name="title"
-        autoFocus
-        value={about}
-        onChange={(e) => setAbout(e.target.value)}
-        multiline
-      /> */}
-
       <Box component={Editor} content={about} setContent={setAbout} />
       <TextField
         margin="normal"

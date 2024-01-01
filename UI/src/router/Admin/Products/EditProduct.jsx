@@ -1,3 +1,4 @@
+import Editor from "@/components/Editor";
 import Loader from "@/components/Loader";
 import { useAdminState } from "@/contexts/AdminContext";
 import {
@@ -10,6 +11,7 @@ import {
   Select,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouteMatch } from "react-router-dom";
@@ -54,6 +56,16 @@ const EditProduct = () => {
   };
 
   const handleChange = (event) => {
+    if (typeof event === "string") {
+      setProduct({
+        ...product,
+        description: event,
+      });
+
+      addToList("description");
+      return;
+    }
+
     addToList(event.target.name);
     if (event.target.type === "file")
       setProduct({
@@ -166,7 +178,7 @@ const EditProduct = () => {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                   name="description"
                   label="Description"
@@ -174,6 +186,13 @@ const EditProduct = () => {
                   value={product.description}
                   onChange={handleChange}
                   fullWidth
+                />
+              </Grid> */}
+              <Grid item xs={12}>
+                <Box
+                  component={Editor}
+                  content={product.description}
+                  setContent={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
