@@ -7,6 +7,7 @@ import AddProduct from "./AddProduct";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAdminState } from "@/contexts/AdminContext";
+import EditProduct from "./EditProduct";
 const Page = () => {
   const { products, setProducts } = useAdminState();
 
@@ -86,6 +87,10 @@ const Page = () => {
         <AddProduct />
       </Route>
 
+      <Route path={match.path + "/edit/:id"}>
+        <EditProduct />
+      </Route>
+
       <Route path={match.path}>
         <div className="w-full py-2 flex justify-between items-center flex-row mb-3">
           <div>
@@ -137,17 +142,20 @@ const Page = () => {
                     gap={1}
                     marginBlock={2}
                   >
-                    <Button
-                      startIcon={<EditIcon />}
-                      variant="contained"
-                      className="text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium w-full"
-                    >
-                      Edit
-                    </Button>
+                    <Link to={`${match.path}/edit/${product._id}`}>
+                      <Button
+                        startIcon={<EditIcon />}
+                        variant="contained"
+                        className="text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium w-full"
+                      >
+                        Edit
+                      </Button>
+                    </Link>
                     <Button
                       startIcon={<DeleteIcon />}
                       variant="contained"
                       className="text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium w-full"
+                      onClick={() => deleteProduct(product._id)}
                     >
                       Delete
                     </Button>

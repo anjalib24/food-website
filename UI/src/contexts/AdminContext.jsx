@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const StateContext = createContext();
 
@@ -18,6 +18,7 @@ export const AdminContext = ({ children }) => {
   const [isClicked, setIsClicked] = useState(initialState);
 
   const [products, setProducts] = useState([]);
+  const [faqs, setFaqs] = useState([]);
 
   const setMode = (e) => {
     setCurrentMode(e.target.value);
@@ -31,6 +32,38 @@ export const AdminContext = ({ children }) => {
 
   const handleClick = (clicked) =>
     setIsClicked({ ...initialState, [clicked]: true });
+
+  const [categories, setCategories] = useState(null);
+  const [countries, setCountries] = useState(null);
+
+  useEffect(() => {
+    const fetchCategoriesAndCountries = async () => {
+      try {
+        const responseCategories = await fetch(
+          "/api/api/v1/products/get-all-category"
+        );
+        const responseCountries = await fetch(
+          "/api/api/v1/products/get-all-country"
+        );
+
+        if (!responseCategories.ok || !responseCountries.ok) {
+          throw new Error(
+            `HTTP error! status: ${responseCategories.status}, ${responseCountries.status}`
+          );
+        }
+
+        const dataCategories = await responseCategories.json();
+        const dataCountries = await responseCountries.json();
+
+        setCategories(dataCategories.data);
+        setCountries(dataCountries.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategoriesAndCountries();
+  }, []);
 
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -54,6 +87,10 @@ export const AdminContext = ({ children }) => {
         setThemeSettings,
         products,
         setProducts,
+        faqs,
+        setFaqs,
+        countries,
+        categories,
       }}
     >
       {children}

@@ -299,7 +299,8 @@ const updateProductData = asyncHandler(async (req, res) => {
   }
 
   let zipFieldName =
-    (req.files["zipFile"] && req.files["zipFile"][0].fieldname) || null;
+    (req.files && req.files["zipFile"] && req.files["zipFile"][0].fieldname) ||
+    null;
   let extractedZipFilesPath = "";
 
   if (zipFieldName === "zipFile") {

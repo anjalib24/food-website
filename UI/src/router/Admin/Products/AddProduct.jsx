@@ -1,3 +1,4 @@
+import { useAdminState } from "@/contexts/AdminContext";
 import {
   Button,
   FormControl,
@@ -28,6 +29,8 @@ const AddProduct = () => {
     categoryID: "",
   });
 
+  const { countries, categories } = useAdminState();
+
   const handleImageChange = (event) => {
     setProduct((product) => ({
       ...product,
@@ -35,37 +38,37 @@ const AddProduct = () => {
     }));
   };
 
-  const [categories, setCategories] = useState(null);
-  const [countries, setCountries] = useState(null);
+  // const [categories, setCategories] = useState(null);
+  // const [countries, setCountries] = useState(null);
 
-  useEffect(() => {
-    const fetchCategoriesAndCountries = async () => {
-      try {
-        const responseCategories = await fetch(
-          "/api/api/v1/products/get-all-category"
-        );
-        const responseCountries = await fetch(
-          "/api/api/v1/products/get-all-country"
-        );
+  // useEffect(() => {
+  //   const fetchCategoriesAndCountries = async () => {
+  //     try {
+  //       const responseCategories = await fetch(
+  //         "/api/api/v1/products/get-all-category"
+  //       );
+  //       const responseCountries = await fetch(
+  //         "/api/api/v1/products/get-all-country"
+  //       );
 
-        if (!responseCategories.ok || !responseCountries.ok) {
-          throw new Error(
-            `HTTP error! status: ${responseCategories.status}, ${responseCountries.status}`
-          );
-        }
+  //       if (!responseCategories.ok || !responseCountries.ok) {
+  //         throw new Error(
+  //           `HTTP error! status: ${responseCategories.status}, ${responseCountries.status}`
+  //         );
+  //       }
 
-        const dataCategories = await responseCategories.json();
-        const dataCountries = await responseCountries.json();
+  //       const dataCategories = await responseCategories.json();
+  //       const dataCountries = await responseCountries.json();
 
-        setCategories(dataCategories.data);
-        setCountries(dataCountries.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  //       setCategories(dataCategories.data);
+  //       setCountries(dataCountries.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
 
-    fetchCategoriesAndCountries();
-  }, []);
+  //   fetchCategoriesAndCountries();
+  // }, []);
 
   const handleChange = (event) => {
     setProduct({
@@ -108,6 +111,7 @@ const AddProduct = () => {
       <Typography variant="h5" gutterBottom marginBottom={"20px"}>
         Create New Products
       </Typography>
+
       <form onSubmit={handleSubmit} className="!my-4">
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>

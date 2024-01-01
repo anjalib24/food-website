@@ -1,3 +1,4 @@
+import { useAdminState } from "@/contexts/AdminContext";
 import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
@@ -14,6 +15,8 @@ const AddFaqs = () => {
       [event.target.name]: event.target.value,
     });
   };
+
+  const { setFaqs } = useAdminState();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -33,8 +36,10 @@ const AddFaqs = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const { data } = await response.json();
       console.log(data);
+
+      setFaqs((prev) => [...prev, data.faq.at(-1)]);
 
       setFaq({
         question: "",

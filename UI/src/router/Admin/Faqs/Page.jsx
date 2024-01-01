@@ -3,32 +3,24 @@ import {
   Add as AddIcon,
   ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { Link, Route, useRouteMatch, Switch } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
 
+import { useAdminState } from "@/contexts/AdminContext";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  Rating,
-  Typography,
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
+  Box,
+  Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import AddReview from "./AddFAQs";
 
 const Page = () => {
-  const [faqs, setFaqs] = useState();
-  /* 
-  This below is the data structure of the faqs array:
-    question: String
-    answer: String
-    _id: "6583e4eba0a5a59cfe8243ce"
-   */
+  const { faqs, setFaqs } = useAdminState();
 
   const match = useRouteMatch();
 
@@ -52,6 +44,24 @@ const Page = () => {
     fetchReviews();
   }, []);
 
+  const handleDelete = (id) => {
+    fetch(`/api/api/v1/views/delete-faq-views/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(() => {
+        setFaqs(faqs.filter((faq) => faq._id !== id));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   if (!faqs) return <Loader />;
 
   return (
@@ -59,6 +69,7 @@ const Page = () => {
       <Route path={match.path + "/new"}>
         <AddReview />
       </Route>
+
       <Route path={match.path}>
         <div className="w-full py-2 flex justify-between items-center flex-row mb-3">
           <div>
@@ -88,7 +99,16 @@ const Page = () => {
                 borderColor: "divider",
               }}
             >
-              <Typography>{faq.question}</Typography>
+              <Box display="flex" justifyContent="space-between" width="100%">
+                <Typography>{faq.question}</Typography>
+                <IconButton
+                  edge="start"
+                  aria-label="delete"
+                  onClick={() => handleDelete(faq._id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
             </AccordionSummary>
             <AccordionDetails>
               <Typography>{faq.answer}</Typography>
