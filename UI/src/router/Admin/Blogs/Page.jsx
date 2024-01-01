@@ -1,31 +1,24 @@
 import Loader from "@/components/Loader";
 import { Add as AddIcon } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { Link, Route, useRouteMatch, Switch } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
 
+import { useAdminState } from "@/contexts/AdminContext";
 import {
-  Avatar,
   Box,
   Card,
   CardContent,
-  Grid,
-  Rating,
-  Typography,
   CardMedia,
+  Grid,
+  Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
+import DOMPurify from "dompurify";
 import AddBlog from "./AddBlog";
+import EditBlog from "./EditBlog";
 
 const Page = () => {
-  const [blogs, setBlogs] = useState(null);
-  /* 
-  This below is the data structure of the reviews array:
-
-    _id: mongoose ObjectID
-    image: string
-    content: html string
-    updatedAt: ISO Date string
-   */
+  const { blogs, setBlogs } = useAdminState();
 
   const match = useRouteMatch();
 
@@ -50,12 +43,34 @@ const Page = () => {
     fetchReviews();
   }, []);
 
+  const handleDelete = (id) => {
+    fetch("/api/api/v1/views/delete-blog-views/" + id, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(({ data }) => {
+        console.log(data);
+        setBlogs(blogs.filter((blog) => blog._id !== id));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   if (!blogs) return <Loader />;
 
   return (
     <Switch>
       <Route path={match.path + "/new"}>
         <AddBlog />
+      </Route>
+      <Route path={match.path + "/edit/:id"}>
+        <EditBlog />
       </Route>
       <Route path={match.path}>
         <div className="w-full py-2 flex justify-between items-center flex-row mb-3">
@@ -75,23 +90,66 @@ const Page = () => {
           </div>
         </div>
 
-        <Grid container spacing={2}>
+        <Grid container spacing={4}>
           {blogs.map((blog, index) => (
             <Grid item xs={12} lg={6} xl={4} key={index}>
-              <Card>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
                 <CardMedia
                   component="img"
                   height="140"
                   image={"/api" + blog.image}
                   alt="blog image"
                 />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary">
-                    {new Date(blog.updatedAt).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body1" color="text.primary">
-                    {blog.content}
-                  </Typography>
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    flexGrow: 1,
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div>
+                    <Typography variant="body2" color="text.secondary">
+                      {new Date(blog.updatedAt).toLocaleDateString()}
+                    </Typography>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(blog.content),
+                      }}
+                    />
+                  </div>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      mt: 1.5,
+                      gap: 1.5,
+                    }}
+                  >
+                    <Link to={`${match.path}/edit/${blog._id}`}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{ opacity: 0.9 }}
+                      >
+                        Edit
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      style={{ opacity: 0.9 }}
+                      onClick={() => handleDelete(blog._id)}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>

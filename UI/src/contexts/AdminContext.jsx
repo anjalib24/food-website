@@ -20,6 +20,7 @@ export const AdminContext = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [faqs, setFaqs] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [blogs, setBlogs] = useState([]);
 
   const setMode = (e) => {
     setCurrentMode(e.target.value);
@@ -94,6 +95,8 @@ export const AdminContext = ({ children }) => {
         categories,
         reviews,
         setReviews,
+        blogs,
+        setBlogs,
       }}
     >
       {children}

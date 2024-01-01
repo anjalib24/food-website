@@ -1,13 +1,5 @@
 import Editor from "@/components/Editor";
-import {
-  Button,
-  TextField,
-  Box,
-  Rating,
-  Paper,
-  Typography,
-  Grid,
-} from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
 const AddBlog = () => {
