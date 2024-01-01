@@ -96,6 +96,6 @@ export const deleteFreeZipCode = async (req, res) => {
       )
     );
   } catch (error) {
-    returnres.status(500).json(new ApiError(500, error.message));
+    return res.status(500).json(new ApiError(500, error.message));
   }
 };

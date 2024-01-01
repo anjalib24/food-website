@@ -4,7 +4,11 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { productValidation } from "../../utils/Validation.js";
 import { Product } from "../../models/product.model.js";
 import { Category } from "../../models/category.model.js";
-import { cartRepository, addItem } from "../../services/repository.js";
+import {
+  cartRepository,
+  addItem,
+  addShippingCharge,
+} from "../../services/repository.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
 import { Country } from "../../models/country.model.js";
@@ -527,9 +531,18 @@ const addItemToCart = asyncHandler(async (req, res) => {
         }
         let data = await cart.save();
 
-        return res
-          .status(200)
-          .json(new ApiResponse(200, data, "Process successful"));
+        if (data) {
+          const cartDataWithShippingCharge = await addShippingCharge(data);
+          return res
+            .status(200)
+            .json(
+              new ApiResponse(
+                200,
+                cartDataWithShippingCharge,
+                "Process successful"
+              )
+            );
+        }
       }
       //------------ This creates a new cart and then adds the item to the cart that has been created------------
       else {
@@ -546,9 +559,18 @@ const addItemToCart = asyncHandler(async (req, res) => {
           subTotal: parseInt(productDetails.price * quantity),
         };
         cart = await addItem(cartData);
-        return res
-          .status(200)
-          .json(new ApiResponse(200, cart, "Items added successful"));
+        if (cart) {
+          const cartDataWithShippingCharge = await addShippingCharge(cart);
+          return res
+            .status(200)
+            .json(
+              new ApiResponse(
+                200,
+                cartDataWithShippingCharge,
+                "Items added successful"
+              )
+            );
+        }
       }
     } catch (err) {
       throw new ApiError(400, err);

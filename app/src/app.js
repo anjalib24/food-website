@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-
+// import { getShippoData } from "./utils/shippo.js";
+// getShippoData();
 const app = express();
 
 app.use(
