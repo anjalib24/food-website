@@ -8,6 +8,7 @@ import {
   useRouteMatch,
 } from "react-router-dom/cjs/react-router-dom.min";
 import ProductsPage from "./Products/Page";
+import WithAuth from "@/components/WithAuth";
 import CustomizationPage from "./Customizations/Page";
 import "./styles.css";
 import BestSellerProduct from "./BestSellerProduct/Page";
@@ -15,7 +16,6 @@ import Reviews from "./Reviews/Page";
 import FAQs from "./Faqs/Page";
 import Blogs from "./Blogs/Page";
 import Charges from "./Charges/Page";
-import WithAuth from "@/components/WithAuth";
 
 const Page = () => {
   let match = useRouteMatch();
@@ -62,6 +62,7 @@ const Page = () => {
         />
       </AdminContext>
     </WithAuth>
+
   );
 };
 

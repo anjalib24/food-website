@@ -6,12 +6,18 @@ import * as Yup from "yup";
 import axios from "axios";
 import Alert from "@/router/Shop/Alert";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Footer } from "@/router/Shop/Footer";
+import Header from "@/router/Shop/Header";
 
 const registrationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
   email: Yup.string().email("Invalid email address").required("Email is required"),
   password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
   repassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match").required("Confirm Password is required"),
+  address: Yup.string().required("Address is required"),
+  city: Yup.string().required("City is required"),
+  state: Yup.string().required("State is required"),
+  zipcode: Yup.string().required("Zipcode is required"),
 });
 
 const initialValues = {
@@ -19,6 +25,11 @@ const initialValues = {
   email: "",
   repassword: "",
   password: "",
+  address: "",
+  city: "",
+  state: "",
+  zipcode: "",
+  country: "",
 };
 
 const Registration = () => {
@@ -40,13 +51,17 @@ const Registration = () => {
           email: values.email,
           password: values.password,
           confirmPassword: values.repassword,
+          address: values.address,
+          city: values.city,
+          state: values.state,
+          zipcode: values.zipcode,
+          country: values.country
         },
       };
-    
+
       try {
         const apiUrl = "http://127.0.0.1:8000/api/v1/users/register";
         const response = await axios.post(apiUrl, requestData);
-    console.log(response);
         // Check the response and show the appropriate alert
         if (response.status === 201) {
           showAlert("success", "Registration successful!");
@@ -70,9 +85,10 @@ const Registration = () => {
   };
 
   return (
+    <>
     <div>
-         {alert && <Alert type={alert.type} message={alert.message} />}
-
+      {alert && <Alert type={alert.type} message={alert.message} />}
+<Header hideCart={true}/>
       <section
         className="p-5 w-100"
         style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}
@@ -168,6 +184,103 @@ const Registration = () => {
                         </div>
                       </div>
                       <div className="row mt-3">
+                        <div className="col text-left">
+                          <label htmlFor="address" className="form-label">
+                            Address
+                          </label>
+                          <input
+                            id="address"
+                            name="address"
+                            className="form-control"
+                            value={values.address}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                          {errors.address && touched.address ? (
+                            <small className="text-danger mt-1">
+                              {errors.address}
+                            </small>
+                          ) : null}
+                        </div>
+                      </div>
+                      <div className="row mt-3">
+                        <div className="col text-left">
+                          <label htmlFor="country" className="form-label">
+                            Country
+                          </label>
+                          <input
+                            id="country"
+                            name="country"
+                            className="form-control"
+                            value={values.country}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                          {errors.country && touched.country ? (
+                            <small className="text-danger mt-1">
+                              {errors.country}
+                            </small>
+                          ) : null}
+                        </div>
+                        <div className="col text-left">
+                          <label htmlFor="city" className="form-label">
+                            City
+                          </label>
+                          <input
+                            id="city"
+                            name="city"
+                            className="form-control"
+                            value={values.city}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                          {errors.city && touched.city ? (
+                            <small className="text-danger mt-1">
+                              {errors.city}
+                            </small>
+                          ) : null}
+                        </div>
+                      </div>
+                      <div className="row mt-3">
+                        <div className="col text-left">
+                          <label htmlFor="state" className="form-label">
+                            State
+                          </label>
+                          <input
+                            id="state"
+                            name="state"
+                            className="form-control"
+                            value={values.state}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                          {errors.state && touched.state ? (
+                            <small className="text-danger mt-1">
+                              {errors.state}
+                            </small>
+                          ) : null}
+                        </div>
+                        <div className="col text-left">
+                          <label htmlFor="zipcode" className="form-label">
+                            Zipcode
+                          </label>
+                          <input
+                            id="zipcode"
+                            name="zipcode"
+                            className="form-control"
+                            value={values.zipcode}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                          {errors.zipcode && touched.zipcode ? (
+                            <small className="text-danger mt-1">
+                              {errors.zipcode}
+                            </small>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <div className="row mt-3">
                         <div className="col text-right actionButtons">
                           <Button
                             variant="secondary"
@@ -193,7 +306,7 @@ const Registration = () => {
                       </div>
                     </form>
                   </div>
-                  <div className="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                  <div className="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2 mt-auto mb-auto">
                     <img
                       src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
                       className="img-fluid"
@@ -207,6 +320,8 @@ const Registration = () => {
         </div>
       </section>
     </div>
+    <Footer/>
+    </>
   );
 };
 

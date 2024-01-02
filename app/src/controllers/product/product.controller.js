@@ -136,6 +136,7 @@ const getProductData = asyncHandler(async (req, res) => {
 
 //create product part-
 const createProductData = asyncHandler(async (req, res) => {
+  
   const {
     title,
     short_description,
@@ -439,7 +440,7 @@ const getAllCountry = asyncHandler(async (req, res) => {
 
 const addItemToCart = asyncHandler(async (req, res) => {
   const productsData = req.body;
-
+console.log("--productsData---",productsData)
   if (
     !Array.isArray(productsData) ||
     productsData.length === 0 ||
@@ -587,7 +588,7 @@ const getCart = asyncHandler(async (req, res) => {
   }
 
   const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-
+console.log(userID , "user ID--------------------");
   let cart = await cartRepository(userID);
   if (!cart) {
     return res.status(200).json(new ApiResponse(200, {}, "Cart not Found!"));
