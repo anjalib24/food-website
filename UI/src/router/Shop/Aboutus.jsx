@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react'
 import "./style.css"
 import videos from "./images/Group.png"
 import AboutusDefaultimg from "./images/image 7.png"
-import DOMPurify from "dompurify";
 import VideoModal from './VideoModal';
+import { useProductState } from './context/ProductContext';
 
 export const Aboutus = (props) => {
-console.log(props ," about us ");
     const [showvideomodal,setShowvideomodal]=useState(null);
     const [videodata,setVideoData] = useState()
+    const {createMarkup } = useProductState();
     const handleVideomodal = (item) => {
         setVideoData(item);
         setShowvideomodal(true);
       };
-    const createMarkup = (htmlContent) => {
-        return { __html: DOMPurify.sanitize(htmlContent) };
-    };
+   
+
     return(
         <>
         {showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata} title="About us video"/>}

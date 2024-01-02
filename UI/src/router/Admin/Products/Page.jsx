@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
 import { Add as AddIcon } from "@mui/icons-material";
 import AddProduct from "./AddProduct";
-
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useAdminState } from "@/contexts/AdminContext";
 const Page = () => {
-  const [products, setProducts] = useState([]);
+  const { products, setProducts } = useAdminState();
+
   const match = useRouteMatch();
 
   useEffect(() => {
@@ -24,14 +27,14 @@ const Page = () => {
 
   if (products.length === 0) return <Loader />;
 
-  function addToBestSeller(id) {
+  function toggleBestSeller(id, best_seller) {
     fetch(`/api/api/v1/products/update-product/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        best_seller: true,
+        best_seller: !best_seller,
       }),
     })
       .then((response) => {
@@ -43,8 +46,33 @@ const Page = () => {
       .then((updatedProduct) => {
         setProducts((prevProducts) =>
           prevProducts.map((product) =>
-            product._id === id ? { ...product, best_seller: true } : product
+            product._id === id
+              ? { ...product, best_seller: !best_seller }
+              : product
           )
+        );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function deleteProduct(id) {
+    fetch(`/api/api/v1/products/delete-product/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((deletedProduct) => {
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== id)
         );
       })
       .catch((error) => {
@@ -103,19 +131,42 @@ const Page = () => {
                     <strong>Category: </strong>
                     {product.category.name}
                   </p>
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    gap={1}
+                    marginBlock={2}
+                  >
+                    <Button
+                      startIcon={<EditIcon />}
+                      variant="contained"
+                      className="text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium w-full"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      startIcon={<DeleteIcon />}
+                      variant="contained"
+                      className="text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium w-full"
+                    >
+                      Delete
+                    </Button>
+                  </Box>
 
                   <Button
                     variant="contained"
-                    className="w-full text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium"
+                    className={`w-full text-white p-2 ${
+                      product.best_seller
+                        ? "!bg-red-400 hover:!bg-red-500"
+                        : "!bg-indigo-400 hover:!bg-indigo-500"
+                    } rounded-md font-medium`}
+                    onClick={() =>
+                      toggleBestSeller(product._id, product.best_seller)
+                    }
                   >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className="w-full text-white p-2 !bg-indigo-500 hover:!bg-indigo-600 rounded-md font-medium"
-                    onClick={() => addToBestSeller(product._id)}
-                  >
-                    Make best seller
+                    {product.best_seller
+                      ? "Remove best seller"
+                      : "Make best seller"}
                   </Button>
                 </Paper>
               </Box>

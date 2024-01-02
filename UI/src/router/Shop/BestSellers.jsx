@@ -10,7 +10,7 @@ const BestSellers = () => {
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
 
-  
+
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
@@ -21,7 +21,7 @@ const BestSellers = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -31,7 +31,7 @@ const BestSellers = () => {
   const settings = {
     dots: false,
     arrows: true,
-    infinite: true,
+    infinite: false,
     slidesToShow: 5,
     slidesToScroll: 1,
     responsive: [
@@ -60,19 +60,19 @@ const BestSellers = () => {
   return (
     <>
       <div className="container">
-        <section className="bestselling">
+        <section id="search" className="mt-5">
           <div className="col-md-12 mt-5 mb-5 text-center">
             <h1>Bestsellers</h1>
           </div>
           <div className="row">
-            {loading ? ( 
+            {loading ? (
               <div className="col-md-12 text-center">
-<Loader/>
+                <Loader />
               </div>
             ) : data && data.length ?
               (
                 <div className='container'>
-                  
+
                   <Slider ref={sliderRef} {...settings} className='d-flex'>
                     {data.map((item, key) => {
                       return <ProductCard key={key} item={item} />

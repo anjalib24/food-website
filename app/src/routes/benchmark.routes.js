@@ -10,11 +10,8 @@ import {
 const router = Router();
 
 router.route("/").post(createBenchmark).get(getAllBenchmarks);
+router.route("/").put(updateBenchmark);
 
-router
-  .route("/:id")
-  .get(getOneBenchmark)
-  .put(updateBenchmark)
-  .delete(deleteBenchmark);
+router.route("/:id").get(getOneBenchmark).delete(deleteBenchmark);
 
 export default router;

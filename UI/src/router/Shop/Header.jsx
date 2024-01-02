@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import "./style.css";
 import ethnicLogo from './images/logo 2 2.png';
-import { Button } from 'react-bootstrap';
-import { useHistory } from "react-router-dom";
+import { Button, Dropdown } from 'react-bootstrap';
+import { useHistory } from "react-router-dom"; 
+import defaultpersonimg from "./images/defaultperson.png"
+import { HashLink as Link } from 'react-router-hash-link';
 
-const Header = () => {
+const Header = ({ hideCart , hidebutton }) => {
   const [basketCount, setBasketCount] = useState(0);
   const navigate = useHistory();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profileImage, setProfileImage] = useState({defaultpersonimg}); 
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
 
   function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
@@ -26,7 +35,6 @@ const Header = () => {
   }
 
   useEffect(() => {
-    console.log("header useeffect run");
     countCartItems();
 
     const handleStorageChange = () => {
@@ -39,35 +47,47 @@ const Header = () => {
     };
   }, []);
 
-
-  
   return (
     <>
-      <header>
+    <header>
         <div className="main-header">
           <div className="container">
             <nav>
-              <a>
+              <Link to="/">
                 <img src={ethnicLogo} className="logo" alt="#" />
-              </a>
+              </Link>
               <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="#shop">Shop</a></li>
-                <li><a href="#about" onClick={() => scrollToSection('About')}>About Us</a></li>
-                <li><a href="#review">Review</a></li>
-                <li><a href="#Blog">Blog</a></li>
-                <li><a href="#FAQ">FAQ</a></li>
-                <li onClick={() => scrollToSection('footer')}>Contact</li>
-              </ul>
-              <div>
-                <Button style={{background:"green"}} onClick={() => navigate.push("/login")}>Login</Button>
-              </div>
-              <div className="icons" onClick={handleBasketClick}>
-                <i className="fa badge fa-lg" value={basketCount}>
-                  &#xf290;
-                </i>
-               
-              </div>
+             <li><Link to="/">Home</Link></li>
+             <li><Link to="/shop">Shop</Link></li>
+             <li><Link to="/#About">About Us</Link></li>
+             <li><Link to="/#review">Review</Link></li>
+             <li><Link to="/#Blog">Blog</Link></li>
+             <li><Link to="/#FAQ">FAQ</Link></li>
+             <li onClick={() => scrollToSection('footer')}>Contact</li>
+           </ul>
+              {!isLoggedIn && !hidebutton && (
+                <div>
+                  <Button style={{background:"green"}} onClick={() => navigate.push("/login")}>Login</Button>
+                </div>
+              )}
+                 {!hideCart && (
+          <div className="icons" onClick={handleBasketClick}>
+            <i className="fa badge fa-lg" value={basketCount}>
+              &#xf290;
+            </i>
+          </div>
+        )}
+              {isLoggedIn && (
+                <Dropdown>
+                  <Dropdown.Toggle as="div" id="dropdown-basic" style={{borderRadius: '40%', width: '40px', height: '40px'}}>
+                    <img src={defaultpersonimg} alt="User Profile" className="profile-image" style={{width: '100%', height: '100%'}}/>
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item as={Link} to="/yourprofile">Your Profile</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              )}
             </nav>
           </div>
         </div>

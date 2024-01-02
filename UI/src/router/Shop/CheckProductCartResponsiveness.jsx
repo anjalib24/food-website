@@ -7,15 +7,15 @@ import "./CheckProductCartResponsiveness.css"
 const CheckProductCartResponsiveness = () => {
   let array = [{
     id: "658be609842a116bb62a7d4a",
-    title: "Test001",
-    short_description: "this is short huihuiuh ijkjkijj  jhkjhlkj kjhkljlkhjk khlkjhlkhj lkhjkljhkh hlkjklhj hlkkhj kjhlkjlkh joklhilh hihihu ohihhi  description ",
+    title: "Test00; kjlijoljk hjkhjkjh khjkhjk hjkhkjhkhj k1",
+    short_description: "this is short huklknlkkjnkjk hkjkjhkjhk hkhkhjk hkhjkhj khjkhj khjkhjkhjihuiuh ijkjkijj  jhkjhlkj kjhkljlkhjk khlkjhlkhj lkhjkljhkh hlkjklhj hlkkhj kjhlkjlkh joklhilh hihihu ohihhi  description ",
     description: "this is description erferv   rf r gvhghh jhgjhjkh gjhkjh gjhgjh gjghhkjh v erv rf ergf rgf ",
     origin_country: "65813d8cb7ac04f7217dcc7d",
     images: [
       { img1 }, { img2 }]
   }, {
     id: "658be609842a116bb62a7d4a",
-    title: "Test00 edfc erf vr 1",
+    title: "Test00 edfc pjklj jiljkljl jljljkl kljkljk  erf vr 1",
     short_description: "this is sho revf erv vrt descriptio frferf vefverf erger gfefrve efv erfv erferf ergverv erverv ervferv erfverfv efverv erverv ervervn",
     description: "this is descripti ref erf ervf erv on",
     origin_country: "65813d8cb7ac04f7217dcc7d",
@@ -31,7 +31,7 @@ const CheckProductCartResponsiveness = () => {
       { img1 }, { img2 }]
   }, {
     id: "658be609842a116bb62a7d4a",
-    title: "Test001 v erv e e ec edfc ",
+    title: "Test edfc ",
     short_description: "this is short description",
     description: "this is description",
     origin_country: "65813d8cb7ac04f7217dcc7d",
@@ -55,12 +55,12 @@ const CheckProductCartResponsiveness = () => {
       { img1 }, { img2 }]
   }]
 
-  const [openmenu , setOpenMenu ]= useState(false)
+  const [openmenu, setOpenMenu] = useState(false)
   return (
     <>
       <div className='hambagarmenu' onClick={!setOpenMenu}>
-            <i className="fa-solid fa-bars"></i>
-            </div>
+        <i className="fa-solid fa-bars"></i>
+      </div>
       <div className='container'>
         <section id="search" className="mt-5">
           <div className="col-md-12 pr-0 pl-0 mb-5" >
@@ -80,7 +80,7 @@ const CheckProductCartResponsiveness = () => {
             </form>
           </div>
           <div className="row">
-          
+
             <div id="checkboxfilter" className="col-md-2 align-items-centerss ">
               <h5>Origin County</h5>
               <h6>All</h6>
@@ -155,22 +155,19 @@ const CheckProductCartResponsiveness = () => {
                 {array.map((product, index) => (
                   <div key={index} className="col-md-3 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
                     <div>
-                    <img src={img1} className="text-center m-2" style={{ maxWidth: '100%' }} alt="#" />
-
+                      <img src={img1} className="text-center m-2" style={{ maxWidth: '100%' }} alt="#" />
                     </div>
                     <div className="product-info ">
                       <div>
-                      <h3 style={{ fontSize: '20px', marginTop: '13px' }}><strong>{product.title}</strong></h3>
-
+                        <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' , fontSize: '20px', marginTop: '13px' }}><strong>{product.title}</strong></h3>
                       </div>
                       <div>
-  <p style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-    {product.short_description}
-  </p>
-</div>
+                        <p className="product-description" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {product.short_description}
+                        </p>
+                      </div>
                       <div>
-                      <h5>Origin County: <img src={flag} alt="#" /></h5>
-
+                        <h5>Origin County: <img src={flag} alt="#" /></h5>
                       </div>
                     </div>
                     <div className="product-actions">
@@ -179,11 +176,10 @@ const CheckProductCartResponsiveness = () => {
                       <a href=""><img src="images/Group.png" width="20px" height="15px" /></a>
                     </div>
                     <div>
-                    <h3 className="text-center">{product.price}</h3>
+                      <h3 className="text-center">{90}</h3>
                     </div>
-                    <div className="d-grid gap-3">
+                    <div className="d-grid gap-3 mt-1">
                       <button className="btn btn-success btn-block ">Add to Cart</button>
-                      <button className="btn btn-success btn-block ">Buy Now</button>
                       <button className="btn btn-white btn-block border border-success mb-1 ">Explore</button>
                     </div>
                   </div>

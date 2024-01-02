@@ -39,3 +39,13 @@
     }
   }
   
+  .product-description {
+    min-height: 48px; /* Adjust this value as needed */
+  }
+
+  .product-title {
+    min-height: 49px; /* Adjust this value as needed */
+  }
+
+  
+  

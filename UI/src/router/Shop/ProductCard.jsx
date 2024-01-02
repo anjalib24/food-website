@@ -3,10 +3,16 @@ import productimg from "./images/image 5 (1).png"
 import png360 from "./images/360.png"
 import usflag from "./images/USA_Flag_icon.png"
 import vectorimg from "./images/Vector.png"
+import { useProductState } from './context/ProductContext'
+import videoimg from "./images/Group.png"
+import "./style.css"
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 const ProductCard = (props) => {
   const { item } = props
-  const { description, price, title } = item
+  const { description, price, title, short_description } = item
+  const { handleaddtocard, showvideomodal, setShowvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, setShow360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial } = useProductState();
+  const history = useHistory()
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -23,35 +29,82 @@ const ProductCard = (props) => {
             <div>
               <img src={productimg} className="text-center" alt="#" />
               <div className="card-content mx-2">
-                <h3 className=" mt-3 clamp-2">{title}</h3>
-                <p className="description clamp-2">{description}</p>
+                <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{title}</strong></h3>
+                <div>
+                  <p className="product-description" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {short_description}
+                  </p>
 
+                </div>
                 <div className='d-flex flex-row align-items-center'>
-                  <div className="mr-2">
                     <h5>Origin County:</h5>
-                  </div>
                   <img src={usflag} alt="#" className='my-auto' />
                 </div>
 
-                <div className='d-flex flex-row'>
-                  <a href="/" className="mr-3"><img src={png360} alt="png360" /></a>
-                  <a href="/" className="mr-3"><img alt='vector' src={vectorimg} /></a>
-                </div>
-              </div>
+                <div className="product-actions">
 
-            </div>
-            <div className="flex-grow-1 d-flex flex-column justify-content-between">
-              <div>
-                <h3 className="text-center">{formatter.format(item.price)}</h3>
-              </div>
-              <div className="d-flex flex-col mx-2">
-                <button className="btn btn-success btn-block ">Add to Cart</button>
-                <button className="btn btn-white btn-block border border-success mb-1 ">Explore</button>
+                  <div className='d-flex flex-row '>
+                    {item.zipFile_url && <div className="mr-3">
+                      <img
+                        src={png360}
+                        alt="png360"
+                        onClick={() => handleExploreClicks(item)}
+                        data-toggle="modal"
+                        data-target="#explore360Modal"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </div>}
+                    <div>
+                      <div className="mr-3">
+                        <img alt='vector' src={vectorimg}
+                          onClick={() => handleSocialmedia(item)}
+                          data-toggle="modal"
+                          data-target="#socialmedia"
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </div>
+                    </div>
+                    {item.video_url && <div>
+                      <div className="mr-3">
+                        <img alt='vector' src={videoimg}
+                          onClick={() => handleVideomodal(item)}
+                          data-toggle="modal"
+                          data-target="#videomodal"
+                          style={{ cursor: 'pointer', width: "22px", height: "20p" }}
+                        />
+                      </div>
+                    </div>}
+
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-center">{formatter.format(item.price)}</h3>
+                </div>
+                <div className="d-grid gap-3 mt-1">
+                  <button
+                    className="btn btn-success btn-block"
+                    onClick={() => handleaddtocard(item)}
+                    data-target="#myModal2"
+                    data-toggle="modal"
+                  >
+                    Add to cart
+                  </button>
+
+                  <button
+                    className="btn btn-white btn-block border border-success mb-1"
+                    onClick={() => history.push(`/productdetail/${item._id}`)}
+                    data-toggle="modal"
+                    data-target="#exploreModal"
+                  >
+                    Explore
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
     </>
   )
 }

@@ -43,14 +43,17 @@ export const getOneBenchmark = async (req, res) => {
 export const updateBenchmark = async (req, res) => {
   try {
     const { benchmark, benchmark1 } = req.body;
-    const updatedBenchmark = await Benchmark.findByIdAndUpdate(
-      req.params.id,
-      { benchmark, benchmark1 },
+
+    const updatedBenchmark = await Benchmark.findOneAndUpdate(
+      {},
+      { $set: { benchmark, benchmark1 } },
       { new: true }
     );
+
     if (!updatedBenchmark) {
       return res.status(404).json(new ApiError(404, "Benchmark not found"));
     }
+
     return res.json(
       new ApiResponse(200, updatedBenchmark, "Benchmark updated successfully")
     );
