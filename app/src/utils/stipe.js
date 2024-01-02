@@ -96,8 +96,8 @@ const orderWithStripeCheckOutPayment = async (
       customer: customer.id,
       line_items: lineItems,
       mode: "payment",
-      success_url: "http://127.0.0.1:8000/api/v1/order/success",
-      cancel_url: "https://your-website.com/cancel",
+      success_url: "http://localhost:5173/paymentsucess",
+      cancel_url: "http://localhost:5173/paymentcancle",
     });
 
     return stripeData;

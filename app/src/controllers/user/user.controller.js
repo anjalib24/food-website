@@ -29,6 +29,13 @@ const getAllUsers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, usersData, "Get all users data successfully"));
 });
 
+//get single user
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Get current user data successfully"));
+});
+
 //User register part-
 const registerUser = asyncHandler(async (req, res) => {
   const {
@@ -91,6 +98,37 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registered Successfully"));
 });
 
+//update user
+const updateUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { username, email, address, city, state, country, zipcode } =
+    req.body.userData;
+
+  const existingUser = await User.findById(id);
+
+  if (!existingUser) {
+    throw new ApiError(404, "User Not Found");
+  }
+
+  existingUser.username = username || existingUser.username;
+  existingUser.email = email || existingUser.email;
+  existingUser.address = address || existingUser.address;
+  existingUser.city = city || existingUser.city;
+  existingUser.state = state || existingUser.state;
+  existingUser.country = country || existingUser.country;
+  existingUser.zipcode = zipcode || existingUser.zipcode;
+
+  const updatedUser = await existingUser.save();
+
+  if (!updatedUser) {
+    throw new ApiError(500, "Error updating user information");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "User updated successfully"));
+});
+
 // User login part-
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body.userData;
@@ -131,4 +169,18 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, getAllUsers };
+// User logout part-
+const logoutUser = asyncHandler(async (req, res) => {
+  res.clearCookie("cookie_token");
+
+  res.status(200).json(new ApiResponse(200, null, "User Logout!"));
+});
+
+export {
+  registerUser,
+  loginUser,
+  getAllUsers,
+  getCurrentUser,
+  updateUser,
+  logoutUser,
+};

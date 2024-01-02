@@ -26,7 +26,7 @@ const adminAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    throw new ApiError(500, error.message);
+    res.status(error.statusCode || 500).json(error.toJSON());
   }
 };
 

@@ -14,20 +14,22 @@ const userAuth = async (req, res, next) => {
 
     const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    const existedUser = await User.findOne({ email: user.email });
+    const existedUser = await User.findOne({ email: user.email }).select(
+      "-password"
+    );
 
     if (!existedUser) {
-      throw new ApiError(404, "User Not Found!");
+      throw new ApiError(404, "User Not Found");
     }
 
     if (existedUser.role !== "user") {
-      return res.status(401).json({ error: "Not permissions" });
+      throw new ApiError(401, "Not permissions");
     }
 
-    req.user = user;
+    req.user = existedUser;
     next();
   } catch (error) {
-    throw new ApiError(500, error.message);
+    res.status(error.statusCode || 500).json(error.toJSON());
   }
 };
 

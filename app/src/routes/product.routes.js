@@ -17,6 +17,7 @@ import {
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
+import { userAuth } from "../middlewares/userAuth.js";
 
 const router = Router();
 
