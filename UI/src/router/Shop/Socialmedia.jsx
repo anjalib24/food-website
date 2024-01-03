@@ -18,8 +18,8 @@ import {
   InstapaperIcon
 } from "react-share";
 
-const Socialmedia = ({ showModal, setShowModal }) => {
-  const shareUrl = 'https://your-website.com';
+const Socialmedia = ({ showModal, setShowModal , productId }) => {
+  const shareUrl = `http://localhost:5173/productdetail/${productId}`;
   const title = 'Check out this awesome website!';
 
   return (

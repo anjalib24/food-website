@@ -14,8 +14,6 @@ export const Home = () => {
   const [show, setShow] = useState()
 
   useEffect(() => {
- 
-
     fetchDataFromApi();
   }, []);
   const fetchDataFromApi = async () => {
@@ -23,14 +21,13 @@ export const Home = () => {
       const result = await getshowingdata("views/get-views");
       setShow(result.data[0]);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      
+      console.error('Error fetching data:', error); 
     }
   };
   
   return (
     <>
-      <Header />
+      <Header/>
       <Shopnow herosection={show?.hero_section} />
       <BestSellers />
       <Allproduct />

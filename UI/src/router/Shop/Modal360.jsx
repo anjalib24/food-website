@@ -5,10 +5,8 @@ import { useEffect } from "react";
 
 const Modal360 = ({ show360Modal, setShow360Modal, data }) => {
 
-console.log(show360Modal,"modal 360 showmoda;");
     useEffect(() => {
 
-        console.log("useeffect run");
         const viewer = WR360.ImageRotator.Create("webrotate360");
         viewer.licenseCode = "your-license-code";
         viewer.settings.configFileURL = "http://localhost:8000/zipfiles/example_1703078272760/example/example.xml"

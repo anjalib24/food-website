@@ -22,7 +22,7 @@ export const Blog = (props) => {
   const settings = {
     dots: false,
     arrows: true,
-    infinite: true,
+    infinite: false,
     slidesToShow: 4,
     slidesToScroll: 1,
     responsive: [

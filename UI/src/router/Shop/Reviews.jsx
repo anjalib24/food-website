@@ -3,8 +3,10 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './style.css';
+import defaultpersonimg from "./images/defaultperson.png"
 
 const Reviews = (props) => {
+  console.log(props,"review props");
   const [index, setIndex] = useState(0);
   const sliderRef = useRef(null);
   useEffect(() => {
@@ -14,7 +16,7 @@ const Reviews = (props) => {
   const settings = {
     dots: false,
     arrows: true,
-    infinite: true,
+    infinite: false,
     slidesToShow: 4,
     slidesToScroll: 1,
     responsive: [
@@ -59,13 +61,16 @@ const Reviews = (props) => {
             {props?.reviews?.map((item, reviewIndex) => (
               <>
                 <div key={reviewIndex} style={{
-                  marginRight: '10px'
+                  marginRight: '5px',
+                  marginLeft: "5px"
                 }}>
                   <div id="review_card">
                     <div id="card_top" >
                       <div id="profile" className="">
                         <div id="profile_image">
-                          <img src={`/api${item.image}`} alt="Item" />
+                          <img src={item.image ? `/api${item.image}` : defaultpersonimg} alt="Item" />
+                          Copy
+
                         </div>
                         <div id="name" className="m-2">
                           <div>
@@ -77,7 +82,7 @@ const Reviews = (props) => {
                               <i key={i} className="fa-solid fa-star"></i>
                             ))}
                           </div>
-                          
+
                         </div>
                       </div>
                     </div>
