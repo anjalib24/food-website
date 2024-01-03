@@ -56,16 +56,6 @@ const getProductData = asyncHandler(async (req, res) => {
       best_seller,
     } = req.query;
 
-    const countBestseller = await Product.find({
-      best_seller: true,
-    }).countDocuments();
-
-    if (countBestseller > 15) {
-      return res
-        .status(200)
-        .json(new ApiResponse(200, null, "Best seller can't be more then 15."));
-    }
-
     const price = req.body.price || 0;
     origin_country = origin_country && origin_country.toLowerCase();
 
@@ -148,6 +138,16 @@ const createProductData = asyncHandler(async (req, res) => {
     categoryID,
     best_seller,
   } = req.body;
+
+  const countBestseller = await Product.find({
+    best_seller: true,
+  }).countDocuments();
+
+  if (countBestseller > 15) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Best seller can't be more then 15."));
+  }
 
   if (!req.files || req.files.length === 0) {
     throw new ApiError(400, "No files were uploaded.");
