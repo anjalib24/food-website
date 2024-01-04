@@ -16,12 +16,11 @@ import { useProductState } from './context/ProductContext'
 
 export const Allproduct = () => {
   const history = useHistory();
-
   const [data, setData] = useState(null);
   const [selectedOrigin, setSelectedOrigin] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const { handleaddtocard, showvideomodal, setShowvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, setShow360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial,setLoading ,loading} = useProductState();
+  const { handleaddtocard, showvideomodal, setShowvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, setShow360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, setLoading, loading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -30,7 +29,7 @@ export const Allproduct = () => {
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const result = await fetchData("products/get-product", { limit: 25 });
+        const result = await fetchData("products/get-product", { limit: 32 });
         setLoading(true)
         setData(result.data.docs);
       } catch (error) {
@@ -41,7 +40,9 @@ export const Allproduct = () => {
     };
     fetchDataFromApi();
   }, []);
+
   const handleOriginCheckboxChange = (value) => {
+    setLoading(true)
     setSelectedOrigin((prevSelected) => {
       if (prevSelected.includes(value)) {
         return prevSelected.filter((item) => item !== value);
@@ -49,9 +50,12 @@ export const Allproduct = () => {
         return [...prevSelected, value];
       }
     });
+    setLoading(false)
   };
 
   const handlePriceCheckboxChange = (value) => {
+    setLoading(true)
+
     setSelectedPriceRange((prevSelected) => {
       if (prevSelected.includes(value)) {
         return prevSelected.filter((item) => item !== value);
@@ -59,6 +63,8 @@ export const Allproduct = () => {
         return [...prevSelected, value];
       }
     });
+    setLoading(false)
+
   };
   const getPriceRange = (price) => {
     if (price >= 1 && price <= 20) {
@@ -73,7 +79,7 @@ export const Allproduct = () => {
   };
 
 
-
+  console.log(loading);
 
   return (
     <>
@@ -81,9 +87,89 @@ export const Allproduct = () => {
       {showsocial && <Socialmedia showModal={showsocial} setShowModal={setShowSocial} productId={productId} />}
       {show360Modal && <Modal360 showModal={show360Modal} setShowModal={setShow360Modal} data={selectedItem} />}
       {showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata} title="videoModal" />}
-      <div className='hambagarmenu' >
+      {/* <div className='hambagarmenu' >
         <i className="fa-solid fa-bars"></i>
-      </div>
+  </div> */}
+
+
+      <div className="hambagarmenu">
+  <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <i className="fa-solid fa-bars"></i>
+
+  </button>
+  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  <h5>Origin County</h5>
+              <h6>All</h6>
+    <a className="dropdown-item" href="#"><input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="usaCheckbox"
+                  checked={selectedOrigin.includes('usa')}
+                  onChange={() => handleOriginCheckboxChange('usa')}
+                />
+                                <label className="form-check-label" htmlFor="exampleCheck1">USA</label>
+
+                </a>
+    <a className="dropdown-item" href="#"> <input type="checkbox"
+                  className="form-check-input"
+                  id="usaCheckbox"
+                  checked={selectedOrigin.includes('india')}
+                  onChange={() => handleOriginCheckboxChange('india')} />
+                <label className="form-check-label" htmlFor="exampleCheck1">India</label></a>
+    <a className="dropdown-item" href="#"><input type="checkbox"
+                  className="form-check-input"
+                  id="usaCheckbox"
+                  checked={selectedOrigin.includes('france')}
+                  onChange={() => handleOriginCheckboxChange('france')} />
+                <label className="form-check-label" htmlFor="exampleCheck1">France</label></a>
+                <a className="dropdown-item" href="#"> <input type="checkbox"
+                  className="form-check-input"
+                  id="usaCheckbox"
+                  checked={selectedOrigin.includes('ukraine')}
+                  onChange={() => handleOriginCheckboxChange('ukraine')} />
+                <label className="form-check-label" htmlFor="exampleCheck1">Ukraine</label></a>
+                <h5 className="mt-4">Price</h5>
+                <a className="dropdown-item" href="#"> <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="range1Checkbox"
+                  checked={selectedPriceRange.includes('1-20')}
+                  onChange={() => handlePriceCheckboxChange('1-20')}
+                />
+                <label className="form-check-label" htmlFor="exampleCheck1">1-20$</label></a>
+                <a className="dropdown-item" href="#">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="range1Checkbox"
+                  checked={selectedPriceRange.includes('20-50$')}
+                  onChange={() => handlePriceCheckboxChange('20-50$')}
+                />
+                <label className="form-check-label" htmlFor="exampleCheck1">20-50$</label>
+                </a>
+                <a className="dropdown-item" href="#">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="range1Checkbox"
+                  checked={selectedPriceRange.includes('50-70$')}
+                  onChange={() => handlePriceCheckboxChange('50-70$')}
+                />
+                <label className="form-check-label" htmlFor="exampleCheck1">50-70$</label>
+                </a>
+                <a className="dropdown-item" href="#">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="range1Checkbox"
+                  checked={selectedPriceRange.includes('+70$')}
+                  onChange={() => handlePriceCheckboxChange('+70$')}
+                />
+                <label className="form-check-label" htmlFor="exampleCheck1">+70$</label>
+                </a>
+  </div>
+</div>
+      
       <div className='container'>
         <section id="search" className="mt-5">
           <div className="col-md-12 pr-0 pl-0 mb-5" >
@@ -189,7 +275,9 @@ export const Allproduct = () => {
               <div className="row">
                 {loading && (
                   <div className="col-md-12 text-center">
-                    <Loader/>
+                    <div className="spinner-border" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </div>
                   </div>
                 )}
                 {!loading && data && data.length === 0 && (
@@ -217,9 +305,10 @@ export const Allproduct = () => {
                     item.title.toLowerCase().includes(searchInput.toLowerCase())
                   )
                 )?.map(item => (
-                  <div key={item.id} className="col-md-3 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
-                    <div>
-                      <img src={"/api" + item.images[0]} className="text-center m-2" style={{ maxWidth: '100%', height: '200px', objectFit: 'cover' }} alt="#" />
+
+                  <div key={item.id} className="col-6 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                      <img src={"/api" + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
                     </div>
                     <div className="product-info">
                       <div>
@@ -291,6 +380,7 @@ export const Allproduct = () => {
                     </div>
                   </div>
                 ))}
+
               </div>
             </div>
           </div>

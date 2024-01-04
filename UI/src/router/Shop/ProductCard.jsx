@@ -10,39 +10,37 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 const ProductCard = (props) => {
   const { item } = props
-  const { description, price, title, short_description } = item
-  const { handleaddtocard, showvideomodal, setShowvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, setShow360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial } = useProductState();
+  const { description, price, title, short_description , images} = item
+  const { handleaddtocard,  handleExploreClicks, handleSocialmedia, handleVideomodal } = useProductState();
   const history = useHistory()
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
+  console.log(images);
   return (
     <>
       <div style={{
         marginRight: '5px',
         marginLeft: "5px"
       }}>
-
-        <div className="mb-4 border border-success card-container">
+        <div className="mb-4 border border-success card-container"  style={{ maxWidth: '225px' }}>
           <div className="d-flex mx-auto h-100">
             <div>
-              <img src={productimg} className="text-center" alt="#" />
-              <div className="card-content mx-2">
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+  <img src={"/api" + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
+</div>              <div className="card-content mx-2">
                 <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{title}</strong></h3>
                 <div>
                   <p className="product-description" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {short_description}
                   </p>
-
                 </div>
                 <div className='d-flex flex-row align-items-center'>
                     <h5>Origin County:</h5>
                   <img src={usflag} alt="#" className='my-auto' />
                 </div>
-
                 <div className="product-actions">
-
                   <div className='d-flex flex-row '>
                     {item.zipFile_url && <div className="mr-3">
                       <img
@@ -74,7 +72,6 @@ const ProductCard = (props) => {
                         />
                       </div>
                     </div>}
-
                   </div>
                 </div>
                 <div>
@@ -89,7 +86,6 @@ const ProductCard = (props) => {
                   >
                     Add to cart
                   </button>
-
                   <button
                     className="btn btn-white btn-block border border-success mb-1"
                     onClick={() => history.push(`/productdetail/${item._id}`)}

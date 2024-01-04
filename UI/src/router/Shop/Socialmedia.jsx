@@ -20,7 +20,7 @@ import {
 
 const Socialmedia = ({ showModal, setShowModal , productId }) => {
   const shareUrl = `http://localhost:5173/productdetail/${productId}`;
-  const title = 'Check out this awesome website!';
+  const title = 'Check out this awesome product!';
 
   return (
     <div className={`modal fade ${showModal ? 'show' : ''}`} id="socialmedia" tabIndex="-1" role="dialog" aria-labelledby="exploreModalLabel" aria-hidden={!showModal}>

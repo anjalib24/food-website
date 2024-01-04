@@ -7,7 +7,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 import Header from "@/router/Shop/Header";
 import { Footer } from "@/router/Shop/Footer";
-import { addtocart } from "@/router/Shop/services/Api";
+import Alert from "@/router/Shop/Alert";
 const initialValues = {
   email: "",
   password: "",
@@ -17,19 +17,24 @@ const loginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Email is required"),
   password: Yup.string().required("Password is required"),
 });
-
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const [alert, setAlert] = useState(null);
 
-
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit, resetForm } = useFormik({
     initialValues,
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const apiUrl = "http://localhost:8000/api/v1/users/login";
+        const apiUrl = "http://127.0.0.1:8000/api/v1/users/login";
         const response = await axios.post(apiUrl, {
           userData: {
             email: values.email,
@@ -44,14 +49,27 @@ const Login = () => {
         if (cart && cart.length > 0) {
           const data = cart.map(item => ({
             productId: item._id,
-            quantity: item.quantity,
+            quantity: item.quantity || 1,
+            shippingCharge: 0
+
           }));
-          console.log(addtocart(data),"==================");
+          const token = localStorage.getItem('token');
+
+          const response = await axios.post('http://127.0.0.1:8000/api/v1/products/add-to-cart', 
+            data
+          , {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
           localStorage.removeItem('cart');
         } else {
           console.log('No items in cart.');
         }
+
         if (userType === 'user') {
+                  showAlert("sucess", "Login sucessfully");
+
           history.push('/shop');
         } else if (userType === 'admin') {
           history.push('/admin');
@@ -60,7 +78,9 @@ const Login = () => {
         }
 
       } catch (error) {
+        console.log(error);
         console.error("Error submitting the form:", error);
+        showAlert("danger", error.response.data.error);
       } finally {
         setSubmitting(false);
       }
@@ -71,6 +91,7 @@ const Login = () => {
   return (
     <>
       <div>
+      {alert && <Alert type={alert.type} message={alert.message} />}
         <Header hidebutton={true} />
         <section className="p-5 w-100" style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}>
           <div className="row">

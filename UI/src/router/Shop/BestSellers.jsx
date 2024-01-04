@@ -4,6 +4,7 @@ import { fetchData } from './services/Api'
 import ProductCard from './ProductCard';
 import Slider from 'react-slick';
 import Loader from '@/components/Loader';
+import axios from 'axios';
 
 const BestSellers = () => {
   const [data, setData] = useState(null);
@@ -15,8 +16,8 @@ const BestSellers = () => {
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const result = await fetchData("products/get-product");
-        const bestSellers = result.data.docs.filter(product => product.best_seller === true);
+        const response = await axios.get('http://127.0.0.1:8000/api/v1/products/get-best-seller-product');
+        const bestSellers = response.data.data
         setData(bestSellers);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -34,6 +35,10 @@ const BestSellers = () => {
     infinite: false,
     slidesToShow: 5,
     slidesToScroll: 1,
+    swipe: true,  // Enable swipe
+  draggable: true,  // Enable drag
+  swipeToSlide: true,  // Enable swipe to any slide
+
     responsive: [
       {
         breakpoint: 1024,
@@ -59,7 +64,7 @@ const BestSellers = () => {
 
   return (
     <>
-      <div className="container">
+      <div className="container" id='bestsellers'>
         <section id="search" className="mt-5">
           <div className="col-md-12 mt-5 mb-5 text-center">
             <h1>Bestsellers</h1>

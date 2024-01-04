@@ -70,8 +70,8 @@ const Registration = () => {
           showAlert("danger", "Registration failed. Please try again.");
         }
       } catch (error) {
-        showAlert("danger", "Error submitting the form. Please try again.");
         console.error("Error submitting the form:", error);
+        showAlert("danger", error.response.data.error);
       }
     },
   });
@@ -81,246 +81,246 @@ const Registration = () => {
     setAlert({ type, message });
     setTimeout(() => {
       setAlert(null);
-    }, 5000); // Hide the alert after 5 seconds
+    }, 5000);
   };
 
   return (
     <>
-    <div>
-      {alert && <Alert type={alert.type} message={alert.message} />}
-<Header hideCart={true}/>
-      <section
-        className="p-5 w-100"
-        style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}
-      >
-        <div className="row">
-          <div className="col-12">
-            <div className="card text-black" style={{ borderRadius: "25px" }}>
-              <div className="card-body p-md-5">
-                <div className="row justify-content-center">
-                  <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-                    <p className="text-center h1 fw-bold mb-5 mt-4">Sign up</p>
-                    <form onSubmit={handleSubmit}>
-                      <div className="row mt-3">
-                        <div className="col text-left">
-                          <label htmlFor="username" className="form-label">
-                            Username
-                          </label>
-                          <input
-                            id="username"
-                            name="username"
-                            className="form-control"
-                            value={values.username}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          {errors.username && touched.username ? (
-                            <small className="text-danger mt-1">
-                              {errors.username}
-                            </small>
-                          ) : null}
+      <div>
+        {alert && <Alert type={alert.type} message={alert.message} />}
+        <Header hideCart={true} />
+        <section
+          className="p-5 w-100"
+          style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}
+        >
+          <div className="row">
+            <div className="col-12">
+              <div className="card text-black" style={{ borderRadius: "25px" }}>
+                <div className="card-body p-md-5">
+                  <div className="row justify-content-center">
+                    <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                      <p className="text-center h1 fw-bold mb-5 mt-4">Sign up</p>
+                      <form onSubmit={handleSubmit}>
+                        <div className="row mt-3">
+                          <div className="col text-left">
+                            <label htmlFor="username" className="form-label">
+                              Username
+                            </label>
+                            <input
+                              id="username"
+                              name="username"
+                              className="form-control"
+                              value={values.username}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {errors.username && touched.username ? (
+                              <small className="text-danger mt-1">
+                                {errors.username}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                      <div className="row mt-3">
-                        <div className="col text-left">
-                          <label htmlFor="email" className="form-label">
-                            Email
-                          </label>
-                          <input
-                            id="email"
-                            name="email"
-                            className="form-control"
-                            value={values.email}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          {errors.email && touched.email ? (
-                            <small className="text-danger mt-1">
-                              {errors.email}
-                            </small>
-                          ) : null}
+                        <div className="row mt-3">
+                          <div className="col text-left">
+                            <label htmlFor="email" className="form-label">
+                              Email
+                            </label>
+                            <input
+                              id="email"
+                              name="email"
+                              className="form-control"
+                              value={values.email}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {errors.email && touched.email ? (
+                              <small className="text-danger mt-1">
+                                {errors.email}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                      <div className="row mt-3">
-                        <div className="col text-left">
-                          <label htmlFor="password" className="form-label">
-                            Password
-                          </label>
-                          <input
-                            id="password"
-                            name="password"
-                            className="form-control"
-                            value={values.password}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            type="password"
-                          />
-                          {errors.password && touched.password ? (
-                            <small className="text-danger mt-1">
-                              {errors.password}
-                            </small>
-                          ) : null}
+                        <div className="row mt-3">
+                          <div className="col text-left">
+                            <label htmlFor="password" className="form-label">
+                              Password
+                            </label>
+                            <input
+                              id="password"
+                              name="password"
+                              className="form-control"
+                              value={values.password}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              type="password"
+                            />
+                            {errors.password && touched.password ? (
+                              <small className="text-danger mt-1">
+                                {errors.password}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                      <div className="row mt-3">
-                        <div className="col text-left">
-                          <label htmlFor="repassword" className="form-label">
-                            Confirm Password
-                          </label>
-                          <input
-                            id="repassword"
-                            name="repassword"
-                            className="form-control"
-                            value={values.repassword}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            type="password"
-                          />
-                          {errors.repassword && touched.repassword ? (
-                            <small className="text-danger mt-1">
-                              {errors.repassword}
-                            </small>
-                          ) : null}
+                        <div className="row mt-3">
+                          <div className="col text-left">
+                            <label htmlFor="repassword" className="form-label">
+                              Confirm Password
+                            </label>
+                            <input
+                              id="repassword"
+                              name="repassword"
+                              className="form-control"
+                              value={values.repassword}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              type="password"
+                            />
+                            {errors.repassword && touched.repassword ? (
+                              <small className="text-danger mt-1">
+                                {errors.repassword}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                      <div className="row mt-3">
-                        <div className="col text-left">
-                          <label htmlFor="address" className="form-label">
-                            Address
-                          </label>
-                          <input
-                            id="address"
-                            name="address"
-                            className="form-control"
-                            value={values.address}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          {errors.address && touched.address ? (
-                            <small className="text-danger mt-1">
-                              {errors.address}
-                            </small>
-                          ) : null}
+                        <div className="row mt-3">
+                          <div className="col text-left">
+                            <label htmlFor="address" className="form-label">
+                              Address
+                            </label>
+                            <input
+                              id="address"
+                              name="address"
+                              className="form-control"
+                              value={values.address}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {errors.address && touched.address ? (
+                              <small className="text-danger mt-1">
+                                {errors.address}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                      <div className="row mt-3">
-                        <div className="col text-left">
-                          <label htmlFor="country" className="form-label">
-                            Country
-                          </label>
-                          <input
-                            id="country"
-                            name="country"
-                            className="form-control"
-                            value={values.country}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          {errors.country && touched.country ? (
-                            <small className="text-danger mt-1">
-                              {errors.country}
-                            </small>
-                          ) : null}
+                        <div className="row mt-3">
+                          <div className="col text-left">
+                            <label htmlFor="country" className="form-label">
+                              Country
+                            </label>
+                            <input
+                              id="country"
+                              name="country"
+                              className="form-control"
+                              value={values.country}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {errors.country && touched.country ? (
+                              <small className="text-danger mt-1">
+                                {errors.country}
+                              </small>
+                            ) : null}
+                          </div>
+                          <div className="col text-left">
+                            <label htmlFor="city" className="form-label">
+                              City
+                            </label>
+                            <input
+                              id="city"
+                              name="city"
+                              className="form-control"
+                              value={values.city}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {errors.city && touched.city ? (
+                              <small className="text-danger mt-1">
+                                {errors.city}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
-                        <div className="col text-left">
-                          <label htmlFor="city" className="form-label">
-                            City
-                          </label>
-                          <input
-                            id="city"
-                            name="city"
-                            className="form-control"
-                            value={values.city}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          {errors.city && touched.city ? (
-                            <small className="text-danger mt-1">
-                              {errors.city}
-                            </small>
-                          ) : null}
+                        <div className="row mt-3">
+                          <div className="col text-left">
+                            <label htmlFor="state" className="form-label">
+                              State
+                            </label>
+                            <input
+                              id="state"
+                              name="state"
+                              className="form-control"
+                              value={values.state}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {errors.state && touched.state ? (
+                              <small className="text-danger mt-1">
+                                {errors.state}
+                              </small>
+                            ) : null}
+                          </div>
+                          <div className="col text-left">
+                            <label htmlFor="zipcode" className="form-label">
+                              Zipcode
+                            </label>
+                            <input
+                              id="zipcode"
+                              name="zipcode"
+                              className="form-control"
+                              value={values.zipcode}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {errors.zipcode && touched.zipcode ? (
+                              <small className="text-danger mt-1">
+                                {errors.zipcode}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                      <div className="row mt-3">
-                        <div className="col text-left">
-                          <label htmlFor="state" className="form-label">
-                            State
-                          </label>
-                          <input
-                            id="state"
-                            name="state"
-                            className="form-control"
-                            value={values.state}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          {errors.state && touched.state ? (
-                            <small className="text-danger mt-1">
-                              {errors.state}
-                            </small>
-                          ) : null}
-                        </div>
-                        <div className="col text-left">
-                          <label htmlFor="zipcode" className="form-label">
-                            Zipcode
-                          </label>
-                          <input
-                            id="zipcode"
-                            name="zipcode"
-                            className="form-control"
-                            value={values.zipcode}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          {errors.zipcode && touched.zipcode ? (
-                            <small className="text-danger mt-1">
-                              {errors.zipcode}
-                            </small>
-                          ) : null}
-                        </div>
-                      </div>
 
-                      <div className="row mt-3">
-                        <div className="col text-right actionButtons">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={resetForm}
-                          >
-                            Clear
-                          </Button>
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={handleSubmit}
-                          >
-                            Register
-                          </Button>
+                        <div className="row mt-3">
+                          <div className="col text-right actionButtons">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={resetForm}
+                            >
+                              Clear
+                            </Button>
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onClick={handleSubmit}
+                            >
+                              Register
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                      <div className="row mt-3">
-                        <br />
-                        <div className="col text-right">
-                          Already have an account? <Link to="/login">Login</Link>
+                        <div className="row mt-3">
+                          <br />
+                          <div className="col text-right">
+                            Already have an account? <Link to="/login">Login</Link>
+                          </div>
                         </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div className="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2 mt-auto mb-auto">
-                    <img
-                      src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                      className="img-fluid"
-                      alt=""
-                    />
+                      </form>
+                    </div>
+                    <div className="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2 mt-auto mb-auto">
+                      <img
+                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                        className="img-fluid"
+                        alt=""
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
-    <Footer/>
+        </section>
+      </div>
+      <Footer />
     </>
   );
 };
