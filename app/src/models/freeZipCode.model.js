@@ -7,6 +7,10 @@ const freeZipCodeSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    shipment_delivery_message: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

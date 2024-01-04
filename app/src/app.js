@@ -27,7 +27,8 @@ import viewsRouter from "./routes/views.routes.js";
 import freeZipCodeRouter from "./routes/freeZipCode.routes.js";
 import benchmarkRouter from "./routes/benchmark.routes.js";
 import fixedShippingPriceRouter from "./routes/fixedShippingPrice.routes.js";
-
+import shipmentRateStateRouter from "./routes/shipmentRateState.routes.js";
+import dimensionsRouter from "./routes/dimensions.routes.js";
 //routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
@@ -36,5 +37,7 @@ app.use("/api/v1/views", viewsRouter);
 app.use("/api/v1/free-zip-codes", freeZipCodeRouter);
 app.use("/api/v1/benchmarks", benchmarkRouter);
 app.use("/api/v1/fixed-shipping-prices", fixedShippingPriceRouter);
+app.use("/api/v1/shipment-rate-state", shipmentRateStateRouter);
+app.use("/api/v1/dimensions", dimensionsRouter);
 
 export { app };

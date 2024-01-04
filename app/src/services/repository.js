@@ -4,7 +4,9 @@ import { FreeZipCode } from "../models/freeZipCode.model.js";
 import { Benchmark } from "../models/benchmark.model.js";
 import { FixedShippingPrice } from "../models/fixedShippingPrice.model.js";
 import { ApiError } from "../utils/ApiError.js";
-import { getShippoData } from "../utils/shippo.js";
+import ShipmentRateState from "../models/shipmentRateState.model.js";
+import Dimension from "../models/Dimensions.model.js";
+import DimensionWeightRange from "../models/dimensionWeightRange.model.js";
 
 export const cartRepository = async (userId) => {
   const carts = await Cart.find({ user_id: userId }).populate({
@@ -59,8 +61,36 @@ export const addShippingCharge = async (cartData) => {
         benchmarkData &&
         benchmarkData.benchmark > cartData.subTotal
       ) {
-        // there is need to implement shippo
-        // getShippoData
+        const getShipmentRateStateData = await ShipmentRateState.find();
+
+        const isStateMatch = getShipmentRateStateData.find(
+          (x) => x.state === userDetails?.state
+        );
+
+        const totalWeight = weightCount?.total_weight;
+        const packageDimension = await DimensionWeightRange.findOne({
+          weight_range: { $gte: totalWeight },
+        });
+
+        let getDimention = null;
+
+        if (packageDimension && packageDimension?.dimensions) {
+          getDimention = await Dimension.findOne({
+            dimensions: packageDimension.dimensions,
+          });
+        }
+
+        if (isStateMatch && getDimention) {
+          cartData.shippingCharge =
+            getDimention.shipment_dimension_price +
+            isStateMatch.shipment_state_rate;
+          cartData.subTotal +=
+            getDimention.shipment_dimension_price +
+            isStateMatch.shipment_state_rate;
+
+          return cartData.save();
+        }
+
         return cartData;
       }
     }

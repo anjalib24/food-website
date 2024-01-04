@@ -126,7 +126,6 @@ const getProductData = asyncHandler(async (req, res) => {
 
 //create product part-
 const createProductData = asyncHandler(async (req, res) => {
-  
   const {
     title,
     short_description,
@@ -275,6 +274,16 @@ const deleteProductData = asyncHandler(async (req, res) => {
 // update product data part-
 const updateProductData = asyncHandler(async (req, res) => {
   let productData = { ...req.body };
+  const { id } = req.params;
+  if (!id) {
+    throw new ApiError(400, "Id is required!");
+  }
+
+  const isProductExist = await Product.findById(id);
+  if (!isProductExist) {
+    throw new ApiError(400, "This product does not exist in DB!");
+  }
+
   const images = (req.files && req.files["images"]) || [];
 
   let video =
@@ -344,8 +353,6 @@ const updateProductData = asyncHandler(async (req, res) => {
       zipFile_url: modifiedPath,
     };
   }
-
-  const { id } = req.params;
 
   if (id) {
     const updateProduct = await Product.findByIdAndUpdate(
@@ -440,7 +447,6 @@ const getAllCountry = asyncHandler(async (req, res) => {
 
 const addItemToCart = asyncHandler(async (req, res) => {
   const productsData = req.body;
-console.log("--productsData---",productsData)
   if (
     !Array.isArray(productsData) ||
     productsData.length === 0 ||
@@ -588,7 +594,6 @@ const getCart = asyncHandler(async (req, res) => {
   }
 
   const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-console.log(userID , "user ID--------------------");
   let cart = await cartRepository(userID);
   if (!cart) {
     return res.status(200).json(new ApiResponse(200, {}, "Cart not Found!"));
