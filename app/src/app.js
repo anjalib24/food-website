@@ -29,6 +29,7 @@ import benchmarkRouter from "./routes/benchmark.routes.js";
 import fixedShippingPriceRouter from "./routes/fixedShippingPrice.routes.js";
 import shipmentRateStateRouter from "./routes/shipmentRateState.routes.js";
 import dimensionsRouter from "./routes/dimensions.routes.js";
+
 //routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);

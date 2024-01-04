@@ -24,6 +24,7 @@ const productValidation = Joi.object({
   promotion_code: Joi.string().required(),
   rank: Joi.number().required(),
   category: Joi.string().required(),
+  weight: Joi.number().required(),
 });
 
 // views customization validation

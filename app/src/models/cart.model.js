@@ -19,6 +19,14 @@ let ItemSchema = new Schema(
       type: Number,
       required: true,
     },
+    weight: {
+      type: Number,
+      required: true,
+    },
+    totalWeight: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -37,6 +45,10 @@ const CartSchema = new Schema(
       default: 0,
     },
     subTotal: {
+      default: 0,
+      type: Number,
+    },
+    subTotalWeight: {
       default: 0,
       type: Number,
     },

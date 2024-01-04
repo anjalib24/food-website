@@ -59,6 +59,19 @@ const productSchema = new mongoose.Schema(
     zipFile_url: {
       type: String,
     },
+    weight: {
+      type: Number,
+      required: true,
+    },
+    length: {
+      type: Number,
+    },
+    height: {
+      type: Number,
+    },
+    width: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

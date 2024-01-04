@@ -39,6 +39,12 @@ export const addShippingCharge = async (cartData) => {
         benchmarkData &&
         benchmarkData.benchmark1 < cartData.subTotal
       ) {
+        if (cartData.shippingCharge > 0) {
+          cartData.subTotal -= cartData.shippingCharge;
+          cartData.shippingCharge = 0;
+
+          return cartData.save();
+        }
         return cartData;
       } else if (
         matchingFreeZipCode &&
@@ -55,6 +61,12 @@ export const addShippingCharge = async (cartData) => {
         benchmarkData &&
         benchmarkData.benchmark < cartData.subTotal
       ) {
+        if (cartData.shippingCharge > 0) {
+          cartData.subTotal -= cartData.shippingCharge;
+          cartData.shippingCharge = 0;
+
+          return cartData.save();
+        }
         return cartData;
       } else if (
         !matchingFreeZipCode &&
@@ -64,10 +76,12 @@ export const addShippingCharge = async (cartData) => {
         const getShipmentRateStateData = await ShipmentRateState.find();
 
         const isStateMatch = getShipmentRateStateData.find(
-          (x) => x.state === userDetails?.state
+          (x) =>
+            x.state.toLocaleLowerCase() ===
+            userDetails?.state?.toLocaleLowerCase()
         );
 
-        const totalWeight = weightCount?.total_weight;
+        const totalWeight = cartData?.subTotalWeight;
         const packageDimension = await DimensionWeightRange.findOne({
           weight_range: { $gte: totalWeight },
         });

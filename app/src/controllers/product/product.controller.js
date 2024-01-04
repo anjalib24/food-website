@@ -13,7 +13,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
 import { Country } from "../../models/country.model.js";
 import AdmZip from "adm-zip";
-import path from "path";
+import path, { parse } from "path";
 import fs from "fs";
 import { Cart } from "../../models/cart.model.js";
 
@@ -137,6 +137,10 @@ const createProductData = asyncHandler(async (req, res) => {
     rank,
     categoryID,
     best_seller,
+    weight,
+    length,
+    height,
+    width,
   } = req.body;
 
   const countBestseller = await Product.find({
@@ -168,6 +172,7 @@ const createProductData = asyncHandler(async (req, res) => {
     promotion_code,
     rank,
     category: categoryID,
+    weight,
   };
 
   const { error } = productValidation.validate(productData);
@@ -233,6 +238,9 @@ const createProductData = asyncHandler(async (req, res) => {
     best_seller,
     zipFile_url: modifiedPath,
     video_url: video,
+    length,
+    height,
+    width,
   };
 
   const existingCategory = await Category.findById(categoryID);
@@ -500,8 +508,14 @@ const addItemToCart = asyncHandler(async (req, res) => {
             cart.items[existingItemIndex].total =
               cart.items[existingItemIndex].quantity * productDetails.price;
 
+            cart.items[existingItemIndex].totalWeight =
+              cart.items[existingItemIndex].quantity * productDetails.weight;
+
             cart.subTotal = cart.items
               .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
+            cart.subTotalWeight = cart.items
+              .map((item) => item.totalWeight)
               .reduce((acc, next) => acc + next);
           } else {
             throw new ApiError(404, "Can not decrease quantity anymore.");
@@ -517,8 +531,15 @@ const addItemToCart = asyncHandler(async (req, res) => {
             cart.items[indexFound].total =
               cart.items[indexFound].quantity * productDetails.price;
             cart.items[indexFound].price = productDetails.price;
+
+            cart.items[indexFound].totalWeight =
+              cart.items[indexFound].quantity * productDetails.weight;
+
             cart.subTotal = cart.items
               .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
+            cart.subTotalWeight = cart.items
+              .map((item) => item.totalWeight)
               .reduce((acc, next) => acc + next);
           } else if (quantity > 0) {
             // If the item is not found and quantity is greater than 0, add a new item
@@ -527,9 +548,14 @@ const addItemToCart = asyncHandler(async (req, res) => {
               quantity: quantity,
               price: productDetails.price,
               total: parseInt(productDetails.price * quantity),
+              weight: productDetails.weight,
+              totalWeight: parseFloat(productDetails.weight * quantity),
             });
             cart.subTotal = cart.items
               .map((item) => item.total)
+              .reduce((acc, next) => acc + next);
+            cart.subTotalWeight = cart.items
+              .map((item) => item.totalWeight)
               .reduce((acc, next) => acc + next);
           } else {
             // If quantity is 0, throw an error
@@ -561,9 +587,12 @@ const addItemToCart = asyncHandler(async (req, res) => {
               quantity: quantity,
               total: parseInt(productDetails.price * quantity),
               price: productDetails.price,
+              weight: productDetails.weight,
+              totalWeight: parseFloat(productDetails.weight * quantity),
             },
           ],
           subTotal: parseInt(productDetails.price * quantity),
+          subTotalWeight: parseFloat(productDetails.weight * quantity),
         };
         cart = await addItem(cartData);
         if (cart) {
@@ -615,6 +644,9 @@ const emptyCart = asyncHandler(async (req, res) => {
   let cart = await cartRepository(userID);
   cart.items = [];
   cart.subTotal = 0;
+  cart.subTotalWeight = 0;
+  cart.shippingCharge = 0;
+
   let data = await cart.save();
   return res
     .status(200)
@@ -705,6 +737,7 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
 
     if (updatedCartData?.items.length === 0) {
       updatedCartData.subTotal = 0;
+      updatedCartData.subTotalWeight = 0;
       await updatedCartData.save();
     }
 
