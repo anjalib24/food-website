@@ -6,23 +6,30 @@ import Noproductincart from './Noproductincart';
 import "./Carttest.css"
 import { loadStripe } from '@stripe/stripe-js';
 import Header from './Header';
-import { jwtDecode } from "jwt-decode";
+import Alert from './Alert';
+import Loader from '@/components/Loader';
 
 
 const Cart = () => {
   const [cartData, setCartData] = useState([]);
   const [localData, setLocalData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [cartId , setCartId] = useState()
+  const [cartId, setCartId] = useState()
   const history = useHistory();
+  const [alert, setAlert] = useState(null);
+
   const token = localStorage.getItem('token');
-  let  totalPrice ;
+  let totalPrice;
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
-
-
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
   const fetchDataFromApi = async () => {
     setIsLoading(true);
     try {
@@ -33,7 +40,7 @@ const Cart = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-setCartId(response?.data?.data?._id)
+        setCartId(response?.data?.data?._id)
         const cartItems = response?.data?.data?.items;
 
         if (cartItems.length > 0) {
@@ -53,8 +60,6 @@ setCartId(response?.data?.data?._id)
         } else {
           setCartData([])
         }
-
-
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -69,12 +74,11 @@ setCartId(response?.data?.data?._id)
   useEffect(() => {
     countCartItems();
   }, []);
-if(token){
-   totalPrice = cartData?.filteredData?.reduce((total, item) => total + (item?.product.price * item?.product?.quantity), 0)
-
-}else{
-   totalPrice = localData.reduce((total,item) => total + (item?.price * item?.quantity),0)
-}
+  if (token) {
+    totalPrice = cartData?.filteredData?.reduce((total, item) => total + (item?.product.price * item?.product?.quantity), 0)
+  } else {
+    totalPrice = localData.reduce((total, item) => total + (item?.price * item?.quantity), 0)
+  }
 
   const countCartItems = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -87,7 +91,6 @@ if(token){
   };
 
   const updateQuantity = async (index, newQuantity, item, incordec) => {
-
     const token = localStorage.getItem('token');
     if (token) {
       const response = await axios.post('http://127.0.0.1:8000/api/v1/products/add-to-cart', [{
@@ -108,9 +111,8 @@ if(token){
     }
   };
 
-  const deleteProduct = async(index) => {
- 
-    if(token){
+  const deleteProduct = async (index) => {
+    if (token) {
       try {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
         const response = await axios.get(`http://127.0.0.1:8000/api/v1/products/remove-items-from-cart/${productId}`, {
@@ -118,68 +120,67 @@ if(token){
             'Authorization': `Bearer ${token}`
           }
         });
-        fetchDataFromApi(); // Reload the data
-
-     
+        showAlert("danger", "Product Delete Sucessfully");
+        fetchDataFromApi(); 
       } catch (error) {
         console.error('Error deleting the product:', error);
       }
-    }else{
-      const updatedCart = [...cartData];
+    } else {
+      const updatedCart = [...localData]; // Use localData instead of cartData
       updatedCart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      showAlert("danger", "Product Delete Sucessfully");
+      setLocalData(updatedCart); // Update the localData state
+      localStorage.setItem('cart', JSON.stringify(updatedCart)); // Update the local storage
       countCartItems();
     }
- 
+
   };
 
   const handleCheckout = () => {
     const token = localStorage.getItem('token');
     if (!token) {
-
       history.push('/login');
     } else {
       payment()
     }
   };
 
-  
+
 
   const payment = async () => {
-   
+
     const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
     const response = await fetch(`http://127.0.0.1:8000/api/v1/order/create-order/${cartId}`, {
-
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
-    const {data} =  await response.json()
-    console.log(data,"-------------------");
+    const { data } = await response.json()
+    console.log(data, "-------------------");
     const sessionID = data?.sessionID
-
     const result = await stripe.redirectToCheckout({
       sessionId: sessionID,
     });
-
     if (result.error) {
       console.error(result.error.message);
     }
   };
-  console.log(cartData);
+  console.log(localData,"local data");
   return (
     <>
-    <Header/>
+    {isLoading && <Loader/>}
+      {alert && <Alert type={alert.type} message={alert.message} />}
+      <Header />
       <section className="h-100 gradient-custom">
         <div className="container py-5">
           <div className="row d-flex flex-row  justify-content-center my-4">
-          <style>
-    {`
+            <style>
+              {`
       #cartitmes::-webkit-scrollbar {
         display: none;
       }
     `}
-  </style>
-  <div id="cartitmes" className="col-md-8" style={{ maxHeight: '600px', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            </style>
+            <div id="cartitmes" className="col-md-8" style={{ maxHeight: '600px', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <div className="card ">
                 <div className="card-header py-3">
                   <h5 className="mb-0">Cart items</h5>
@@ -196,7 +197,7 @@ if(token){
                               <div className="_2nQDXZ">
                                 <a href="/nb-nicky-boy-printed-men-round-neck-black-t-shirt/p/itmb1c6b5e8551de?pid=TSHGW3FNAGC9UJ7X&amp;lid=LSTTSHGW3FNAGC9UJ7XCU0GGF&amp;marketplace=FLIPKART"><span>
                                   <div className="CXW8mj" style={{ height: '112px', width: '112px' }}>
-                                    <img loading="lazy" className="_396cs4" alt="productImg" src={"/api"+item?.product?.images[0]} />
+                                    <img loading="lazy" className="_396cs4" alt="productImg" src={"/api" + item?.product?.images[0]} />
                                   </div></span></a>
                                 <div className="_3fSRat">
                                   <div className="_2-uG6-">
@@ -230,8 +231,8 @@ if(token){
                                     > + </button>
                                   </div>
                                 </div>
-                                <div className="_10vWcL td-FUv WDiNrH"                                    onClick={() => deleteProduct(index)}
->
+                                <div className="_10vWcL td-FUv WDiNrH" onClick={() => deleteProduct(index)}
+                                >
                                   <div className="_3dsJAO"
                                   >Remove</div>
                                 </div>
@@ -287,12 +288,12 @@ if(token){
                                       />
                                     </div>
                                     <button className="_23FHuj" onClick={() => updateQuantity(index, item.quantity + 1)}
-
                                     > + </button>
                                   </div>
                                 </div>
                                 <div className="_10vWcL td-FUv WDiNrH">
-                                  <div className="_3dsJAO">Remove</div>
+                                  <div className="_3dsJAO" onClick={() => deleteProduct(index)}
+                                  >Remove</div>
                                 </div>
                               </div>
                             </div>
@@ -305,15 +306,17 @@ if(token){
                   }
                 </div>
               </div>
-              <div className="card mb-4">
-                <div className="card-body text-right">
-                  <button type="button" className="btn btn-primary" onClick={() => handleCheckout()}>
-                    Go to checkout
-                  </button>
+              {(cartData?.filteredData?.length > 0 || localData.length > 0) && (
+                <div className="card mb-4">
+                  <div className="card-body text-right">
+                    <button type="button" className="btn btn-primary" onClick={() => handleCheckout()}>
+                      Go to checkout
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-            <div id="pricedetails" className="col-md-4" style={{position: "sticky", top: "0"}}>
+            <div id="pricedetails" className="col-md-4" style={{ position: "sticky", top: "0" }}>
               <div className="card mb-4">
                 <div className="card-header py-3">
                   <h5 className="mb-0">Price Details</h5>
@@ -336,6 +339,16 @@ if(token){
                       <div>
                         2$
                       </div>
+                      
+                    </li>
+                    <li className="list-group-item d-flex justify-content-between flex-row  px-0">
+                      <div>
+tax
+                      </div>
+                      <div>
+                        2$
+                      </div>
+                      
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between flex-row border-0 px-0 mb-3">

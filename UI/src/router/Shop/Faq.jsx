@@ -3,7 +3,6 @@ import "./style.css";
 
 export const Faq = (props) => {
   const [openIndex, setOpenIndex] = useState(null);
-
   const handleAccordionClick = (index) => {
     setOpenIndex((prevIndex) => (prevIndex === index ? null : index));
   };
