@@ -467,7 +467,7 @@ const calculateTax = async (totalPrice, userData) => {
     );
 
     const taxRate = +stateTaxData?.state_tax_rate || 0;
-    const taxAmount = totalPrice + Math.floor(totalPrice * (taxRate / 100));
+    const taxAmount = totalPrice + Math.round(totalPrice * (taxRate / 100));
 
     return { taxAmount, taxRate };
   } catch (error) {
