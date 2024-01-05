@@ -463,23 +463,25 @@ const addItemToCart = asyncHandler(async (req, res) => {
     throw new ApiError(400, "At least one non-empty product is required!");
   }
 
+  const token =
+    req.headers["authorization"]?.replace("Bearer", "").trim() ||
+    req.cookies["cookie_token"];
+
+  if (!token) {
+    throw new ApiError(400, "Unauthorized user!");
+  }
+  const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
+
+  const existedUser = await User.findOne({ _id: userID });
+
+  if (!existedUser) {
+    throw new ApiError(404, "User Not Found!");
+  }
+
+  let cartDataWithShippingCharge = {};
+
   for (let data of productsData) {
     const { productId, quantity: productQuantity } = data;
-
-    const token =
-      req.headers["authorization"]?.replace("Bearer", "").trim() ||
-      req.cookies["cookie_token"];
-
-    if (!token) {
-      throw new ApiError(400, "Unauthorized user!");
-    }
-    const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-
-    const existedUser = await User.findOne({ _id: userID });
-
-    if (!existedUser) {
-      throw new ApiError(404, "User Not Found!");
-    }
 
     const quantity = Number.parseInt(productQuantity);
     if (quantity == 0) {
@@ -565,16 +567,11 @@ const addItemToCart = asyncHandler(async (req, res) => {
         let data = await cart.save();
 
         if (data) {
-          const cartDataWithShippingCharge = await addShippingCharge(data);
-          return res
-            .status(200)
-            .json(
-              new ApiResponse(
-                200,
-                cartDataWithShippingCharge,
-                "Process successful"
-              )
-            );
+          const getCartData = await addShippingCharge(data);
+          cartDataWithShippingCharge = {
+            ...cartDataWithShippingCharge,
+            getCartData,
+          };
         }
       }
       //------------ This creates a new cart and then adds the item to the cart that has been created------------
@@ -596,22 +593,23 @@ const addItemToCart = asyncHandler(async (req, res) => {
         };
         cart = await addItem(cartData);
         if (cart) {
-          const cartDataWithShippingCharge = await addShippingCharge(cart);
-          return res
-            .status(200)
-            .json(
-              new ApiResponse(
-                200,
-                cartDataWithShippingCharge,
-                "Items added successful"
-              )
-            );
+          const getCartData = await addShippingCharge(cart);
+          cartDataWithShippingCharge = {
+            ...cartDataWithShippingCharge,
+            getCartData,
+          };
         }
       }
     } catch (err) {
       throw new ApiError(400, err);
     }
   }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, cartDataWithShippingCharge, "Items added successful")
+    );
 });
 
 const getCart = asyncHandler(async (req, res) => {

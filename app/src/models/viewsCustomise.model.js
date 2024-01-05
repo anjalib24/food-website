@@ -86,7 +86,7 @@ const viewsCustomiseSchema = new Schema(
         type: String,
         required: true,
       },
-      video: {
+      video_url: {
         type: String,
       },
 

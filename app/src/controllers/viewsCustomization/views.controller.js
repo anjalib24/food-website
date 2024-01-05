@@ -129,7 +129,7 @@ const createViews = asyncHandler(async (req, res) => {
     },
     about_us: {
       text: about_us_text,
-      video: about_us_video,
+      video_url: about_us_video,
       image: about_us_image,
     },
     reviews: [
@@ -433,7 +433,7 @@ const updateAboutUs = asyncHandler(async (req, res) => {
   if (about_us_video) {
     aboutAttribute = {
       ...aboutAttribute,
-      "about_us.video": `/videos/${about_us_video}`,
+      "about_us.video_url": `/videos/${about_us_video}`,
     };
   }
 

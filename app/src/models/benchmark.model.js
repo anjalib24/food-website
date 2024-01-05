@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const benchmarkSchema = new mongoose.Schema({
-  benchmark: {
+  benchmark1: {
     type: Number,
     required: true,
   },
-  benchmark1: {
+  benchmark2: {
     type: Number,
     required: true,
   },

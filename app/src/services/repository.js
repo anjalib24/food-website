@@ -37,7 +37,7 @@ export const addShippingCharge = async (cartData) => {
         matchingFreeZipCode &&
         userDetails.zipcode === matchingFreeZipCode.zipCode &&
         benchmarkData &&
-        benchmarkData.benchmark1 < cartData.subTotal
+        benchmarkData.benchmark2 < cartData.subTotal
       ) {
         if (cartData.shippingCharge > 0) {
           cartData.subTotal -= cartData.shippingCharge;
@@ -50,7 +50,7 @@ export const addShippingCharge = async (cartData) => {
         matchingFreeZipCode &&
         userDetails.zipcode === matchingFreeZipCode.zipCode &&
         benchmarkData &&
-        benchmarkData.benchmark1 > cartData.subTotal
+        benchmarkData.benchmark2 > cartData.subTotal
       ) {
         cartData.shippingCharge = fixedShippingPrice.fixed_shipping_price;
         cartData.subTotal += fixedShippingPrice.fixed_shipping_price;
@@ -59,7 +59,7 @@ export const addShippingCharge = async (cartData) => {
       } else if (
         !matchingFreeZipCode &&
         benchmarkData &&
-        benchmarkData.benchmark < cartData.subTotal
+        benchmarkData.benchmark1 < cartData.subTotal
       ) {
         if (cartData.shippingCharge > 0) {
           cartData.subTotal -= cartData.shippingCharge;
@@ -71,7 +71,7 @@ export const addShippingCharge = async (cartData) => {
       } else if (
         !matchingFreeZipCode &&
         benchmarkData &&
-        benchmarkData.benchmark > cartData.subTotal
+        benchmarkData.benchmark1 > cartData.subTotal
       ) {
         const getShipmentRateStateData = await ShipmentRateState.find();
 

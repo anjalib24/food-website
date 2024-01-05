@@ -5,8 +5,8 @@ import { ApiError } from "../../utils/ApiError.js";
 // Create
 export const createBenchmark = async (req, res) => {
   try {
-    const { benchmark, benchmark1 } = req.body;
-    const newBenchmark = new Benchmark({ benchmark, benchmark1 });
+    const { benchmark1, benchmark2 } = req.body;
+    const newBenchmark = new Benchmark({ benchmark1, benchmark2 });
     const savedBenchmark = await newBenchmark.save();
     return res.json(
       new ApiResponse(200, savedBenchmark, "Benchmark created successfully")
@@ -42,11 +42,11 @@ export const getOneBenchmark = async (req, res) => {
 // Update
 export const updateBenchmark = async (req, res) => {
   try {
-    const { benchmark, benchmark1 } = req.body;
+    const { benchmark1, benchmark2 } = req.body;
 
     const updatedBenchmark = await Benchmark.findOneAndUpdate(
       {},
-      { $set: { benchmark, benchmark1 } },
+      { $set: { benchmark1, benchmark2 } },
       { new: true }
     );
 
