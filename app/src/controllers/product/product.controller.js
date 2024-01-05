@@ -736,6 +736,8 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
     if (updatedCartData?.items.length === 0) {
       updatedCartData.subTotal = 0;
       updatedCartData.subTotalWeight = 0;
+      updatedCartData.shippingCharge = 0;
+
       await updatedCartData.save();
     }
 

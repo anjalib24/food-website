@@ -70,7 +70,7 @@ const orderWithStripeCheckOutPayment = async (
             product_data: {
               name: productData.title,
             },
-            unit_amount: product.price, // convert to cent unit_amount: product.price * 100,
+            unit_amount: product.price * 100, // convert to cent unit_amount: product.price * 100,
           },
           quantity: product.quantity,
         };
@@ -85,7 +85,7 @@ const orderWithStripeCheckOutPayment = async (
           product_data: {
             name: "Shipping Charge",
           },
-          unit_amount: shippingCharge, //conver to cent unit_amount: shippingCharge*100
+          unit_amount: shippingCharge * 100, //conver to cent unit_amount: shippingCharge*100
         },
         quantity: 1,
       });
