@@ -44,6 +44,10 @@ const CartSchema = new Schema(
       type: Number,
       default: 0,
     },
+    tax: {
+      default: 0,
+      type: Number,
+    },
     subTotal: {
       default: 0,
       type: Number,

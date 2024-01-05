@@ -16,6 +16,8 @@ import AdmZip from "adm-zip";
 import path, { parse } from "path";
 import fs from "fs";
 import { Cart } from "../../models/cart.model.js";
+import Tax from "../../models/tax.model.js";
+import ShipmentRateState from "../../models/shipmentRateState.model.js";
 
 //------------get best seller------------
 
@@ -451,8 +453,30 @@ const getAllCountry = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, getAllCountry, "Get all country successfully"));
 });
 
-// product add to cart -----------
+// tax calculate
+const calculateTax = async (totalPrice, userData) => {
+  try {
+    const stateCodes = await ShipmentRateState.find();
+    const userStateCode = stateCodes.find(
+      (state) => state?.state?.toLowerCase() === userData?.state?.toLowerCase()
+    )?.state_code;
 
+    const taxData = await Tax.find();
+    const stateTaxData = taxData.find(
+      (tax) => tax?.state_code?.toLowerCase() === userStateCode?.toLowerCase()
+    );
+
+    const taxRate = +stateTaxData?.state_tax_rate || 0;
+    const taxAmount = totalPrice + Math.floor(totalPrice * (taxRate / 100));
+
+    return { taxAmount, taxRate };
+  } catch (error) {
+    console.error("Error in calculateTax:", error);
+    throw new ApiError(500, "Something went wrong while calculating tax.");
+  }
+};
+
+// product add to cart -----------
 const addItemToCart = asyncHandler(async (req, res) => {
   const productsData = req.body;
   if (
@@ -513,9 +537,15 @@ const addItemToCart = asyncHandler(async (req, res) => {
             cart.items[existingItemIndex].totalWeight =
               cart.items[existingItemIndex].quantity * productDetails.weight;
 
-            cart.subTotal = cart.items
+            const getTotalPrice = cart.items
               .map((item) => item.total)
               .reduce((acc, next) => acc + next);
+            const calculateTaxData = await calculateTax(
+              getTotalPrice,
+              existedUser
+            );
+            cart.subTotal = calculateTaxData.taxAmount;
+            cart.tax = calculateTaxData.taxRate;
             cart.subTotalWeight = cart.items
               .map((item) => item.totalWeight)
               .reduce((acc, next) => acc + next);
@@ -537,9 +567,15 @@ const addItemToCart = asyncHandler(async (req, res) => {
             cart.items[indexFound].totalWeight =
               cart.items[indexFound].quantity * productDetails.weight;
 
-            cart.subTotal = cart.items
+            const getTotalPrice = cart.items
               .map((item) => item.total)
               .reduce((acc, next) => acc + next);
+            const calculateTaxData = await calculateTax(
+              getTotalPrice,
+              existedUser
+            );
+            cart.subTotal = calculateTaxData.taxAmount;
+            cart.tax = calculateTaxData.taxRate;
             cart.subTotalWeight = cart.items
               .map((item) => item.totalWeight)
               .reduce((acc, next) => acc + next);
@@ -553,9 +589,15 @@ const addItemToCart = asyncHandler(async (req, res) => {
               weight: productDetails.weight,
               totalWeight: parseFloat(productDetails.weight * quantity),
             });
-            cart.subTotal = cart.items
+            const getTotalPrice = cart.items
               .map((item) => item.total)
               .reduce((acc, next) => acc + next);
+            const calculateTaxData = await calculateTax(
+              getTotalPrice,
+              existedUser
+            );
+            cart.subTotal = calculateTaxData.taxAmount;
+            cart.tax = calculateTaxData.taxRate;
             cart.subTotalWeight = cart.items
               .map((item) => item.totalWeight)
               .reduce((acc, next) => acc + next);
@@ -588,9 +630,15 @@ const addItemToCart = asyncHandler(async (req, res) => {
               totalWeight: parseFloat(productDetails.weight * quantity),
             },
           ],
-          subTotal: parseInt(productDetails.price * quantity),
           subTotalWeight: parseFloat(productDetails.weight * quantity),
         };
+        const getTotalPrice = await calculateTax(
+          parseInt(productDetails.price * quantity),
+          existedUser
+        );
+        cartData.subTotal = getTotalPrice?.taxAmount;
+        cartData.tax = getTotalPrice?.taxRate;
+
         cart = await addItem(cartData);
         if (cart) {
           const getCartData = await addShippingCharge(cart);

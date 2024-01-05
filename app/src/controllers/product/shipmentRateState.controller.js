@@ -23,19 +23,21 @@ export const shipmentRateStateCsvFileUpload = async (req, res) => {
         Postal: postal,
         "Shipment State Rate (SSSR)": shipment_state_rate,
         "Shipment Delivery Message": shipment_delivery_message,
+        "State Code": state_code,
       } = row;
 
       try {
         // Parse the numeric value without the "$" symbol
         const parsedSSR = parseFloat(shipment_state_rate.replace("$", ""));
 
-        const filter = { postal };
+        const filter = { state_code };
         const update = {
           $set: {
             state,
             postal,
             shipment_state_rate: isNaN(parsedSSR) ? 0 : parsedSSR,
             shipment_delivery_message,
+            state_code,
           },
         };
         const options = { upsert: true, new: true };
@@ -52,6 +54,7 @@ export const shipmentRateStateCsvFileUpload = async (req, res) => {
                 postal,
                 shipment_state_rate: isNaN(parsedSSR) ? 0 : parsedSSR,
                 shipment_delivery_message,
+                state_code,
               });
             }
             return updatedData;
@@ -62,14 +65,14 @@ export const shipmentRateStateCsvFileUpload = async (req, res) => {
           })
           .catch((updateError) => {
             console.error(
-              `Error updating/inserting document with Postal ${postal}: ${updateError.message}`
+              `Error updating/inserting document with State Code ${state_code}: ${updateError.message}`
             );
           });
 
         promises.push(promise);
       } catch (updateError) {
         console.error(
-          `Error updating/inserting document with Postal ${postal}: ${updateError.message}`
+          `Error updating/inserting document with State Code ${state_code}: ${updateError.message}`
         );
       }
     });
