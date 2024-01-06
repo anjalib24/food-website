@@ -18,6 +18,7 @@ import fs from "fs";
 import { Cart } from "../../models/cart.model.js";
 import Tax from "../../models/tax.model.js";
 import ShipmentRateState from "../../models/shipmentRateState.model.js";
+import ProductsReview from "../../models/productsReviews.model.js";
 
 //------------get best seller------------
 
@@ -43,6 +44,29 @@ const getProductById = asyncHandler(async (req, res) => {
       new ApiResponse(200, getProduct, "Single order data get successfully.")
     );
 });
+
+// calculate product reviews
+
+const calculateProductReviews = async (productIds) => {
+  const productReviews = await ProductsReview.find({
+    product: { $in: productIds },
+  });
+
+  const productLenght = productReviews.length;
+  if (productLenght === 0) {
+    return { productOverAllReviews: 0, allReviewsCount: 0 };
+  }
+
+  let productReviewsSum = 0;
+
+  productReviews.forEach((review) => {
+    productReviewsSum += review.rating;
+  });
+
+  const productOverAllReviews = productReviewsSum / productLenght;
+
+  return { productOverAllReviews, allReviewsCount: productLenght };
+};
 
 //get product data -----------
 const getProductData = asyncHandler(async (req, res) => {
@@ -98,19 +122,31 @@ const getProductData = asyncHandler(async (req, res) => {
       (product) => product.origin_country
     );
 
+    const productIds = paginatedProducts.docs.map((product) => product._id);
+
     const categories = await Category.find({ _id: { $in: categoryIds } });
     const countries = await Country.find({ _id: { $in: countryIds } });
 
-    const productsWithCategories = paginatedProducts.docs.map((product) => {
-      const category = categories.find((cat) =>
-        cat._id.equals(product.category)
-      );
-      const country = countries.find((cntry) =>
-        cntry._id.equals(product.origin_country)
-      );
+    const productsWithCategories = await Promise.all(
+      paginatedProducts.docs.map(async (product) => {
+        const category = categories.find((cat) =>
+          cat._id.equals(product.category)
+        );
+        const country = countries.find((cntry) =>
+          cntry._id.equals(product.origin_country)
+        );
 
-      return { ...product.toObject(), category, country };
-    });
+        const getProductReviews = await calculateProductReviews(product._id);
+
+        return {
+          ...product.toObject(),
+          category,
+          country,
+          productRating: getProductReviews?.productOverAllReviews || 0,
+          productRatingCount: getProductReviews?.allReviewsCount || 0,
+        };
+      })
+    );
 
     const getProducts = { ...paginatedProducts, docs: productsWithCategories };
 
@@ -806,6 +842,48 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
   }
 });
 
+const createProductReview = asyncHandler(async (req, res) => {
+  try {
+    const { id: product_id } = req.params;
+    const { rating } = req.body;
+
+    if (!product_id) {
+      throw new ApiError(400, "Product ID is required!");
+    }
+
+    const existingReview = await ProductsReview.findOne({
+      user: req.user._id,
+      product: product_id,
+    });
+
+    if (existingReview) {
+      return res.status(400).json({
+        error: "User has already submitted a review for this product.",
+      });
+    }
+
+    const newReview = new ProductsReview({
+      user: req.user._id,
+      product: product_id,
+      rating,
+    });
+
+    const savedReview = await newReview.save();
+
+    res
+      .status(201)
+      .json(new ApiResponse(201, savedReview, "Review created successfully."));
+  } catch (error) {
+    console.error(error);
+
+    if (error instanceof ApiError) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+});
+
 export {
   createProductData,
   createCategory,
@@ -821,4 +899,5 @@ export {
   getBestSeller,
   getProductById,
   removeItemsFromCart,
+  createProductReview,
 };

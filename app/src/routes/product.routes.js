@@ -14,6 +14,7 @@ import {
   getBestSeller,
   getProductById,
   removeItemsFromCart,
+  createProductReview,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
@@ -47,6 +48,7 @@ router.route("/update-product/:id").put(
 router.route("/delete-product/:id").delete(deleteProductData);
 
 router.route("/create-category").post(createCategory);
+router.route("/create-product-review/:id").post(userAuth, createProductReview);
 
 router.route("/get-all-category").get(getAllCategory);
 

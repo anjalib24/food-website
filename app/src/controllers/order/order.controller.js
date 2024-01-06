@@ -7,6 +7,7 @@ import { Order } from "../../models/order.model.js";
 import { Cart } from "../../models/cart.model.js";
 import Stripe from "stripe";
 import { OrderHistory } from "../../models/orderHistory.model.js";
+import { emptyCartAfterOrder } from "../../services/repository.js";
 
 const getProductIds = async (products) => {
   const productPromises = products.map(async (product) => product.productId);
@@ -59,8 +60,15 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       products: productIds,
       pyamentOrderId: stripeOrderData.id,
       status: "pending",
+      tax: cartData.tax,
+      shippingCharge: cartData.shippingCharge,
+      subTotal: cartData.subTotal,
     });
     orderData = await order.save();
+
+    // empty card after order
+    await emptyCartAfterOrder(existedUser._id);
+
     if (!orderData) {
       throw new ApiError(
         409,

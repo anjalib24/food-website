@@ -32,6 +32,18 @@ const orderSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    tax: {
+      type: Number,
+      default: 0,
+    },
+    shippingCharge: {
+      type: Number,
+      default: 0,
+    },
+    subTotal: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

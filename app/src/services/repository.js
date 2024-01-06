@@ -20,6 +20,17 @@ export const addItem = async (payload) => {
   return newItem;
 };
 
+export const emptyCartAfterOrder = async (userID) => {
+  let cart = await cartRepository(userID);
+  cart.items = [];
+  cart.subTotal = 0;
+  cart.subTotalWeight = 0;
+  cart.shippingCharge = 0;
+  cart.tax = 0;
+
+  return await cart.save();
+};
+
 export const addShippingCharge = async (cartData) => {
   try {
     if (cartData.items?.length > 0) {
