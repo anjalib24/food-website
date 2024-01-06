@@ -466,9 +466,10 @@ const calculateTax = async (totalPrice, userData) => {
       (tax) => tax?.state_code?.toLowerCase() === userStateCode?.toLowerCase()
     );
 
-    const taxRate = +stateTaxData?.state_tax_rate || 0;
-    const taxAmount = totalPrice + Math.round(totalPrice * (taxRate / 100));
-
+    const taxRatePrice = +stateTaxData?.state_tax_rate || 0;
+    const taxAmount =
+      totalPrice + Math.round(totalPrice * (taxRatePrice / 100));
+    const taxRate = Math.round(totalPrice * (taxRatePrice / 100));
     return { taxAmount, taxRate };
   } catch (error) {
     console.error("Error in calculateTax:", error);
@@ -692,6 +693,7 @@ const emptyCart = asyncHandler(async (req, res) => {
   cart.subTotal = 0;
   cart.subTotalWeight = 0;
   cart.shippingCharge = 0;
+  cart.tax = 0;
 
   let data = await cart.save();
   return res
@@ -785,6 +787,7 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
       updatedCartData.subTotal = 0;
       updatedCartData.subTotalWeight = 0;
       updatedCartData.shippingCharge = 0;
+      updatedCartData.tax = 0;
 
       await updatedCartData.save();
     }

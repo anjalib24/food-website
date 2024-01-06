@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   updateUser,
   logoutUser,
+  userOrderHistory,
 } from "../controllers/user/user.controller.js";
 import { userAuth } from "../middlewares/userAuth.js";
 
@@ -17,5 +18,6 @@ router.route("/register").post(registerUser);
 router.route("/update-user/:id").put(userAuth, updateUser);
 router.route("/login").post(loginUser);
 router.route("/logout").get(userAuth, logoutUser);
+router.route("/get-user-order-history").get(userAuth, userOrderHistory);
 
 export default router;

@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userRegistrationValidation } from "../../utils/Validation.js";
 import { sendUserRegistrationConfirmationEmail } from "../../utils/mail.js";
+import { OrderHistory } from "../../models/orderHistory.model.js";
 
 //get all user
 
@@ -176,6 +177,36 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, null, "User Logout!"));
 });
 
+// get user order history
+const userOrderHistory = asyncHandler(async (req, res) => {
+  const getUserOrderHistoryData = await OrderHistory.aggregate([
+    { $match: { userId: req.user._id } },
+    {
+      $lookup: {
+        from: "orders",
+        localField: "orderId",
+        foreignField: "_id",
+        as: "orderDetails",
+      },
+    },
+    {
+      $unwind: "$orderDetails",
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "orderDetails.products",
+        foreignField: "_id",
+        as: "productDetails",
+      },
+    },
+  ]);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, getUserOrderHistoryData, "User Logout!"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -183,4 +214,5 @@ export {
   getCurrentUser,
   updateUser,
   logoutUser,
+  userOrderHistory,
 };

@@ -6,6 +6,7 @@ import { User } from "../../models/user.model.js";
 import { Order } from "../../models/order.model.js";
 import { Cart } from "../../models/cart.model.js";
 import Stripe from "stripe";
+import { OrderHistory } from "../../models/orderHistory.model.js";
 
 const getProductIds = async (products) => {
   const productPromises = products.map(async (product) => product.productId);
@@ -66,6 +67,11 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
         "Something went wrong while inserting order data"
       );
     }
+
+    await OrderHistory.create({
+      userId: existedUser._id,
+      orderId: orderData._id,
+    });
   }
   orderData = { ...orderData, sessionID: stripeOrderData?.id };
   return res
