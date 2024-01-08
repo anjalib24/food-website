@@ -80,6 +80,10 @@ const getProductData = asyncHandler(async (req, res) => {
 
     const filter = {};
 
+    if (title) {
+      filter.title = title;
+    }
+
     if (origin_country) {
       const country = await Country.findOne({ name: origin_country });
 
