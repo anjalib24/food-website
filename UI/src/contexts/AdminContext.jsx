@@ -16,7 +16,6 @@ export const AdminContext = ({ children }) => {
   const [themeSettings, setThemeSettings] = useState(false);
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
-
   const [products, setProducts] = useState([]);
   const [faqs, setFaqs] = useState([]);
   const [reviews, setReviews] = useState([]);

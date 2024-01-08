@@ -14,11 +14,22 @@ import Productdetailpage from "./Shop/Productdetailpage";
 import { ProductContexts } from "./Shop/context/ProductContext";
 import Yourprofile from "./Shop/Yourprofile";
 import PaymentSuccess from "./Shop/PaymentSuccess";
-
+import PaymentCancel from "./Shop/PaymentCancel";
+import UserOrderDetails from "./Shop/UserOrderDetails";
+import ContactUs from "./Shop/ContactUs";
 const Page = () => {
   return (
-    <Switch>
+    <Switch>                     
       <ProductContexts>
+      <Route exact path="/contactus">
+          <ContactUs/>
+        </Route>
+        <Route exact path="/PaymentCancel">
+          <PaymentCancel/>
+        </Route>
+        <Route exact path="/userorderdetail">
+          <UserOrderDetails/>
+        </Route>
         <Route exact path="/paymentsucess">
           <PaymentSuccess/>
         </Route>
@@ -49,6 +60,7 @@ const Page = () => {
         <Route exact path="/">
           <Home />
         </Route>
+   
       </ProductContexts>
     </Switch>
   );

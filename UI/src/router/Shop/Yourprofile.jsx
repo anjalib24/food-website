@@ -2,31 +2,40 @@ import React, { useEffect, useState } from 'react'
 import "./Yourprofile.css"
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
+import Header from './Header';
+import { Footer } from './Footer';
+import { useHistory } from 'react-router-dom';
+
 
 const Yourprofile = () => {
   const [selectedOption, setSelectedOption] = useState('profileInfo');
   const [userData, setUserData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
+  const [orderHistory, setOrderHistory] = useState([]);
 
+  const history = useHistory();
+  const handleClick = (item) => {
+    console.log(item , "item in the handle");
+    history.push({
+      pathname: '/userorderdetail',
+      state: { orderDetails: item }
+    });  };
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
   }
-
-
   const handleInputChange = (event) => {
     setUserData({
       ...userData,
       [event.target.name]: event.target.value,
     });
   };
-
   const handleUpdateClick = async () => {
     if (isEditable) {
       const token = localStorage.getItem("token");
       try {
 
-        await axios.put(`http://127.0.0.1:8000/api/v1/users/update-user/${userData._id}`, {
+        await axios.put(`/api/api/v1/users/update-user/${userData._id}`, {
           userData: userData,
         }, {
           headers: {
@@ -42,8 +51,7 @@ const Yourprofile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-
-    axios.get('http://127.0.0.1:8000/api/v1/users/get-current', {
+    axios.get('/api/api/v1/users/get-current', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -54,11 +62,25 @@ const Yourprofile = () => {
       .catch(error => {
         console.error('Error fetching data: ', error);
       });
+    axios.get('/api/api/v1/users/get-user-order-history', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(response => {
+        setOrderHistory(response?.data?.data);
+      })
+      .catch(error => {
+        console.error('Error fetching order history: ', error);
+      });
+
+
   }, []);
 
-
+  console.log(orderHistory, "order historyyyyy");
   return (
     <div>
+      <Header />
       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
       <div className="container">
         <div className="view-account">
@@ -190,20 +212,53 @@ const Yourprofile = () => {
                   </>
                 )}
                 {selectedOption === 'orders' && (
-                  <div><>
+                  <>
+                    {orderHistory?.map((item) => {
+                      return (
+                        <>
+   <div className="row product" onClick={() => handleClick(item)}>
+                            <div className="col-md-2">
+                              <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={"/api" + `${item?.productDetails[0]?.images[0]}`} />
+                            </div>
+                            <div className="col-md-6 product-detail" style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                              <div>
+                                {
+                                  item?.productDetails[0]?.title
+                                }
+                              </div>
+                              <div>$
+                                {item?.productDetails[0]?.price
+                                }
+                              </div>
+                            </div>
+                            <div className="col-md-4 product-detail" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                            {item?.orderDetails?.status === 'pending' ? (
+                                     <div className='reddot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#dc3545', border: '2px solid #dc3545', display: 'inline-block', marginRight: '8px' }}></div>
 
+   ) : (
+    <div className='greendot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#26a541', border: '2px solid #26a541', display: 'inline-block', marginRight: '8px' }}></div>
 
+   )}
+                              <div>
+                                {item?.orderDetails?.status}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )
 
+                    }
 
+                    )}
 
                   </>
-                  </div>
                 )}
               </div>
             </div>
           </section>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

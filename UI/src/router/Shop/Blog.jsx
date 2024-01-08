@@ -1,23 +1,29 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
+// Simple Loader component
+const Loader = () => (
+  <div className="loader-container">
+    <div className="loader"></div>
+  </div>
+);
+
 export const Blog = (props) => {
-
   const slickRef = useRef(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // useEffect(() => {
-  //   const slickInstance = slickRef.current;
+  useEffect(() => {
+    // Simulating an asynchronous data fetch
+    const fetchData = async () => {
+      // You can replace this with your actual data fetching logic
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating a 2-second delay
+      setIsLoaded(true);
+    };
 
-  //   slickInstance.slickGoTo(0);
-
-  //   return () => {
-
-  //     slickInstance.slickGoTo(0);
-  //     slickInstance.slickPause();
-  //   };
-  // }, [props.blog]);
+    fetchData();
+  }, []);
 
   const settings = {
     dots: false,
@@ -25,6 +31,7 @@ export const Blog = (props) => {
     infinite: false,
     slidesToShow: 4,
     slidesToScroll: 1,
+    initialSlide: 0,
     responsive: [
       {
         breakpoint: 1024,
@@ -36,51 +43,82 @@ export const Blog = (props) => {
         breakpoint: 600,
         settings: {
           slidesToShow: 2,
-          arrows: false,
+          arrows: true,
         },
       },
       {
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
+          arrows: false,
+          dots:true
         },
       },
     ],
   };
 
+  useEffect(() => {
+    if (isLoaded && slickRef.current) {
+      slickRef.current.slickGoTo(0);
+    }
+  }, [isLoaded]);
+
+  const handleAfterChange = (currentSlide) => {
+    if (currentSlide === 0) {
+      setIsLoaded(true);
+    }
+  };
+
   return (
     <>
-      <section id="Blog" className="mb-5">
-        <div className="col-md-12 m-4 text-center">
-          <h1>Blog</h1>
-        </div>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <div id="blog_main">
-                <Slider ref={slickRef} {...settings}>
-                  {props?.blog?.map((blogItem, index) => (
-                    <div key={index} className="single-box">
-                      <div className="img-area">
-                        <img src={"/api" + blogItem.image} />
+      {!isLoaded && <Loader />} {/* Display the loader while data is loading */}
+      {isLoaded && (
+        <section id="Blog" className="mb-5">
+          <div className="col-md-12 m-4 text-center">
+            <h1>Blog</h1>
+          </div>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <div id="blog_main">
+                  <Slider ref={slickRef} {...settings} afterChange={handleAfterChange}>
+                    {props?.blog?.map((blogItem, index) => (
+                      <div key={index} className="single-box">
+                        <div className="img-area">
+                          <img src={"/api" + blogItem.image} alt={`Blog ${index + 1}`} />
+                        </div>
+                        <div className="mt-3">
+                          <p>
+                            {new Date(blogItem.createdAt).toLocaleDateString('en-US', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </p>
+                          <h6 className='text-break text-justify' style={{
+                            display: 'block',
+                            WebkitBoxOrient: 'vertical',
+                            WebkitLineClamp: 6,
+                            maxWidth: '100%',
+                            height: 'calc(1.5em * 10)',
+                            margin: '0 auto',
+                            fontSize: '1em',
+                            lineHeight: '1.5',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {blogItem.content}
+                          </h6>
+                        </div>
                       </div>
-                      <div className="mt-3"><p>
-                          {new Date(blogItem.createdAt).toLocaleDateString('en-US', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
-                        </p>
-                        <h6 className='text-break'>{blogItem.content}</h6>
-                      </div>
-                    </div>
-                  ))}
-                </Slider>
+                    ))}
+                  </Slider>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 };

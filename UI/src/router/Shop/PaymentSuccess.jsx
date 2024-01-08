@@ -1,7 +1,14 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 
 const PaymentSuccess = () => {
+    const history = useHistory();
+
+    const handleBackHomeClick = () => {
+        history.push('/');
+    };
+
     return (
         <div className="vh-100 d-flex justify-content-center align-items-center">
             <div>
@@ -15,7 +22,7 @@ const PaymentSuccess = () => {
                 <div className="text-center">
                     <h1>Thank You !</h1>
                     <p>We've send the link to your inbox. Lorem ipsum dolor sit, </p>
-                    <Button variant="primary">Back Home</Button>
+                    <Button variant="primary" onClick={handleBackHomeClick}>Back Home</Button>
                 </div>
             </div>
         </div>

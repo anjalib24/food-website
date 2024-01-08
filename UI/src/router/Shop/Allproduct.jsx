@@ -13,6 +13,8 @@ import Alert from './Alert'
 import "./CheckProductCartResponsiveness.css"
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useProductState } from './context/ProductContext'
+import Rating from '@mui/material/Rating';
+import Stack from '@mui/material/Stack';
 
 export const Allproduct = () => {
   const history = useHistory();
@@ -20,7 +22,7 @@ export const Allproduct = () => {
   const [selectedOrigin, setSelectedOrigin] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const { handleaddtocard, showvideomodal, setShowvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, setShow360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, setLoading, loading } = useProductState();
+  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, setLoading, loading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -79,97 +81,93 @@ export const Allproduct = () => {
   };
 
 
-  console.log(loading);
-
   return (
     <>
       {showAlert && <Alert type="success" message={alertmsg} />}
-      {showsocial && <Socialmedia showModal={showsocial} setShowModal={setShowSocial} productId={productId} />}
-      {show360Modal && <Modal360 showModal={show360Modal} setShowModal={setShow360Modal} data={selectedItem} />}
-      {showvideomodal && <VideoModal showModal={showvideomodal} setShowModal={setShowvideomodal} data={videodata} title="videoModal" />}
-      {/* <div className='hambagarmenu' >
-        <i className="fa-solid fa-bars"></i>
-  </div> */}
+      {showsocial && <Socialmedia productId={productId} />}
+      {show360Modal && <Modal360 data={selectedItem} />}
+      {showvideomodal && <VideoModal data={videodata} title="videoModal" />}
 
+      <div className="hambagarmenu" style={{
+        marginLeft: "47px",
+        marginTop: "29px"
+      }}>
+        <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Filter
+        </button>
+        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton" style={{ padding: "23px" }}>
+          <h5>Origin County</h5>
+          <h6>All</h6>
+          <a className="dropdown-item" href="#"><input
+            type="checkbox"
+            className="form-check-input"
+            id="usaCheckbox"
+            checked={selectedOrigin.includes('usa')}
+            onChange={() => handleOriginCheckboxChange('usa')}
+          />
+            <label className="form-check-label" htmlFor="exampleCheck1">USA</label>
 
-      <div className="hambagarmenu">
-  <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  <i className="fa-solid fa-bars"></i>
+          </a>
+          <a className="dropdown-item" href="#"> <input type="checkbox"
+            className="form-check-input"
+            id="usaCheckbox"
+            checked={selectedOrigin.includes('india')}
+            onChange={() => handleOriginCheckboxChange('india')} />
+            <label className="form-check-label" htmlFor="exampleCheck1">India</label></a>
+          <a className="dropdown-item" href="#"><input type="checkbox"
+            className="form-check-input"
+            id="usaCheckbox"
+            checked={selectedOrigin.includes('france')}
+            onChange={() => handleOriginCheckboxChange('france')} />
+            <label className="form-check-label" htmlFor="exampleCheck1">France</label></a>
+          <a className="dropdown-item" href="#"> <input type="checkbox"
+            className="form-check-input"
+            id="usaCheckbox"
+            checked={selectedOrigin.includes('ukraine')}
+            onChange={() => handleOriginCheckboxChange('ukraine')} />
+            <label className="form-check-label" htmlFor="exampleCheck1">Ukraine</label></a>
+          <h5 className="mt-4">Price</h5>
+          <a className="dropdown-item" href="#"> <input
+            type="checkbox"
+            className="form-check-input"
+            id="range1Checkbox"
+            checked={selectedPriceRange.includes('1-20')}
+            onChange={() => handlePriceCheckboxChange('1-20')}
+          />
+            <label className="form-check-label" htmlFor="exampleCheck1">1-20$</label></a>
+          <a className="dropdown-item" href="#">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="range1Checkbox"
+              checked={selectedPriceRange.includes('20-50$')}
+              onChange={() => handlePriceCheckboxChange('20-50$')}
+            />
+            <label className="form-check-label" htmlFor="exampleCheck1">20-50$</label>
+          </a>
+          <a className="dropdown-item" href="#">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="range1Checkbox"
+              checked={selectedPriceRange.includes('50-70$')}
+              onChange={() => handlePriceCheckboxChange('50-70$')}
+            />
+            <label className="form-check-label" htmlFor="exampleCheck1">50-70$</label>
+          </a>
+          <a className="dropdown-item" href="#">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="range1Checkbox"
+              checked={selectedPriceRange.includes('+70$')}
+              onChange={() => handlePriceCheckboxChange('+70$')}
+            />
+            <label className="form-check-label" htmlFor="exampleCheck1">+70$</label>
+          </a>
+        </div>
+      </div>
 
-  </button>
-  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-  <h5>Origin County</h5>
-              <h6>All</h6>
-    <a className="dropdown-item" href="#"><input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="usaCheckbox"
-                  checked={selectedOrigin.includes('usa')}
-                  onChange={() => handleOriginCheckboxChange('usa')}
-                />
-                                <label className="form-check-label" htmlFor="exampleCheck1">USA</label>
-
-                </a>
-    <a className="dropdown-item" href="#"> <input type="checkbox"
-                  className="form-check-input"
-                  id="usaCheckbox"
-                  checked={selectedOrigin.includes('india')}
-                  onChange={() => handleOriginCheckboxChange('india')} />
-                <label className="form-check-label" htmlFor="exampleCheck1">India</label></a>
-    <a className="dropdown-item" href="#"><input type="checkbox"
-                  className="form-check-input"
-                  id="usaCheckbox"
-                  checked={selectedOrigin.includes('france')}
-                  onChange={() => handleOriginCheckboxChange('france')} />
-                <label className="form-check-label" htmlFor="exampleCheck1">France</label></a>
-                <a className="dropdown-item" href="#"> <input type="checkbox"
-                  className="form-check-input"
-                  id="usaCheckbox"
-                  checked={selectedOrigin.includes('ukraine')}
-                  onChange={() => handleOriginCheckboxChange('ukraine')} />
-                <label className="form-check-label" htmlFor="exampleCheck1">Ukraine</label></a>
-                <h5 className="mt-4">Price</h5>
-                <a className="dropdown-item" href="#"> <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="range1Checkbox"
-                  checked={selectedPriceRange.includes('1-20')}
-                  onChange={() => handlePriceCheckboxChange('1-20')}
-                />
-                <label className="form-check-label" htmlFor="exampleCheck1">1-20$</label></a>
-                <a className="dropdown-item" href="#">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="range1Checkbox"
-                  checked={selectedPriceRange.includes('20-50$')}
-                  onChange={() => handlePriceCheckboxChange('20-50$')}
-                />
-                <label className="form-check-label" htmlFor="exampleCheck1">20-50$</label>
-                </a>
-                <a className="dropdown-item" href="#">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="range1Checkbox"
-                  checked={selectedPriceRange.includes('50-70$')}
-                  onChange={() => handlePriceCheckboxChange('50-70$')}
-                />
-                <label className="form-check-label" htmlFor="exampleCheck1">50-70$</label>
-                </a>
-                <a className="dropdown-item" href="#">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="range1Checkbox"
-                  checked={selectedPriceRange.includes('+70$')}
-                  onChange={() => handlePriceCheckboxChange('+70$')}
-                />
-                <label className="form-check-label" htmlFor="exampleCheck1">+70$</label>
-                </a>
-  </div>
-</div>
-      
       <div className='container'>
         <section id="search" className="mt-5">
           <div className="col-md-12 pr-0 pl-0 mb-5" >
@@ -377,10 +375,14 @@ export const Allproduct = () => {
                       >
                         Explore
                       </button>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Stack spacing={1}>
+                          <Rating name="half-rating-read" defaultValue={item.rating} precision={0.5} readOnly />
+                        </Stack>
+                      </div>
                     </div>
                   </div>
                 ))}
-
               </div>
             </div>
           </div>
@@ -389,6 +391,7 @@ export const Allproduct = () => {
     </>
   )
 }
+
 
 
 

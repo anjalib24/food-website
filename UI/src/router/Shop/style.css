@@ -410,3 +410,11 @@ Header style */
 .dropdown{
     margin-top: 5px;
 }
+
+@media (max-width: 820px){
+    .main-header ul {
+        display: none;
+    }
+    
+
+}

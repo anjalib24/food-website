@@ -9,12 +9,16 @@ import { Blog } from './Blog'
 import { Footer } from './Footer'
 import { getshowingdata } from './services/Api'
 import Reviews from './Reviews'
+import axios from 'axios'
+import { useProductState } from './context/ProductContext'
 
 export const Home = () => {
   const [show, setShow] = useState()
-
+  const token = localStorage.getItem('token');
+const {setCartCount} = useProductState()
   useEffect(() => {
     fetchDataFromApi();
+    getcart();
   }, []);
   const fetchDataFromApi = async () => {
     try {
@@ -24,6 +28,21 @@ export const Home = () => {
       console.error('Error fetching data:', error); 
     }
   };
+
+  const getcart = async () =>{
+    const response = await axios.get('/api/api/v1/products/get-cart', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    setCartCount(response?.data?.data?.items.length)
+
+  }
+
+  if(!token){
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    setCartCount(cart?.length || 0)
+  }
   
   return (
     <>
