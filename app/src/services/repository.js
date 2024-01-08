@@ -7,6 +7,8 @@ import { ApiError } from "../utils/ApiError.js";
 import ShipmentRateState from "../models/shipmentRateState.model.js";
 import Dimension from "../models/Dimensions.model.js";
 import DimensionWeightRange from "../models/dimensionWeightRange.model.js";
+import ProductsReview from "../models/productsReviews.model.js";
+import { Product } from "../models/product.model.js";
 
 export const cartRepository = async (userId) => {
   const carts = await Cart.find({ user_id: userId }).populate({
@@ -123,5 +125,80 @@ export const addShippingCharge = async (cartData) => {
   } catch (error) {
     console.error("Error in addShippingCharge:", error);
     throw new ApiError(500, `Error adding shipping charge: ${error.message}`);
+  }
+};
+
+// calculate product reviews
+
+export const calculateProductReviews = async (productId) => {
+  try {
+    const productReviews = await Product.aggregate([
+      {
+        $match: { _id: productId },
+      },
+      {
+        $lookup: {
+          from: "productsreviews",
+          localField: "_id",
+          foreignField: "product",
+          as: "productReviewDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$productReviewDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "productReviewDetails.user",
+          foreignField: "_id",
+          as: "userdetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userdetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          comment: "$productReviewDetails.comment",
+          rating: "$productReviewDetails.rating",
+          username: "$userdetails.username",
+          _id: 0,
+        },
+      },
+      {
+        $match: {
+          rating: { $exists: true },
+        },
+      },
+    ]);
+
+    const productLength = productReviews.length;
+
+    if (productLength === 0) {
+      return { productOverAllReviews: 0, allReviewsCount: 0 };
+    }
+
+    let productReviewsSum = 0;
+
+    productReviews.forEach((product) => {
+      productReviewsSum += product?.rating;
+    });
+
+    const productOverAllReviews = productReviewsSum / productLength;
+    return {
+      productOverAllReviews,
+      allReviewsCount: productLength,
+      reviews: productReviews,
+    };
+  } catch (error) {
+    console.error("Error calculating product reviews:", error);
+    throw error; // Rethrow the error for proper handling at the caller level
   }
 };

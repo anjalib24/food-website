@@ -8,6 +8,7 @@ import {
   cartRepository,
   addItem,
   addShippingCharge,
+  calculateProductReviews,
 } from "../../services/repository.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
@@ -111,14 +112,16 @@ const getProductData = asyncHandler(async (req, res) => {
           cntry._id.equals(product.origin_country)
         );
 
+        const getProductReviews = await calculateProductReviews(product._id);
+
         return {
           ...product.toObject(),
           category,
           country,
+          reviewDetails: getProductReviews,
         };
       })
     );
-
     const getProducts = { ...paginatedProducts, docs: productsWithCategories };
 
     return res
@@ -127,9 +130,7 @@ const getProductData = asyncHandler(async (req, res) => {
         new ApiResponse(200, getProducts, "Get all product data successfully.")
       );
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiResponse(500, null, "Internal Server Error!"));
+    return res.status(500).json(new ApiResponse(500, null, error));
   }
 });
 
@@ -846,8 +847,6 @@ const createProductReview = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Something went wrong while creating review.");
     }
 
-    await calculateProductReviews(savedReview?.product);
-
     res
       .status(201)
       .json(new ApiResponse(201, savedReview, "Review created successfully."));
@@ -861,42 +860,6 @@ const createProductReview = asyncHandler(async (req, res) => {
     }
   }
 });
-
-// calculate product reviews
-
-const calculateProductReviews = async (productIds) => {
-  const productReviews = await ProductsReview.find({
-    product: productIds,
-  });
-
-  const productLenght = productReviews.length;
-  if (productLenght === 0) {
-    return { productOverAllReviews: 0, allReviewsCount: 0 };
-  }
-
-  let productReviewsSum = 0;
-
-  productReviews.forEach((review) => {
-    productReviewsSum += review.rating;
-  });
-
-  const productOverAllReviews = productReviewsSum / productLenght;
-
-  let updatedProductData = await Product.findByIdAndUpdate(productIds, {
-    $set: {
-      rating: productOverAllReviews,
-      rating_count: productLenght,
-    },
-  });
-  if (!updatedProductData) {
-    throw new ApiError(
-      400,
-      "Something went wrong while updating product reviews "
-    );
-  }
-
-  return true;
-};
 
 export {
   createProductData,
