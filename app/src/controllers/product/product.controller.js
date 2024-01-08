@@ -45,29 +45,6 @@ const getProductById = asyncHandler(async (req, res) => {
     );
 });
 
-// calculate product reviews
-
-const calculateProductReviews = async (productIds) => {
-  const productReviews = await ProductsReview.find({
-    product: { $in: productIds },
-  });
-
-  const productLenght = productReviews.length;
-  if (productLenght === 0) {
-    return { productOverAllReviews: 0, allReviewsCount: 0 };
-  }
-
-  let productReviewsSum = 0;
-
-  productReviews.forEach((review) => {
-    productReviewsSum += review.rating;
-  });
-
-  const productOverAllReviews = productReviewsSum / productLenght;
-
-  return { productOverAllReviews, allReviewsCount: productLenght };
-};
-
 //get product data -----------
 const getProductData = asyncHandler(async (req, res) => {
   try {
@@ -122,8 +99,6 @@ const getProductData = asyncHandler(async (req, res) => {
       (product) => product.origin_country
     );
 
-    const productIds = paginatedProducts.docs.map((product) => product._id);
-
     const categories = await Category.find({ _id: { $in: categoryIds } });
     const countries = await Country.find({ _id: { $in: countryIds } });
 
@@ -136,14 +111,10 @@ const getProductData = asyncHandler(async (req, res) => {
           cntry._id.equals(product.origin_country)
         );
 
-        const getProductReviews = await calculateProductReviews(product._id);
-
         return {
           ...product.toObject(),
           category,
           country,
-          productRating: getProductReviews?.productOverAllReviews || 0,
-          productRatingCount: getProductReviews?.allReviewsCount || 0,
         };
       })
     );
@@ -870,6 +841,12 @@ const createProductReview = asyncHandler(async (req, res) => {
 
     const savedReview = await newReview.save();
 
+    if (!savedReview) {
+      throw new ApiError(400, "Something went wrong while creating review.");
+    }
+
+    await calculateProductReviews(savedReview?.product);
+
     res
       .status(201)
       .json(new ApiResponse(201, savedReview, "Review created successfully."));
@@ -883,6 +860,42 @@ const createProductReview = asyncHandler(async (req, res) => {
     }
   }
 });
+
+// calculate product reviews
+
+const calculateProductReviews = async (productIds) => {
+  const productReviews = await ProductsReview.find({
+    product: productIds,
+  });
+
+  const productLenght = productReviews.length;
+  if (productLenght === 0) {
+    return { productOverAllReviews: 0, allReviewsCount: 0 };
+  }
+
+  let productReviewsSum = 0;
+
+  productReviews.forEach((review) => {
+    productReviewsSum += review.rating;
+  });
+
+  const productOverAllReviews = productReviewsSum / productLenght;
+
+  let updatedProductData = await Product.findByIdAndUpdate(productIds, {
+    $set: {
+      rating: productOverAllReviews,
+      rating_count: productLenght,
+    },
+  });
+  if (!updatedProductData) {
+    throw new ApiError(
+      400,
+      "Something went wrong while updating product reviews "
+    );
+  }
+
+  return true;
+};
 
 export {
   createProductData,

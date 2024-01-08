@@ -72,6 +72,14 @@ const productSchema = new mongoose.Schema(
     width: {
       type: Number,
     },
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    rating_count: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

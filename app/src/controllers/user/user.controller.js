@@ -210,6 +210,9 @@ const userOrderHistory = asyncHandler(async (req, res) => {
         as: "userData",
       },
     },
+    {
+      $unwind: "$userData",
+    },
   ]);
 
   res
