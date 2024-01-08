@@ -24,12 +24,27 @@ import ProductsReview from "../../models/productsReviews.model.js";
 //------------get best seller------------
 
 const getBestSeller = asyncHandler(async (req, res) => {
-  const getBestsellerData = await Product.find({
-    best_seller: true,
-  }).populate("origin_country");
-  return res
-    .status(200)
-    .json(new ApiResponse(200, getBestsellerData, "All best seller data."));
+  try {
+    const getBestsellerData = await Product.find({
+      best_seller: true,
+    }).populate("origin_country");
+
+    const bestsellerData = [];
+
+    for (const data of getBestsellerData) {
+      const reviewData = await calculateProductReviews(data?._id);
+      bestsellerData.push({ ...data.toObject(), ...reviewData });
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, bestsellerData, "All best seller data."));
+  } catch (error) {
+    console.error("Error fetching best seller data:", error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal Server Error"));
+  }
 });
 
 //------------get single order------------
@@ -151,6 +166,7 @@ const createProductData = asyncHandler(async (req, res) => {
     length,
     height,
     width,
+    youtube_video_url,
   } = req.body;
 
   const countBestseller = await Product.find({
@@ -251,6 +267,7 @@ const createProductData = asyncHandler(async (req, res) => {
     length,
     height,
     width,
+    youtube_video_url,
   };
 
   const existingCategory = await Category.findById(categoryID);

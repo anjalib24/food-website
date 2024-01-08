@@ -198,7 +198,9 @@ export const calculateProductReviews = async (productId) => {
       reviews: productReviews,
     };
   } catch (error) {
-    console.error("Error calculating product reviews:", error);
-    throw error; // Rethrow the error for proper handling at the caller level
+    throw new ApiError(
+      500,
+      `Error calculating product reviews: ${error.message}`
+    );
   }
 };

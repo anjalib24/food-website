@@ -72,13 +72,9 @@ const productSchema = new mongoose.Schema(
     width: {
       type: Number,
     },
-    rating: {
-      type: Number,
-      default: 0,
-    },
-    rating_count: {
-      type: Number,
-      default: 0,
+    youtube_video_url: {
+      type: String,
+      default: null,
     },
   },
   {
