@@ -180,7 +180,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 // get user order history
 const userOrderHistory = asyncHandler(async (req, res) => {
   const getUserOrderHistoryData = await OrderHistory.aggregate([
-    { $match: { userId: req.user._id } },
+    {
+      $match: { userId: req.user._id },
+    },
     {
       $lookup: {
         from: "orders",
@@ -198,6 +200,14 @@ const userOrderHistory = asyncHandler(async (req, res) => {
         localField: "orderDetails.products",
         foreignField: "_id",
         as: "productDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userData",
       },
     },
   ]);
