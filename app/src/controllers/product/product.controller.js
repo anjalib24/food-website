@@ -816,7 +816,7 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
 const createProductReview = asyncHandler(async (req, res) => {
   try {
     const { id: product_id } = req.params;
-    const { rating } = req.body;
+    const { rating, comment } = req.body;
 
     if (!product_id) {
       throw new ApiError(400, "Product ID is required!");
@@ -837,6 +837,7 @@ const createProductReview = asyncHandler(async (req, res) => {
       user: req.user._id,
       product: product_id,
       rating,
+      comment,
     });
 
     const savedReview = await newReview.save();

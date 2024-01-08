@@ -18,6 +18,9 @@ const productsReviewSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    comment: {
+      type: String,
+    },
   },
   {
     timestamps: true,
