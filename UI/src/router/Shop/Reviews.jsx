@@ -5,13 +5,30 @@ import 'slick-carousel/slick/slick-theme.css';
 import './style.css';
 import defaultpersonimg from "./images/defaultperson.png"
 
+
+
+const Loader = () => (
+  <div className="loader-container">
+    <div className="loader"></div>
+  </div>
+);
+
+
 const Reviews = (props) => {
-  console.log(props,"review props");
-  const [index, setIndex] = useState(0);
-  const sliderRef = useRef(null);
+  const slickRef = useRef(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
-    setIndex(0);
-  }, [props.reviews]);
+    // Simulating an asynchronous data fetch
+    const fetchData = async () => {
+      // You can replace this with your actual data fetching logic
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating a 2-second delay
+      setIsLoaded(true);
+    };
+
+    fetchData();
+  }, []);
+
 
   const settings = {
     dots: false,
@@ -37,15 +54,24 @@ const Reviews = (props) => {
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
+          dots:true,
+          arrows:false
         },
       },
     ],
   };
 
-  const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
-  };
+  useEffect(() => {
+    if (isLoaded && slickRef.current) {
+      slickRef.current.slickGoTo(0);
+    }
+  }, [isLoaded]);
 
+  const handleAfterChange = (currentSlide) => {
+    if (currentSlide === 0) {
+      setIsLoaded(true);
+    }
+  };
   return (
     <>
       <section id="review" className="m-5 mb-5">
@@ -55,15 +81,20 @@ const Reviews = (props) => {
         <div className="container">
           <Slider
             {...settings}
-            ref={sliderRef}
-            beforeChange={(oldIndex, newIndex) => handleSelect(newIndex)}
+            ref={slickRef}
+            afterChange={handleAfterChange}
           >
             {props?.reviews?.map((item, reviewIndex) => (
               <>
                 <div key={reviewIndex} style={{
                   marginRight: '5px',
-                  marginLeft: "5px"
+                  marginLeft: "5px",
+                  // margin:"auto",
+                  // maxWidth:"275px"
                 }}>
+                  <div style={{margin:"auto", maxWidth:"275px"}}>
+
+                 
                   <div id="review_card">
                     <div id="card_top" >
                       <div id="profile" className="">
@@ -86,10 +117,24 @@ const Reviews = (props) => {
                         </div>
                       </div>
                     </div>
-                    <div id="comment" className="m-2 overflow-auto" style={{ height: "355px" }}>
-                      <p>{item.reviews}</p>
+                    <div id="comment" className="m-2 " style={{ height: "355px" }}>
+                      <h6 className='text-break text-justify' style={{
+                        display: 'block',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 6,
+                        maxWidth: '100%',
+                        height: 'calc(1.5em * 14)',
+                        margin: '0 auto',
+                        fontSize: '1em',
+                        lineHeight: '1.5',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
+                        {item.reviews}
+                      </h6>
                     </div>
                   </div>
+                </div>
                 </div>
               </>
             ))}
@@ -101,4 +146,3 @@ const Reviews = (props) => {
 };
 
 export default Reviews;
-

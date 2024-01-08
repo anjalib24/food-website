@@ -8,6 +8,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import Header from './Header';
 import Alert from './Alert';
 import Loader from '@/components/Loader';
+import { useProductState } from './context/ProductContext';
+import { Footer } from './Footer';
 
 
 const Cart = () => {
@@ -15,11 +17,19 @@ const Cart = () => {
   const [localData, setLocalData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [cartId, setCartId] = useState()
+  const [shipingCharge, setShipingCharge] = useState({
+    deliveryCharge: 0,
+    tax: 0
+  }
+
+  )
   const history = useHistory();
   const [alert, setAlert] = useState(null);
+  let { setCartCount } = useProductState()
 
   const token = localStorage.getItem('token');
   let totalPrice;
+
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -33,16 +43,20 @@ const Cart = () => {
   const fetchDataFromApi = async () => {
     setIsLoading(true);
     try {
-      const result = await fetchData("products/get-product", { limit: 25 });
+      const result = await fetchData("products/get-product", { limit: 32 });
       if (token) {
-        const response = await axios.get('http://127.0.0.1:8000/api/v1/products/get-cart', {
+        const response = await axios.get('/api/api/v1/products/get-cart', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
+        setCartCount(response?.data?.data?.items.length)
         setCartId(response?.data?.data?._id)
+        setShipingCharge({
+          deliveryCharge: response?.data?.data?.shippingCharge,
+          tax: response?.data?.data?.tax
+        })
         const cartItems = response?.data?.data?.items;
-
         if (cartItems.length > 0) {
           const filteredData = result?.data?.docs
             .filter(item => cartItems.some(cartItem => cartItem?.productId == item._id))
@@ -93,10 +107,9 @@ const Cart = () => {
   const updateQuantity = async (index, newQuantity, item, incordec) => {
     const token = localStorage.getItem('token');
     if (token) {
-      const response = await axios.post('http://127.0.0.1:8000/api/v1/products/add-to-cart', [{
+      const response = await axios.post('/api/api/v1/products/add-to-cart', [{
         productId: item?.product?._id,
         quantity: incordec,
-        shippingCharge: 0
       }], {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -115,13 +128,14 @@ const Cart = () => {
     if (token) {
       try {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
-        const response = await axios.get(`http://127.0.0.1:8000/api/v1/products/remove-items-from-cart/${productId}`, {
+        const response = await axios.get(`/api/api/v1/products/remove-items-from-cart/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         showAlert("danger", "Product Delete Sucessfully");
-        fetchDataFromApi(); 
+        fetchDataFromApi();
+        setCartCount(prev=>prev-1)
       } catch (error) {
         console.error('Error deleting the product:', error);
       }
@@ -146,16 +160,15 @@ const Cart = () => {
   };
 
 
-
   const payment = async () => {
 
     const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
-    const response = await fetch(`http://127.0.0.1:8000/api/v1/order/create-order/${cartId}`, {
+    const response = await fetch(`/api/api/v1/order/create-order/${cartId}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }    });
     const { data } = await response.json()
-    console.log(data, "-------------------");
     const sessionID = data?.sessionID
     const result = await stripe.redirectToCheckout({
       sessionId: sessionID,
@@ -164,12 +177,19 @@ const Cart = () => {
       console.error(result.error.message);
     }
   };
-  console.log(localData,"local data");
+
+  // if (token) {
+  //   setCartCount(cartData?.filteredData?.length)
+  // } else {
+  //   setCartCount(localData.length)
+  // }
+
+  console.log(shipingCharge.shipingCharges,"=================");
   return (
     <>
-    {isLoading && <Loader/>}
+      {isLoading && <Loader />}
       {alert && <Alert type={alert.type} message={alert.message} />}
-      <Header />
+      <Header hideCart={true}/>
       <section className="h-100 gradient-custom">
         <div className="container py-5">
           <div className="row d-flex flex-row  justify-content-center my-4">
@@ -185,14 +205,14 @@ const Cart = () => {
                 <div className="card-header py-3">
                   <h5 className="mb-0">Cart items</h5>
                 </div>
-                <div className="card-body " >
+                <div className="card-body ">
                   {cartData?.length === 0 && localData?.length === 0 ? (
                     <Noproductincart />
                   ) : (
                     token ? (cartData?.filteredData?.map((item, index) => {
                       return (
                         <>
-                          {<div className="_1AtVbE col-12-12">
+                          {<div className="_1AtVbE col-12-12" key={index}>
                             <div className="zab8Yh _10k93p">
                               <div className="_2nQDXZ">
                                 <a href="/nb-nicky-boy-printed-men-round-neck-black-t-shirt/p/itmb1c6b5e8551de?pid=TSHGW3FNAGC9UJ7X&amp;lid=LSTTSHGW3FNAGC9UJ7XCU0GGF&amp;marketplace=FLIPKART"><span>
@@ -247,7 +267,7 @@ const Cart = () => {
                     ) : (localData.map((item, index) => {
                       return (
                         <>
-                          {<div className="_1AtVbE col-12-12">
+                          {<div className="_1AtVbE col-12-12" key={index}>
                             <div className="zab8Yh _10k93p">
                               <div className="_2nQDXZ">
                                 <a href="/nb-nicky-boy-printed-men-round-neck-black-t-shirt/p/itmb1c6b5e8551de?pid=TSHGW3FNAGC9UJ7X&amp;lid=LSTTSHGW3FNAGC9UJ7XCU0GGF&amp;marketplace=FLIPKART"><span>
@@ -272,12 +292,10 @@ const Cart = () => {
                                       className="_23FHuj"
                                       disabled={item.quantity === 1}
                                       onClick={() => updateQuantity(index, item.quantity - 1)}
-
                                     >
                                       –
                                     </button>
                                     <div className="_26HdzL">
-
                                       <input
                                         id={`form${index}`}
                                         min="0"
@@ -316,56 +334,62 @@ const Cart = () => {
                 </div>
               )}
             </div>
-            <div id="pricedetails" className="col-md-4" style={{ position: "sticky", top: "0" }}>
-              <div className="card mb-4">
-                <div className="card-header py-3">
-                  <h5 className="mb-0">Price Details</h5>
-                </div>
-                <div className="card-body">
-                  <ul className="list-group list-group-flush">
-                    <li
-                      className="list-group-item d-flex justify-content-between flex-row border-0 px-0 pb-0">
-                      <div>
-                        Price
-                      </div>
-                      <div>
-                        {totalPrice}
-                      </div>
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between flex-row  px-0">
-                      <div>
-                        Delivery Charges
-                      </div>
-                      <div>
-                        2$
-                      </div>
-                      
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between flex-row  px-0">
-                      <div>
-tax
-                      </div>
-                      <div>
-                        2$
-                      </div>
-                      
-                    </li>
-                    <li
-                      className="list-group-item d-flex justify-content-between flex-row border-0 px-0 mb-3">
-                      <div>
-                        <strong>Total amount</strong>
-                      </div>
-                      <div>
-                        <span><strong>${totalPrice}</strong></span>
-                      </div>
-                    </li>
-                  </ul>
+            {cartData?.length === 0 && localData?.length === 0 ? (
+
+              <></>
+            ) : (
+              <div id="pricedetails" className="col-md-4" style={{ position: "sticky", top: "0" }}>
+                <div className="card mb-4">
+                  <div className="card-header py-3">
+                    <h5 className="mb-0">Price Details</h5>
+                  </div>
+                  <div className="card-body">
+                    <ul className="list-group list-group-flush">
+                      <li
+                        className="list-group-item d-flex justify-content-between flex-row border-0 px-0 pb-0">
+                        <div>
+                          Price
+                        </div>
+                        <div>
+                          {totalPrice}
+                        </div>
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between flex-row  px-0">
+                        <div>
+                          Delivery Charges
+                        </div>
+                        <div>
+                          {shipingCharge?.deliveryCharge}
+                        </div>
+
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between flex-row  px-0">
+                        <div>
+                          Tax
+                        </div>
+                        <div>
+                          {shipingCharge?.tax}
+                        </div>
+
+                      </li>
+                      <li
+                        className="list-group-item d-flex justify-content-between flex-row border-0 px-0 mb-3">
+                        <div>
+                          <strong>Total amount</strong>
+                        </div>
+                        <div>
+                          <span><strong>${(totalPrice + shipingCharge?.deliveryCharge + shipingCharge?.tax)}</strong></span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            )
+            }     </div>
         </div>
       </section>
+      <Footer/>
     </>
   );
 };

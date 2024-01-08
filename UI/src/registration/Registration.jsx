@@ -60,7 +60,7 @@ const Registration = () => {
       };
 
       try {
-        const apiUrl = "http://127.0.0.1:8000/api/v1/users/register";
+        const apiUrl = "/api/api/v1/users/register";
         const response = await axios.post(apiUrl, requestData);
         // Check the response and show the appropriate alert
         if (response.status === 201) {

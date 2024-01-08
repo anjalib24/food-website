@@ -17,8 +17,10 @@ import {
   WhatsappIcon,
   InstapaperIcon
 } from "react-share";
+import { useProductState } from './context/ProductContext';
 
 const Socialmedia = ({ showModal, setShowModal , productId }) => {
+  const {showsocial , setShowSocial} = useProductState()
   const shareUrl = `http://localhost:5173/productdetail/${productId}`;
   const title = 'Check out this awesome product!';
 

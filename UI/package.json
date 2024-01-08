@@ -23,7 +23,7 @@
     "@stripe/stripe-js": "^2.2.2",
     "@syncfusion/ej2-react-popups": "^19.4.53",
     "@webrotate360/imagerotator": "^5.0.1",
-    "axios": "^1.6.2",
+    "axios": "^1.6.5",
     "bootstrap": "^4.1.1",
     "dompurify": "^3.0.6",
     "formik": "^2.4.5",
@@ -38,6 +38,7 @@
     "react-bootstrap": "^2.9.1",
     "react-cool-onclickoutside": "^1.7.0",
     "react-dom": "^18.2.0",
+    "react-google-recaptcha": "^3.1.0",
     "react-icons": "^4.12.0",
     "react-js-loader": "^0.1.3",
     "react-load-script": "^0.0.6",
@@ -55,6 +56,7 @@
     "react-social-media-embed": "^2.4.1",
     "react-spring": "^9.7.3",
     "slick-carousel": "^1.8.1",
+    "styled-components": "^6.1.6",
     "yup": "^1.3.3"
   },
   "devDependencies": {

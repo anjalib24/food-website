@@ -28,9 +28,9 @@ export const Aboutus = (props) => {
                             <div className=" m-5 justify-content-center" dangerouslySetInnerHTML={createMarkup(props?.aboutus?.text)}
                             >
                             </div>
-                            {props?.aboutus?.video && (
+                            {props?.aboutus?.video_url && (
                                 <img alt="youtube_logo" src={videos} className="px-5"          
-                                onClick={() => handleVideomodal(props?.aboutus?.video)}
+                                onClick={() => handleVideomodal(props?.aboutus?.video_url)}
                                 data-toggle="modal"
                                 data-target="#videomodal"
                                 />
