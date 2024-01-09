@@ -79,7 +79,6 @@ const getProductById = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    // Handle errors and send an appropriate response
     console.error(error);
     return res
       .status(500)
@@ -251,7 +250,7 @@ const createProductData = asyncHandler(async (req, res) => {
   let zipFieldName =
     (req.files && req.files["zipFile"] && req.files["zipFile"][0].fieldname) ||
     null;
-  let extractedZipFilesPath = null;
+  let extractedZipFilesData = "";
 
   if (zipFieldName === "zipFile") {
     const zipPath = req.files["zipFile"][0].path;
@@ -266,33 +265,22 @@ const createProductData = asyncHandler(async (req, res) => {
       "/public/zipfiles",
       `${fileNameWithoutExtension}_${Date.now()}`
     );
+    extractedZipFilesData = await extractZip(zipPath);
 
     const zip = new AdmZip(zipPath);
     fs.unlinkSync(zipPath);
 
     zip.extractAllTo(uploadDir, true);
 
-    const extractedZipFiles = fs.readdirSync(uploadDir);
-
-    const specificPath = path.join(uploadDir, extractedZipFiles[0]);
-
-    extractedZipFilesPath = path.relative(parentDirectory, specificPath);
+    fs.readdirSync(uploadDir);
   }
-  const publicIndex =
-    extractedZipFilesPath && extractedZipFilesPath.indexOf("public");
-
-  const modifiedPath =
-    extractedZipFilesPath && publicIndex !== -1
-      ? extractedZipFilesPath.slice(publicIndex + "public".length)
-      : extractedZipFilesPath;
-
   video = video && `/videos/${video}`;
 
   productData = {
     ...productData,
     images: imageArray,
     best_seller,
-    zipFile_url: modifiedPath,
+    zipFile: extractedZipFilesData,
     video_url: video,
     length,
     height,
@@ -335,6 +323,30 @@ const deleteProductData = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid product ID!");
   }
 });
+
+const extractZip = async (zipFilePath) => {
+  const zip = new AdmZip(zipFilePath);
+  const zipEntries = zip.getEntries();
+
+  const desiredExtensions = [".xml", ".jpg", ".png", ".jpeg"];
+  const result = {};
+
+  zipEntries.forEach((zipEntry) => {
+    const entryName = zipEntry.entryName;
+
+    if (desiredExtensions.some((ext) => entryName.endsWith(ext))) {
+      if (!entryName.startsWith("example/images/")) {
+        if (entryName.endsWith(".jpg")) {
+          result.image_url = `/zipfiles/${entryName}`;
+        } else if (entryName.endsWith(".xml")) {
+          result.xml_url = `/zipfiles/${entryName}`;
+        }
+      }
+    }
+  });
+
+  return result;
+};
 
 // update product data part-
 const updateProductData = asyncHandler(async (req, res) => {
@@ -380,7 +392,7 @@ const updateProductData = asyncHandler(async (req, res) => {
   let zipFieldName =
     (req.files && req.files["zipFile"] && req.files["zipFile"][0].fieldname) ||
     null;
-  let extractedZipFilesPath = "";
+  let extractedZipFilesData = "";
 
   if (zipFieldName === "zipFile") {
     const zipPath = req.files["zipFile"][0].path;
@@ -395,34 +407,30 @@ const updateProductData = asyncHandler(async (req, res) => {
       "/public/zipfiles",
       `${fileNameWithoutExtension}_${Date.now()}`
     );
+    extractedZipFilesData = await extractZip(zipPath);
 
     const zip = new AdmZip(zipPath);
     fs.unlinkSync(zipPath);
 
     zip.extractAllTo(uploadDir, true);
 
-    const extractedZipFiles = fs.readdirSync(uploadDir);
-    const specificPath = path.join(uploadDir, extractedZipFiles[0]);
-
-    extractedZipFilesPath = path.relative(parentDirectory, specificPath);
+    fs.readdirSync(uploadDir);
   }
-  const publicIndex = extractedZipFilesPath.indexOf("public");
-  const modifiedPath =
-    publicIndex !== -1
-      ? extractedZipFilesPath.slice(publicIndex + "public".length)
-      : extractedZipFilesPath;
 
-  if (extractedZipFilesPath) {
+  if (!(Object.keys(extractedZipFilesData).length === 0)) {
     productData = {
       ...productData,
-      zipFile_url: modifiedPath,
+      zipFile: extractedZipFilesData,
     };
   }
 
   if (id) {
     const updateProduct = await Product.findByIdAndUpdate(
       { _id: id },
-      productData
+      productData,
+      {
+        new: true,
+      }
     );
 
     if (!updateProduct) {

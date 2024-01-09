@@ -56,8 +56,8 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    zipFile_url: {
-      type: String,
+    zipFile: {
+      type: Object,
     },
     weight: {
       type: Number,
