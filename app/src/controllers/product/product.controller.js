@@ -50,15 +50,41 @@ const getBestSeller = asyncHandler(async (req, res) => {
 //------------get single order------------
 
 const getProductById = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const getProduct = await Product.findById(id)
-    .populate("origin_country")
-    .populate("category");
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, getProduct, "Single order data get successfully.")
-    );
+  try {
+    const { id } = req.params;
+
+    const singleProductData = await Product.findById(id)
+      .populate("origin_country")
+      .populate("category");
+
+    if (!singleProductData) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "Product not found."));
+    }
+
+    const reviewData = await calculateProductReviews(singleProductData._id);
+    const productWithReview = {
+      ...singleProductData.toObject(),
+      ...reviewData,
+    };
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          productWithReview,
+          "Single product data retrieved successfully."
+        )
+      );
+  } catch (error) {
+    // Handle errors and send an appropriate response
+    console.error(error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Internal server error."));
+  }
 });
 
 //get product data -----------
