@@ -72,7 +72,7 @@ const Page = () => {
     <Switch>
       <Route path="/admin">
         <AdminPage />
-      </Route>
+      </Route> 
       <Route path="/">
         <ShopPage />
       </Route>

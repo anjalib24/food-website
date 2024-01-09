@@ -10,7 +10,7 @@ import {
 import ProductsPage from "./Products/Page";
 import WithAuth from "@/components/WithAuth";
 import CustomizationPage from "./Customizations/Page";
-// import "./styles.css";
+import "./styles.css";
 import BestSellerProduct from "./BestSellerProduct/Page";
 import Reviews from "./Reviews/Page";
 import FAQs from "./Faqs/Page";

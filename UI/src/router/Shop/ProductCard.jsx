@@ -22,7 +22,9 @@ const ProductCard = (props) => {
     <>
       <div style={{
         marginRight: '5px',
-        marginLeft: "5px"
+        marginLeft: "5px",
+        display: 'flex',
+        justifyContent: 'center'
       }}>
         <div className="mb-4 border border-success card-container"  style={{ maxWidth: '225px' }}>
           <div className="d-flex mx-auto h-100">

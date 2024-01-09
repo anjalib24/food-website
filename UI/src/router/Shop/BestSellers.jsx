@@ -16,14 +16,15 @@ const BestSellers = () => {
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const response = await axios.get('/api/api/v1/products/get-best-seller-product');
+        const response = await axios.get(
+        import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-best-seller-product"
+        );
         const bestSellers = response.data.data
         setData(bestSellers);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false);
-      }
+        setLoading(false);      }
     };
 
     fetchDataFromApi();
