@@ -41,10 +41,11 @@ export const AdminContext = ({ children }) => {
     const fetchCategoriesAndCountries = async () => {
       try {
         const responseCategories = await fetch(
-          "/api/api/v1/products/get-all-category"
+          import.meta.env.VITE_APP_BASE_API +
+            "/api/v1/products/get-all-category"
         );
         const responseCountries = await fetch(
-          "/api/api/v1/products/get-all-country"
+          import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-all-country"
         );
 
         if (!responseCategories.ok || !responseCountries.ok) {

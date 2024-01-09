@@ -18,7 +18,7 @@ const Page = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch("/api/api/v1/views/get-views")
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

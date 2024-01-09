@@ -34,10 +34,13 @@ const AddBlog = () => {
     });
 
     try {
-      const response = await fetch("/api/api/v1/views/create-blog-views", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        import.meta.env.VITE_APP_BASE_API + "/api/v1/views/create-blog-views",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiUrl = 'http://127.0.0.1:8000/api/v1';
+const apiUrl = import.meta.env.VITE_APP_BASE_API + '/api/v1';
 const token = localStorage.getItem('token');
 
 // export const fetchData = async (endpoint) => {
@@ -8,7 +8,6 @@ const token = localStorage.getItem('token');
 //     const data = await response.json();
 //     return data;
 // };
-
 export const getshowingdata = async (endpoint) => {
     const response = await fetch(`${apiUrl}/${endpoint}`);
     const data = await response.json();

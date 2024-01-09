@@ -31,7 +31,11 @@ const EditProduct = () => {
       console.log("prod", prod);
       setProduct(formatProduct(prod));
     } else {
-      fetch(`/api/api/v1/products/get-single-product/${id}`)
+      fetch(
+        `${
+          import.meta.env.VITE_APP_BASE_API
+        }/api/v1/products/get-single-product/${id}`
+      )
         .then((res) => res.json())
         .then(({ data }) => {
           console.log("data", data);
@@ -96,10 +100,15 @@ const EditProduct = () => {
     });
 
     // return;
-    fetch(`/api/api/v1/products/update-product/${id}`, {
-      method: "PUT",
-      body: formData,
-    })
+    fetch(
+      `${
+        import.meta.env.VITE_APP_BASE_API
+      }/api/v1/products/update-product/${id}`,
+      {
+        method: "PUT",
+        body: formData,
+      }
+    )
       .then((res) => res.json())
       .then(({ data }) => {
         product.country = countries.find(
@@ -281,7 +290,7 @@ const EditProduct = () => {
                       // src={URL.createObjectURL(image)}
                       src={
                         typeof image === "string"
-                          ? "/api" + image
+                          ? import.meta.env.VITE_APP_BASE_API + image
                           : URL.createObjectURL(image)
                       }
                       alt={`Selected ${index}`}

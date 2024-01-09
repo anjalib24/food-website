@@ -18,7 +18,7 @@ const Page = () => {
   const [newZipCode, setNewZipCode] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/benchmarks")
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/benchmarks")
       .then((response) => response.json())
       .then((data) => {
         const marks = data.data[0];
@@ -29,14 +29,14 @@ const Page = () => {
         console.error("Error fetching benchmarks:", error);
       });
 
-    fetch("http://127.0.0.1:8000/api/v1/fixed-shipping-prices")
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/fixed-shipping-prices")
       .then((response) => response.json())
       .then((data) => {
         const charge = data.data[0];
         setFixedShippingCharge(charge.fixed_shipping_price);
       });
 
-    fetch("http://127.0.0.1:8000/api/v1/free-zip-codes")
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/free-zip-codes")
       .then((response) => response.json())
       .then((data) => {
         setZipCodes(data.data);
@@ -48,7 +48,7 @@ const Page = () => {
 
   const addZipCode = () => {
     if (/^\d+$/.test(newZipCode)) {
-      fetch("http://127.0.0.1:8000/api/v1/free-zip-codes", {
+      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/free-zip-codes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,9 +69,12 @@ const Page = () => {
   };
 
   const deleteZipCode = (zipId) => {
-    fetch("http://127.0.0.1:8000/api/v1/free-zip-codes/" + zipId, {
-      method: "DELETE",
-    })
+    fetch(
+      import.meta.env.VITE_APP_BASE_API + "/api/v1/free-zip-codes/" + zipId,
+      {
+        method: "DELETE",
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setZipCodes(zipCodes.filter((zipCode) => zipCode._id !== zipId));
@@ -79,7 +82,7 @@ const Page = () => {
   };
 
   const updateBenchmark = () => {
-    fetch("http://127.0.0.1:8000/api/v1/benchmarks", {
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/benchmarks", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -98,7 +101,7 @@ const Page = () => {
 
   const updateFixedShippingCharge = () => {
     console.log("Updating fixed shipping charge...");
-    fetch("http://127.0.0.1:8000/api/v1/fixed-shipping-prices", {
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/fixed-shipping-prices", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

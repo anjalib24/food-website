@@ -29,7 +29,7 @@ const EditReview = () => {
 
   useEffect(() => {
     const fetchReviews = () => {
-      fetch("/api/api/v1/views/get-views")
+      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views")
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -42,7 +42,7 @@ const EditReview = () => {
           const review = reviews.find((review) => review._id === id);
           setReviews(reviews);
           setReview(review);
-          setPreview(`/api/${review.image}`);
+          setPreview(`${import.meta.env.VITE_APP_BASE_API}/${review.image}`);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -53,7 +53,7 @@ const EditReview = () => {
 
     if (review) {
       setReview(review);
-      setPreview(`/api/${review.image}`);
+      setPreview(`${import.meta.env.VITE_APP_BASE_API}/${review.image}`);
     } else {
       fetchReviews();
     }
@@ -76,7 +76,9 @@ const EditReview = () => {
 
     try {
       const response = await fetch(
-        "/api/api/v1/views/update-reviews-views/" + id,
+        import.meta.env.VITE_APP_BASE_API +
+          "/api/v1/views/update-reviews-views/" +
+          id,
         {
           method: "PUT",
           body: formData,
