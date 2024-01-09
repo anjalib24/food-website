@@ -15,11 +15,12 @@ const Yourprofile = () => {
 
   const history = useHistory();
   const handleClick = (item) => {
-    console.log(item , "item in the handle");
+    console.log(item, "item in the handle");
     history.push({
       pathname: '/userorderdetail',
       state: { orderDetails: item }
-    });  };
+    });
+  };
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
@@ -216,7 +217,7 @@ const Yourprofile = () => {
                     {orderHistory?.map((item) => {
                       return (
                         <>
-   <div className="row product" onClick={() => handleClick(item)}>
+                          <div className="row product" onClick={() => handleClick(item)}>
                             <div className="col-md-2">
                               <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={"/api" + `${item?.productDetails[0]?.images[0]}`} />
                             </div>
@@ -232,13 +233,13 @@ const Yourprofile = () => {
                               </div>
                             </div>
                             <div className="col-md-4 product-detail" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            {item?.orderDetails?.status === 'pending' ? (
-                                     <div className='reddot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#dc3545', border: '2px solid #dc3545', display: 'inline-block', marginRight: '8px' }}></div>
+                              {item?.orderDetails?.status === 'pending' ? (
+                                <div className='reddot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#dc3545', border: '2px solid #dc3545', display: 'inline-block', marginRight: '8px' }}></div>
 
-   ) : (
-    <div className='greendot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#26a541', border: '2px solid #26a541', display: 'inline-block', marginRight: '8px' }}></div>
+                              ) : (
+                                <div className='greendot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#26a541', border: '2px solid #26a541', display: 'inline-block', marginRight: '8px' }}></div>
 
-   )}
+                              )}
                               <div>
                                 {item?.orderDetails?.status}
                               </div>

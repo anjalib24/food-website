@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FaStar } from "react-icons/fa";
 import axios from 'axios';
 import $ from 'jquery';
+import Alert from './Alert';
 
 
 
@@ -31,11 +32,19 @@ const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
     console.log(reviewmodal, "reviewww");
     const [rate, setRate] = useState(0);
     const [comment, setComment] = useState('');
+    const [alert, setAlert] = useState(null);
 
+    const showAlert = (type, message) => {
+      setAlert({ type, message });
+      setTimeout(() => {
+        setAlert(null);
+      }, 5000);
+    };
+  
     const handleClose = () => {
         setReviewModal(false);
     };
-
+console.log(alert,"-=---");
     const submitReview = async () => {
         try {
             const token = localStorage.getItem("token"); 
@@ -49,7 +58,11 @@ const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
                 }
             });
             console.log(response.data);
+            showAlert('success', 'Review submitted successfully');
+
         } catch (error) {
+            showAlert("danger", error.response.data.error);
+
             console.error(error);
         }
         setReviewModal(false);
@@ -64,6 +77,8 @@ const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
     }, [reviewmodal]);
  
     return (
+        <>
+        {alert && <Alert type={alert.type} message={alert.message} />}
 
         <div className={`modal fade ${reviewmodal ? 'show' : ''}`} id="reviewmodalmodal" tabIndex="-1" role="dialog" aria-labelledby="explorereviewmodal" aria-hidden={!reviewmodal} data-backdrop="static" data-keyboard="false">
             <div className="modal-dialog modal-dialog-centered" role="document">
@@ -116,6 +131,7 @@ const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 
 }
