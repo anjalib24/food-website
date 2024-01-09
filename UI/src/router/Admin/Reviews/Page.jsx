@@ -23,7 +23,7 @@ const Page = () => {
 
   useEffect(() => {
     const fetchReviews = () => {
-      fetch("/api/api/v1/views/get-views")
+      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views")
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -43,9 +43,14 @@ const Page = () => {
 
   const handleDelete = (id) => {
     // make a delete request at http://127.0.0.1:8000/api/v1/views/delete-reviews-views/:id
-    fetch(`/api/api/v1/views/delete-reviews-views/${id}`, {
-      method: "DELETE",
-    })
+    fetch(
+      `${
+        import.meta.env.VITE_APP_BASE_API
+      }/api/v1/views/delete-reviews-views/${id}`,
+      {
+        method: "DELETE",
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

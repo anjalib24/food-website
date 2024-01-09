@@ -18,7 +18,8 @@ const Page = () => {
     async function fetchData() {
       try {
         const result = await fetch(
-          "/api/api/v1/products/get-best-seller-product"
+          import.meta.env.VITE_APP_BASE_API +
+            "/api/v1/products/get-best-seller-product"
         );
 
         if (!result.ok) {
@@ -37,15 +38,20 @@ const Page = () => {
   }, []);
 
   function rmFromBestSeller(id) {
-    fetch(`/api/api/v1/products/update-product/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        best_seller: false,
-      }),
-    })
+    fetch(
+      `${
+        import.meta.env.VITE_APP_BASE_API
+      }/api/v1/products/update-product/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          best_seller: false,
+        }),
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -83,7 +89,9 @@ const Page = () => {
                 } `}
               >
                 <img
-                  src={`/api${product.images[0]}`}
+                  src={`${import.meta.env.VITE_APP_BASE_API}${
+                    product.images[0]
+                  }`}
                   className="w-full aspect-square object-cover rounded-md"
                 />
 

@@ -24,7 +24,7 @@ const AboutSection = ({ data }) => {
     if (video) formData.append("about_us_video", video);
     formData.append("text", about);
 
-    fetch("/api/api/v1/views/update-about-us", {
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/update-about-us", {
       method: "PUT",
       body: formData,
     })
@@ -59,7 +59,11 @@ const AboutSection = ({ data }) => {
       {img && (
         <Box
           component={"img"}
-          src={img == data.image ? "/api" + img : URL.createObjectURL(img)}
+          src={
+            img == data.image
+              ? import.meta.env.VITE_APP_BASE_API + img
+              : URL.createObjectURL(img)
+          }
           alt={`image`}
           className="w-full object-cover rounded-md"
           sx={{ mt: 1 }}
@@ -83,7 +87,11 @@ const AboutSection = ({ data }) => {
         <Box sx={{ mt: 1 }}>
           <video className="w-full object-cover rounded-md" controls>
             <source
-              src={vid == data.video ? "/api" + vid : URL.createObjectURL(vid)}
+              src={
+                vid == data.video
+                  ? import.meta.env.VITE_APP_BASE_API + vid
+                  : URL.createObjectURL(vid)
+              }
               type="video/mp4"
             />
             Your browser does not support the video tag.

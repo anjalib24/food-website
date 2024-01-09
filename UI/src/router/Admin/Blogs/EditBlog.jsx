@@ -20,7 +20,7 @@ const EditBlog = () => {
 
   useEffect(() => {
     const fetchBlog = () => {
-      fetch("/api/api/v1/views/get-views")
+      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views")
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -41,7 +41,7 @@ const EditBlog = () => {
     if (blog) {
       console.log("cache-blog", blog);
       setBlog(blog);
-      setPreview("/api" + blog.image);
+      setPreview(import.meta.env.VITE_APP_BASE_API + blog.image);
     } else {
       console.log("fetch-blog");
       fetchBlog();
@@ -73,7 +73,9 @@ const EditBlog = () => {
 
     try {
       const response = await fetch(
-        "/api/api/v1/views/update-blog-views/" + id,
+        import.meta.env.VITE_APP_BASE_API +
+          "/api/v1/views/update-blog-views/" +
+          id,
         {
           method: "PUT",
           body: formData,
