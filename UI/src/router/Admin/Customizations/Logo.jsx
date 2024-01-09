@@ -20,10 +20,13 @@ const Logo = ({ data }) => {
     const formData = new FormData();
     formData.append("logo", logo);
 
-    fetch("/api/api/v1/views/update-logo-views", {
-      method: "PUT",
-      body: formData,
-    })
+    fetch(
+      import.meta.env.VITE_APP_BASE_API + "/api/v1/views/update-logo-views",
+      {
+        method: "PUT",
+        body: formData,
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -57,7 +60,11 @@ const Logo = ({ data }) => {
       {img && (
         <Box
           component={"img"}
-          src={img == data ? "/api" + img : URL.createObjectURL(img)}
+          src={
+            img == data
+              ? import.meta.env.VITE_APP_BASE_API + img
+              : URL.createObjectURL(img)
+          }
           alt={`Logo`}
           className="h-56 object-cover rounded-md"
           sx={{ mt: 1 }}

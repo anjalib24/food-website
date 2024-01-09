@@ -1,6 +1,7 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* 
 
 .sidebar {
   box-shadow: rgba(113, 122, 131, 0.295) 0px 7px 30px 0px;
