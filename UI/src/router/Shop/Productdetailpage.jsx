@@ -108,18 +108,18 @@ const Productdetailpage = () => {
                 onClick={() => handleaddtocard(product)}
               >Add to cart</Button>
               <div>
-                <div>
-                  <strong>
-                    Review
-                  </strong>
+                <div style={{marginTop:"10px"}}>
+                  <h5>
+                    Reviews
+                  </h5>
 
                 </div>
-                <div>
+                <div style={{marginTop:"30px"}}>
                   {
-                    product?.reviews.map((item) => {
+                    product?.reviews?.map((item) => {
                       return (
                         <>
-                          <div className="row" style={{ display: "flex", flexDirection: "column", margin:"auto" }}  >
+                          <div className="row" style={{ display: "flex", flexDirection: "column", margin:"auto"  , marginTop:"10px"}}  >
                             <div className="col-md-4 " style={{ display: "flex" , gap:"10px" }}>
                               <div>
                                 <img alt="Sample Image" style={{ maxHeight: "35px", width: "auto" }} src={defaultpersonimg} />
