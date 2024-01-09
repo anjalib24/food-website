@@ -74,7 +74,7 @@ const Header = ({ hideCart, hidebutton }) => {
                 <li><Link to="/#About">About Us</Link></li>
                 <li><Link to="/#review">Review</Link></li>
                 <li><Link to="/#Blog">Blog</Link></li>
-                <li><Link to="/#FAQ">FAQ</Link></li>
+                <li><Link to="/#FAQ">FAQS</Link></li>
                 <li onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}>Contact</li>
               </ul>
               <div className="d-flex justify-content-center align-items-center" style={{ flexDirection: 'row', gap: '5px' }}>
