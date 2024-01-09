@@ -12,7 +12,6 @@ export const Shopnow = (props) => {
     }
   }
   
-console.log(sectionStyle,"herosectionnn---");  
   return (
 <>
 <section className="banner" style={sectionStyle}>

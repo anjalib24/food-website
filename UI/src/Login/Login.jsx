@@ -34,7 +34,7 @@ const Login = () => {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const apiUrl = "http://127.0.0.1:8000/api/v1/users/login";
+        const apiUrl = "/api/api/v1/users/login";
         const response = await axios.post(apiUrl, {
           userData: {
             email: values.email,
@@ -50,12 +50,11 @@ const Login = () => {
           const data = cart.map(item => ({
             productId: item._id,
             quantity: item.quantity || 1,
-            shippingCharge: 0
 
           }));
           const token = localStorage.getItem('token');
 
-          const response = await axios.post('http://127.0.0.1:8000/api/v1/products/add-to-cart', 
+          const response = await axios.post('/api/api/v1/products/add-to-cart', 
             data
           , {
             headers: {

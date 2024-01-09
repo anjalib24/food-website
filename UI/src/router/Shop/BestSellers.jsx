@@ -16,7 +16,7 @@ const BestSellers = () => {
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/v1/products/get-best-seller-product');
+        const response = await axios.get('/api/api/v1/products/get-best-seller-product');
         const bestSellers = response.data.data
         setData(bestSellers);
       } catch (error) {
@@ -57,6 +57,8 @@ const BestSellers = () => {
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
+          dots:true,
+          arrows:false
         },
       },
     ],
@@ -77,7 +79,6 @@ const BestSellers = () => {
             ) : data && data.length ?
               (
                 <div className='container'>
-
                   <Slider ref={sliderRef} {...settings} className='d-flex'>
                     {data.map((item, key) => {
                       return <ProductCard key={key} item={item} />

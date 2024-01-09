@@ -19,10 +19,9 @@ export const ProductContexts = ({ children }) => {
   const [showvideomodal, setShowvideomodal] = useState(null);
   const [videodata, setVideoData] = useState()
   const [loading, setLoading] = useState(true);
-
-
+  const [cartCount, setCartCount] = useState(0)
+  
   const handleaddtocard = async (item) => {
-    console.log("add to cart workkk-----");
     try {
       const token = localStorage.getItem('token');
       if (token) {
@@ -50,6 +49,7 @@ export const ProductContexts = ({ children }) => {
             }
           });
           setAlertMsg("Product added to the cart");
+          setCartCount(prevCount => prevCount + 1);
           setShowAlert(true);
           setTimeout(() => {
             setAlertMsg("");
@@ -61,8 +61,8 @@ export const ProductContexts = ({ children }) => {
         const isItemInCart = existingCart.some((cartItem) => cartItem._id === item._id);
         if (!isItemInCart) {
           const newCart = [...existingCart, item];
+          setCartCount(prevCount => prevCount + 1);
           localStorage.setItem('cart', JSON.stringify(newCart));
-          localStorage.setItem('CartType', JSON.stringify("WithoutLogin"));
           setCart(newCart);
           setShowCard(true);
           setAlertMsg("Product added to the cart")
@@ -100,13 +100,12 @@ export const ProductContexts = ({ children }) => {
     setVideoData(item);
     setShowvideomodal(true);
   };
-
   return (
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
     <ProductContext.Provider
-      value={{ setLoading, loading ,handleaddtocard, showAlert, setShowAlert, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, createMarkup, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setShow360Modal, show360Modal , setProductId,productId , setShowSocial , showsocial , setVideoData , videodata, showvideomodal ,setShowvideomodal}}>
-
-
+      value={{
+        setCartCount,
+        cartCount, setLoading, loading, handleaddtocard, showAlert, setShowAlert, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, createMarkup, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setShow360Modal, show360Modal, setProductId, productId, setShowSocial, showsocial, setVideoData, videodata, showvideomodal, setShowvideomodal
+      }}>
       {children}
     </ProductContext.Provider>
   );
