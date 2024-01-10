@@ -260,12 +260,9 @@ const createProductData = asyncHandler(async (req, res) => {
 
     const fileNameWithoutExtension = path.parse(originalZipName).name;
 
-    const uploadDir = path.join(
-      parentDirectory,
-      "/public/zipfiles",
-      `${fileNameWithoutExtension}_${Date.now()}`
-    );
-    extractedZipFilesData = await extractZip(zipPath);
+    const directoryNameOf360 = `/zipfiles/${fileNameWithoutExtension}_${Date.now()}`;
+    const uploadDir = path.join(parentDirectory, "/public", directoryNameOf360);
+    extractedZipFilesData = await extractZip(zipPath, directoryNameOf360);
 
     const zip = new AdmZip(zipPath);
     fs.unlinkSync(zipPath);
@@ -324,7 +321,7 @@ const deleteProductData = asyncHandler(async (req, res) => {
   }
 });
 
-const extractZip = async (zipFilePath) => {
+const extractZip = async (zipFilePath, uploadDir) => {
   const zip = new AdmZip(zipFilePath);
   const zipEntries = zip.getEntries();
 
@@ -337,9 +334,9 @@ const extractZip = async (zipFilePath) => {
     if (desiredExtensions.some((ext) => entryName.endsWith(ext))) {
       if (!entryName.startsWith("example/images/")) {
         if (entryName.endsWith(".jpg")) {
-          result.image_url = `/zipfiles/${entryName}`;
+          result.image_url = `${uploadDir}/${entryName}`;
         } else if (entryName.endsWith(".xml")) {
-          result.xml_url = `/zipfiles/${entryName}`;
+          result.xml_url = `${uploadDir}/${entryName}`;
         }
       }
     }
@@ -402,12 +399,9 @@ const updateProductData = asyncHandler(async (req, res) => {
 
     const fileNameWithoutExtension = path.parse(originalZipName).name;
 
-    const uploadDir = path.join(
-      parentDirectory,
-      "/public/zipfiles",
-      `${fileNameWithoutExtension}_${Date.now()}`
-    );
-    extractedZipFilesData = await extractZip(zipPath);
+    const directoryNameOf360 = `/zipfiles/${fileNameWithoutExtension}_${Date.now()}`;
+    const uploadDir = path.join(parentDirectory, "/public", directoryNameOf360);
+    extractedZipFilesData = await extractZip(zipPath, directoryNameOf360);
 
     const zip = new AdmZip(zipPath);
     fs.unlinkSync(zipPath);
