@@ -24,7 +24,7 @@ const Page = () => {
 
   useEffect(() => {
     const fetchReviews = () => {
-      fetch("/api/api/v1/views/get-views")
+      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views")
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -44,9 +44,14 @@ const Page = () => {
   }, []);
 
   const handleDelete = (id) => {
-    fetch("/api/api/v1/views/delete-blog-views/" + id, {
-      method: "DELETE",
-    })
+    fetch(
+      import.meta.env.VITE_APP_BASE_API +
+        "/api/v1/views/delete-blog-views/" +
+        id,
+      {
+        method: "DELETE",
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -104,7 +109,7 @@ const Page = () => {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={"/api" + blog.image}
+                  image={import.meta.env.VITE_APP_BASE_API + blog.image}
                   alt="blog image"
                 />
                 <CardContent

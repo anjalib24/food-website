@@ -14,7 +14,10 @@ const Page = () => {
   const match = useRouteMatch();
 
   useEffect(() => {
-    fetch("/api/api/v1/products/get-product?limit=40")
+    fetch(
+      import.meta.env.VITE_APP_BASE_API +
+        "/api/v1/products/get-product?limit=40"
+    )
       .then((res) => res.json())
       .then(({ data }) => {
         setProducts(data.docs);
@@ -29,15 +32,20 @@ const Page = () => {
   if (products.length === 0) return <Loader />;
 
   function toggleBestSeller(id, best_seller) {
-    fetch(`/api/api/v1/products/update-product/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        best_seller: !best_seller,
-      }),
-    })
+    fetch(
+      `${
+        import.meta.env.VITE_APP_BASE_API
+      }/api/v1/products/update-product/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          best_seller: !best_seller,
+        }),
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -59,12 +67,17 @@ const Page = () => {
   }
 
   function deleteProduct(id) {
-    fetch(`/api/api/v1/products/delete-product/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${
+        import.meta.env.VITE_APP_BASE_API
+      }/api/v1/products/delete-product/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,7 +132,9 @@ const Page = () => {
                   } `}
                 >
                   <img
-                    src={`/api${product.images[0]}`}
+                    src={`${import.meta.env.VITE_APP_BASE_API}${
+                      product.images[0]
+                    }`}
                     className="w-full aspect-square object-cover rounded-md"
                   />
 

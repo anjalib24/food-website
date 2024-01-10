@@ -26,11 +26,14 @@ const AddFaqs = () => {
     // return;
 
     try {
-      const response = await fetch("/api/api/v1/views/create-faq-views", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(faq),
-      });
+      const response = await fetch(
+        import.meta.env.VITE_APP_BASE_API + "/api/v1/views/create-faq-views",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(faq),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

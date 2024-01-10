@@ -1,26 +1,31 @@
-// Page.jsx
+// // Page.jsx
 
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+// import { Route, Switch, useRouteMatch } from "react-router-dom";
+// import AdminPage from "./Admin/Page";
+// import ShopPage from "./Shop/Page";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
+// import Login from "@/Login/Login";
+// import Registration from "@/registration/Registration";
+// import Cart from "./Shop/Cart";
+// import { Home } from "./Shop/Home";
+// import Strip from "./Shop/strip/Strip";
+// import Productdetailpage from "./Shop/Productdetailpage";
+// import { ProductContexts } from "./Shop/context/ProductContext";
+// import Yourprofile from "./Shop/Yourprofile";
+// import PaymentSuccess from "./Shop/PaymentSuccess";
+// import PaymentCancel from "./Shop/PaymentCancel";
+// import UserOrderDetails from "./Shop/UserOrderDetails";
+// import ContactUs from "./Shop/ContactUs";
+
+// ---------------------
+import { Route, Switch } from "react-router-dom";
 import AdminPage from "./Admin/Page";
 import ShopPage from "./Shop/Page";
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import Login from "@/Login/Login";
-import Registration from "@/registration/Registration";
-import Cart from "./Shop/Cart";
-import { Home } from "./Shop/Home";
-import Strip from "./Shop/strip/Strip";
-import Productdetailpage from "./Shop/Productdetailpage";
-import { ProductContexts } from "./Shop/context/ProductContext";
-import Yourprofile from "./Shop/Yourprofile";
-import PaymentSuccess from "./Shop/PaymentSuccess";
-import PaymentCancel from "./Shop/PaymentCancel";
-import UserOrderDetails from "./Shop/UserOrderDetails";
-import ContactUs from "./Shop/ContactUs";
+
 const Page = () => {
-  return (
-    <Switch>                     
-      <ProductContexts>
+  {
+    /* <Switch>  <ProductContexts>
       <Route exact path="/contactus">
           <ContactUs/>
         </Route>
@@ -61,7 +66,16 @@ const Page = () => {
           <Home />
         </Route>
    
-      </ProductContexts>
+      </ProductContexts> </Switch>*/
+  }
+  return (
+    <Switch>
+      <Route path="/admin">
+        <AdminPage />
+      </Route> 
+      <Route path="/">
+        <ShopPage />
+      </Route>
     </Switch>
   );
 };

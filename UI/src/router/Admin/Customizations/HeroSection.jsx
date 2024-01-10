@@ -19,10 +19,14 @@ const HeroSection = ({ data }) => {
     formData.append("subtitle", subtitle);
     if (image) formData.append("hero_section_image", image);
 
-    fetch("/api/api/v1/views/update-hero-section-views", {
-      method: "PUT",
-      body: formData,
-    })
+    fetch(
+      import.meta.env.VITE_APP_BASE_API +
+        "/api/v1/views/update-hero-section-views",
+      {
+        method: "PUT",
+        body: formData,
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -79,7 +83,11 @@ const HeroSection = ({ data }) => {
       {img && (
         <Box
           component={"img"}
-          src={img == data.image ? "/api" + img : URL.createObjectURL(img)}
+          src={
+            img == data.image
+              ? import.meta.env.VITE_APP_BASE_API + img
+              : URL.createObjectURL(img)
+          }
           alt={`Hero image`}
           className="h-56 object-cover rounded-md"
           sx={{ mt: 1 }}

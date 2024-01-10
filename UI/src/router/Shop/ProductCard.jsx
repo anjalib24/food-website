@@ -7,30 +7,31 @@ import { useProductState } from './context/ProductContext'
 import videoimg from "./images/Group.png"
 import "./style.css"
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import { Stack } from 'react-bootstrap'
-import { Rating } from '@mui/material'
 
 const ProductCard = (props) => {
   const { item } = props
-  const { title, short_description } = item
-  const { handleaddtocard, handleExploreClicks, handleSocialmedia, handleVideomodal } = useProductState();
+  const { description, price, title, short_description , images} = item
+  const { handleaddtocard,  handleExploreClicks, handleSocialmedia, handleVideomodal } = useProductState();
   const history = useHistory()
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
+  console.log(images);
   return (
     <>
       <div style={{
         marginRight: '5px',
-        marginLeft: "5px"
+        marginLeft: "5px",
+        display: 'flex',
+        justifyContent: 'center'
       }}>
-        <div className="mb-4 border border-success card-container" style={{ maxWidth: '225px', margin: "auto" }}>
+        <div className="mb-4 border border-success card-container"  style={{ maxWidth: '225px' }}>
           <div className="d-flex mx-auto h-100">
             <div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-                <img src={"/api" + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
-              </div>              <div className="card-content mx-2">
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+  <img src={"/api" + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
+</div>              <div className="card-content mx-2">
                 <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{title}</strong></h3>
                 <div>
                   <p className="product-description" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -38,7 +39,7 @@ const ProductCard = (props) => {
                   </p>
                 </div>
                 <div className='d-flex flex-row align-items-center'>
-                  <h5>Origin County:</h5>
+                    <h5>Origin County:</h5>
                   <img src={usflag} alt="#" className='my-auto' />
                 </div>
                 <div className="product-actions">
@@ -96,11 +97,6 @@ const ProductCard = (props) => {
                     Explore
                   </button>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Stack spacing={1}>
-                          <Rating name="half-rating-read" defaultValue={item.rating} precision={0.5} readOnly />
-                        </Stack>
-                      </div>
               </div>
             </div>
           </div>
