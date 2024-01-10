@@ -67,6 +67,7 @@ const Productdetailpage = () => {
               ))}
               {product?.video_url && (
                 <video width="100" height="100"
+                style={{ height:"100px"}}
                   onMouseOver={() => {
                     setSelectedImage(product.video_url);
                     setIsVideo(true);

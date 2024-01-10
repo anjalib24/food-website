@@ -6,6 +6,7 @@ import Slider from 'react-slick';
 import Loader from '@/components/Loader';
 import axios from 'axios';
 
+
 const BestSellers = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

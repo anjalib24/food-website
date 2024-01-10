@@ -11,6 +11,8 @@ import { getshowingdata } from './services/Api'
 import Reviews from './Reviews'
 import axios from 'axios'
 import { useProductState } from './context/ProductContext'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export const Home = () => {
   const [show, setShow] = useState()
