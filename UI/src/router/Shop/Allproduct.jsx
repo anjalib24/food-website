@@ -323,7 +323,7 @@ export const Allproduct = () => {
                     </div>
                     <div className="product-actions">
                       <div className='d-flex flex-row '>
-                        {item.zipFile_url && <div className="mr-3">
+                        {item.zipFile && <div className="mr-3">
                           <img
                             src={png360}
                             alt="png360"

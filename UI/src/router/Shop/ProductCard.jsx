@@ -17,7 +17,7 @@ const ProductCard = (props) => {
     style: "currency",
     currency: "USD",
   });
-  console.log(images);
+
   return (
     <>
       <div style={{
