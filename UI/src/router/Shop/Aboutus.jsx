@@ -30,7 +30,7 @@ export const Aboutus = (props) => {
                             </div>
                             {props?.aboutus?.video_url && (
                                 <img alt="youtube_logo" src={videos} className="px-5"          
-                                onClick={() => handleVideomodal(props?.aboutus?.video_url)}
+                                onClick={() => handleVideomodal(props?.aboutus)}
                                 data-toggle="modal"
                                 data-target="#videomodal"
                                 />

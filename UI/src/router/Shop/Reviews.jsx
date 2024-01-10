@@ -19,13 +19,10 @@ const Reviews = (props) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Simulating an asynchronous data fetch
     const fetchData = async () => {
-      // You can replace this with your actual data fetching logic
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating a 2-second delay
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
       setIsLoaded(true);
     };
-
     fetchData();
   }, []);
 

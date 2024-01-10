@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { useProductState } from './context/ProductContext';
 
-// Simple Loader component
 const Loader = () => (
+
   <div className="loader-container">
     <div className="loader"></div>
   </div>
@@ -13,15 +14,14 @@ const Loader = () => (
 export const Blog = (props) => {
   const slickRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const {createMarkup } = useProductState();
+
 
   useEffect(() => {
-    // Simulating an asynchronous data fetch
     const fetchData = async () => {
-      // You can replace this with your actual data fetching logic
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating a 2-second delay
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
       setIsLoaded(true);
     };
-
     fetchData();
   }, []);
 
@@ -71,9 +71,9 @@ export const Blog = (props) => {
 
   return (
     <>
-      {!isLoaded && <Loader />} {/* Display the loader while data is loading */}
+      {!isLoaded && <Loader />} 
       {isLoaded && (
-        <section id="Blog" className="mb-5">
+        <section id="Blog" className="mb-5 mt-5" >
           <div className="col-md-12 m-4 text-center">
             <h1>Blog</h1>
           </div>
@@ -81,38 +81,50 @@ export const Blog = (props) => {
             <div className="row">
               <div className="col-md-12">
                 <div id="blog_main">
-                  <Slider ref={slickRef} {...settings} afterChange={handleAfterChange}>
-                    {props?.blog?.map((blogItem, index) => (
-                      <div key={index} className="single-box">
-                        <div className="img-area">
-                          <img src={"/api" + blogItem.image} alt={`Blog ${index + 1}`} />
-                        </div>
-                        <div className="mt-3">
-                          <p>
-                            {new Date(blogItem.createdAt).toLocaleDateString('en-US', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </p>
-                          <h6 className='text-break text-justify' style={{
-                            display: 'block',
-                            WebkitBoxOrient: 'vertical',
-                            WebkitLineClamp: 6,
-                            maxWidth: '100%',
-                            height: 'calc(1.5em * 10)',
-                            margin: '0 auto',
-                            fontSize: '1em',
-                            lineHeight: '1.5',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
-                            {blogItem.content}
-                          </h6>
-                        </div>
-                      </div>
-                    ))}
-                  </Slider>
+
+
+
+                {props?.blog?.length > 0 ? (
+                        <Slider ref={slickRef} {...settings} afterChange={handleAfterChange}>
+                        {props?.blog?.map((blogItem, index) => (
+                          <div key={index} className="single-box">
+                            <div className="img-area">
+                              <img src={"/api" + blogItem.image} alt={`Blog ${index + 1}`} />
+                            </div>
+                            <div className="mt-3">
+                              <p>
+                                {new Date(blogItem.createdAt).toLocaleDateString('en-US', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric',
+                                })}
+                              </p>
+                              <h6 className='text-break text-justify' style={{
+                                display: 'block',
+                                WebkitBoxOrient: 'vertical',
+                                WebkitLineClamp: 6,
+                                maxWidth: '100%',
+                                height: 'calc(1.5em * 10)',
+                                margin: '0 auto',
+                                fontSize: '1em',
+                                lineHeight: '1.5',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}
+                              dangerouslySetInnerHTML={createMarkup(blogItem?.content)}
+
+                              >
+                              </h6>
+                            </div>
+                          </div>
+                        ))}
+                      </Slider>
+               ) : (
+                <p style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>There is no blog now</p>
+                )}
+
+
+          
                 </div>
               </div>
             </div>
