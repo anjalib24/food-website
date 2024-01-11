@@ -12,7 +12,7 @@ export const Faq = (props) => {
       <section id="FAQ" className="mt-5 mb-5">
         <div className="container">
           <div className="col-md-12 m-4 mt-5 text-center">
-            <h1>FAQ</h1>
+            <h1>FAQ`s</h1>
           </div>
           <div className="accordion accordion-flush" id="accordionFlushExample">
             {props?.reviews?.map((item, index) => (
