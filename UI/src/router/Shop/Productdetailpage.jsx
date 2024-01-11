@@ -45,7 +45,6 @@ const Productdetailpage = () => {
     fetchProduct();
   }, []);
 
-  console.log(product, "===================");
   return (
     <>
       <Header />

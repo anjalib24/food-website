@@ -22,6 +22,7 @@ export const Allproduct = () => {
   const [selectedOrigin, setSelectedOrigin] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
+  
   const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, setLoading, loading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
