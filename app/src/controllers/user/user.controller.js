@@ -21,9 +21,10 @@ const getAllUsers = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
 
-  const options = { page, limit };
+  const options = { page };
 
-  const usersData = await User.paginate(filter, options);
+  // const usersData = await User.paginate(filter, options);
+  const usersData = await User.find();
 
   return res
     .status(200)
