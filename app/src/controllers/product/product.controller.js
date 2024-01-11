@@ -206,10 +206,12 @@ const createProductData = asyncHandler(async (req, res) => {
     best_seller: true,
   }).countDocuments();
 
-  if (countBestseller > 15) {
-    return res
-      .status(200)
-      .json(new ApiResponse(200, null, "Best seller can't be more then 15."));
+  if (countBestseller >= 15) {
+    if (best_seller == "true" || best_seller == true) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Best seller can't be more then 15."));
+    }
   }
 
   if (!req.files || req.files.length === 0) {
