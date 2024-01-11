@@ -9,6 +9,18 @@ import axios from 'axios';
 import { useProductState } from './context/ProductContext';
 
 const Header = ({ hideCart, hidebutton }) => {
+  const navStyles = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    background: 'white',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    height: '80px',
+  };
+
   const navigate = useHistory();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { cartCount } = useProductState()
@@ -64,7 +76,7 @@ const Header = ({ hideCart, hidebutton }) => {
       <header>
         <div className="main-header">
           <div className="container">
-            <nav>
+          <nav style={navStyles}>
               <Link to="/">
                 <img src={ethnicLogo} className="logo" alt="#" />
               </Link>

@@ -2,14 +2,13 @@ import React from 'react';
 import { useProductState } from './context/ProductContext';
 
 const VideoModal = ({data , title }) => {
-
+console.log(data);
   const {showvideomodal , setShowvideomodal} = useProductState()
   const handleClose = () => {
     const video = document.getElementById('videoPlayer');
     video.pause();
     setShowvideomodal(false);
   };
-  console.log(data,"================");
   return (
     <div className={`modal fade ${showvideomodal ? 'show' : ''}`} id="videomodal" tabIndex="-1" role="dialog" aria-labelledby="explore360ModalLabel" aria-hidden={!showvideomodal} data-backdrop="static" data-keyboard="false">
       <div className="modal-dialog modal-dialog-centered" role="document">
@@ -21,7 +20,7 @@ const VideoModal = ({data , title }) => {
             </button>
           </div>
           <div className="modal-body" style={{ height: "89%" }}>
-            <video id="videoPlayer" controls width="100%" height="100%">
+            <video id="videoPlayer" controls width="100%" height="100%" style={{ maxHeight:"360px",minHeight:"330px"}}>
               <source src={"/api"+data?.video_url} type="video/mp4" />
               Your browser does not support the video tag.
             </video>

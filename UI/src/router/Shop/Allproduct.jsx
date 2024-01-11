@@ -180,11 +180,11 @@ export const Allproduct = () => {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                 />
-                <div className="input-group-btn">
+                {/* <div className="input-group-btn">
                   <button className="btn btn border rounded-end " type="submit">
                     <i className="fa-solid fa-magnifying-glass"></i>
                   </button>
-                </div>
+                </div> */}
               </div>
             </form>
           </div>
@@ -317,13 +317,14 @@ export const Allproduct = () => {
                           {item.short_description}
                         </p>
                       </div>
-                      <div>
-                        <h5>Origin County: <img src={usflag} alt="#" /></h5>
-                      </div>
+                      <div className='d-flex flex-row align-items-center'>
+                  <h5>Origin County:</h5>
+                  <img src={usflag} alt="#" className='my-auto' />
+                </div>
                     </div>
                     <div className="product-actions">
                       <div className='d-flex flex-row '>
-                        {item.zipFile_url && <div className="mr-3">
+                        {item.zipFile && <div className="mr-3">
                           <img
                             src={png360}
                             alt="png360"

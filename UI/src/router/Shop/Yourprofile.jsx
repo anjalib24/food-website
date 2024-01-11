@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import "./Yourprofile.css"
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import Header from './Header';
 import { Footer } from './Footer';
 import { useHistory } from 'react-router-dom';
+import "./Yourprofile.css"
 
 
 const Yourprofile = () => {
@@ -78,7 +78,6 @@ const Yourprofile = () => {
 
   }, []);
 
-  console.log(orderHistory, "order historyyyyy");
   return (
     <div>
       <Header />
@@ -249,9 +248,7 @@ const Yourprofile = () => {
                       )
 
                     }
-
                     )}
-
                   </>
                 )}
               </div>
