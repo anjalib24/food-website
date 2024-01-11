@@ -8,6 +8,7 @@ import { Cart } from "../../models/cart.model.js";
 import Stripe from "stripe";
 import { OrderHistory } from "../../models/orderHistory.model.js";
 import { emptyCartAfterOrder } from "../../services/repository.js";
+import { Product } from "../../models/product.model.js";
 
 const getProductIds = async (products) => {
   const productPromises = products.map(async (product) => product.productId);
@@ -159,4 +160,62 @@ const handleCheckoutSessionCompleted = async (session) => {
   }
 };
 
-export { orderProductPaymentWithStripe, orderSuccess, stripeWebHookHandler };
+const getAllOrder = asyncHandler(async (req, res) => {
+  const { _id, username, email, products, title } = req.query;
+
+  let filter = {};
+
+  if (_id) {
+    filter._id = _id;
+  }
+
+  if (username) {
+    filter.username = username;
+  }
+
+  if (email) {
+    filter.email = email;
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const options = { page, limit };
+
+  try {
+    const getAllOrderData = await Order.paginate(filter, options);
+
+    const productIds = getAllOrderData.docs.reduce((ids, order) => {
+      return ids.concat(order.products);
+    }, []);
+
+    const productsDetails = await Product.find({ _id: { $in: productIds } });
+
+    const ordersWithProductDetails = getAllOrderData.docs.map((order) => {
+      const orderProducts = order.products.map((productId) => {
+        return productsDetails.find((product) => product._id.equals(productId));
+      });
+
+      return { ...order.toObject(), products: orderProducts };
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { ...getAllOrderData, docs: ordersWithProductDetails },
+          "All order data retrieved successfully."
+        )
+      );
+  } catch (error) {
+    throw new ApiError(500, "Error retrieving order data.");
+  }
+});
+
+export {
+  orderProductPaymentWithStripe,
+  orderSuccess,
+  stripeWebHookHandler,
+  getAllOrder,
+};

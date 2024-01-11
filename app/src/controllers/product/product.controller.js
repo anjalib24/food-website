@@ -131,9 +131,13 @@ const getProductData = asyncHandler(async (req, res) => {
     }
 
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
 
-    const options = { page, limit };
+    let options = { page };
+
+    if (req.query.limit) {
+      const limit = parseInt(req.query.limit);
+      options = { page, limit };
+    }
 
     const paginatedProducts = await Product.paginate(filter, options);
 
