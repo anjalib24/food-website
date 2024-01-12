@@ -187,7 +187,10 @@ const getAllOrder = asyncHandler(async (req, res) => {
   }
 
   try {
-    const getAllOrderData = await Order.paginate(filter, options);
+    const getAllOrderData = await Order.paginate(filter, {
+      ...options,
+      sort: { createdAt: -1 },
+    });
 
     const productIds = getAllOrderData.docs.reduce((ids, order) => {
       return ids.concat(order.products);
@@ -234,9 +237,36 @@ const getAllOrder = asyncHandler(async (req, res) => {
   }
 });
 
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    throw new ApiError(400, "Order Id is required.");
+  }
+  try {
+    const orderUpdate = await Order.findByIdAndUpdate(
+      id,
+      {
+        status: "delivered",
+      },
+      { new: true }
+    );
+
+    if (!orderUpdate) {
+      throw new ApiError(400, "Something went wrong while updating order.");
+    }
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, orderUpdate, "Order update successfully."));
+  } catch (error) {
+    throw new ApiError(500, "Order update error.");
+  }
+});
+
 export {
   orderProductPaymentWithStripe,
   orderSuccess,
   stripeWebHookHandler,
   getAllOrder,
+  updateOrderStatus,
 };
