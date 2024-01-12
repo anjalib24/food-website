@@ -15,9 +15,9 @@ const Page = () => {
     useEffect(() => {
       const fetchUsers = async () => {
         try {
-          const response = await axios.get('http://127.0.0.1:8000/api/v1/users/get-users?limit=50');
+          const response = await axios.get(import.meta.env.VITE_APP_BASE_API +'/api/v1/users/get-users?limit=50');
           console.log(response,"userdara");
-          setUsers(response.data.data.docs); 
+          setUsers(response?.data?.data?.docs); 
         } catch (error) {
           console.error('Error fetching users:', error);
         }
@@ -25,7 +25,7 @@ const Page = () => {
   
       fetchUsers();
     }, []);
-
+console.log(users,"users------");
   return (
     <>
         <Switch>
@@ -34,14 +34,14 @@ const Page = () => {
         <TableContainer component={Paper}>
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
                       <TableHead>
-                          <TableRow>
-                              <TableCell>User ID</TableCell>
-                              <TableCell align="right">User Name</TableCell>
-                              <TableCell align="right">User Email</TableCell>
-                              <TableCell align="right">Country</TableCell>
-                              <TableCell align="right">State</TableCell>
-                              <TableCell align="right">City</TableCell>
-                          </TableRow>
+                      <TableRow>
+       <TableCell align="right">User Name</TableCell>
+       <TableCell align="right">User Email</TableCell>
+       <TableCell align="right">Country</TableCell>
+       <TableCell align="right">State</TableCell>
+       <TableCell align="right">City</TableCell>
+       <TableCell align="right">Actions</TableCell>
+   </TableRow>
                       </TableHead>
                       <TableBody>
                           {users?.map((user) => (
@@ -49,15 +49,17 @@ const Page = () => {
                                  key={user.userId}
                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                               >
-                                 <TableCell component="th" scope="row">
-                                     {user._id
-}
+                                 <TableCell component="th"  scope="row" align="right">
+                                     {user.username}
                                  </TableCell>
-                                 <TableCell align="right">{user.username}</TableCell>
                                  <TableCell align="right">{user.email}</TableCell>
                                  <TableCell align="right">{user.country}</TableCell>
                                  <TableCell align="right">{user.state}</TableCell>
                                  <TableCell align="right">{user.city}</TableCell>
+                                 <TableCell align="right">                                 <button>Edit</button>
+</TableCell>
+
+
                               </TableRow>
                           ))}
                       </TableBody>
