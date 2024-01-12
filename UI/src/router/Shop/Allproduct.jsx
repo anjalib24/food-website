@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useProductState } from './context/ProductContext'
 import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
+import { Pagination } from '@mui/material'
 
 export const Allproduct = () => {
   const history = useHistory();
@@ -22,27 +23,40 @@ export const Allproduct = () => {
   const [selectedOrigin, setSelectedOrigin] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(32);
+  const [totalproduct,setTotalproduct] = useState()
   const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, setLoading, loading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
+console.log(currentPage,"current");
 
-  useEffect(() => {
-    const fetchDataFromApi = async () => {
-      try {
-        const result = await fetchData("products/get-product", { limit: 32 });
-        setLoading(true)
-        setData(result.data.docs);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDataFromApi();
-  }, []);
+useEffect(() => {
+  const fetchDataFromApi = async () => {
+    setLoading(true); // Set loading to true before fetching data
+    try {
+      const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`);
+      setData(result.data.docs);
+      setTotalproduct(result?.data?.totalDocs);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false); // Set loading to false after data is fetched or in case of an error
+    }
+  };
+  fetchDataFromApi();
+}, [currentPage, itemsPerPage]);
+
+const totalPages = Math.ceil(totalproduct / itemsPerPage);
+const startIndex = (currentPage - 1) * itemsPerPage;
+let endIndex = Math.min(startIndex + itemsPerPage);
+console.log(endIndex,"endIndex");
+if (endIndex > data?.length) {
+ endIndex = data.length;
+}
+const currentItems = data?.slice(0, 32);
 
   const handleOriginCheckboxChange = (value) => {
     setLoading(true)
@@ -81,6 +95,7 @@ export const Allproduct = () => {
     }
   };
 
+if (loading) return <Loader />;
 
   return (
     <>
@@ -275,11 +290,11 @@ export const Allproduct = () => {
                 {loading && (
                   <div className="col-md-12 text-center">
                     <div className="spinner-border" role="status">
-                      <span className="sr-only">Loading...</span>
+             <Loader/>
                     </div>
                   </div>
                 )}
-                {!loading && data && data.length === 0 && (
+                {!loading && currentItems && currentItems?.length === 0 && (
                   <div className="col-md-12 text-center">
                     <p>No products available</p>
                   </div>
@@ -298,7 +313,7 @@ export const Allproduct = () => {
                     <p>No products match the search criteria</p>
                   </div>
                 ) : (
-                  data?.filter(item =>
+                  currentItems?.filter(item =>
                     (selectedOrigin.length === 0 || selectedOrigin.includes(item.country.name)) &&
                     (selectedPriceRange.length === 0 || selectedPriceRange.includes(getPriceRange(item.price))) &&
                     item.title.toLowerCase().includes(searchInput.toLowerCase())
@@ -385,8 +400,21 @@ export const Allproduct = () => {
                     </div>
                   </div>
                 ))}
-              </div>
+
+          </div>
             </div>
+            <div className="col-md-12 d-flex justify-content-center">
+    <Pagination 
+className='flex'
+count={totalPages}
+      variant="outlined"
+      color="primary"
+      page={currentPage}
+      onChange={(event, page) => {
+        setCurrentPage(page);
+      }}
+    />
+  </div>
           </div>
         </section>
       </div>
