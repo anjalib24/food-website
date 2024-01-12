@@ -124,11 +124,25 @@ export const dimensionWeightRangeCsvFileUpload = async (req, res) => {
     const stream = fs.createReadStream(filePath).pipe(csvParser());
 
     stream.on("data", async (row) => {
-      const { Dimensions: dimensions, "Weight Range": weight_range } = row;
+      const {
+        Dimensions: dimensions,
+        Length,
+        Width,
+        Height,
+        "Weight Range": weight_range,
+      } = row;
 
       try {
         const filter = { dimensions, weight_range };
-        const update = { $set: { dimensions, weight_range } };
+        const update = {
+          $set: {
+            dimensions,
+            weight_range,
+            length: parseFloat(Length),
+            width: parseFloat(Width),
+            height: parseFloat(Height),
+          },
+        };
         const options = { upsert: true, new: true };
         const promise = DimensionWeightRange.findOneAndUpdate(
           filter,
@@ -137,7 +151,13 @@ export const dimensionWeightRangeCsvFileUpload = async (req, res) => {
         )
           .then((updatedData) => {
             if (!updatedData) {
-              return DimensionWeightRange.create({ dimensions, weight_range });
+              return DimensionWeightRange.create({
+                dimensions,
+                weight_range,
+                length: parseFloat(Length),
+                width: parseFloat(Width),
+                height: parseFloat(Height),
+              });
             }
             return updatedData;
           })

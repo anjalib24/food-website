@@ -178,9 +178,13 @@ const getAllOrder = asyncHandler(async (req, res) => {
   }
 
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit);
 
-  const options = { page, limit };
+  let options = { page };
+
+  if (limit) {
+    options = { page, limit };
+  }
 
   try {
     const getAllOrderData = await Order.paginate(filter, options);
@@ -189,14 +193,31 @@ const getAllOrder = asyncHandler(async (req, res) => {
       return ids.concat(order.products);
     }, []);
 
+    const userIds = getAllOrderData.docs.reduce((ids, order) => {
+      return ids.concat(order.user_id);
+    }, []);
+
     const productsDetails = await Product.find({ _id: { $in: productIds } });
+    const usersDetails = await User.find({ _id: { $in: userIds } });
 
     const ordersWithProductDetails = getAllOrderData.docs.map((order) => {
-      const orderProducts = order.products.map((productId) => {
-        return productsDetails.find((product) => product._id.equals(productId));
-      });
+      const orderProducts = order.products
+        .map((productId) => {
+          return productsDetails.find((product) =>
+            product._id.equals(productId)
+          );
+        })
+        .filter((product) => product !== undefined);
 
-      return { ...order.toObject(), products: orderProducts };
+      const orderUsers = usersDetails.find((userId) =>
+        userId._id.equals(order.user_id)
+      );
+
+      return {
+        ...order.toObject(),
+        products: orderProducts,
+        userDetails: orderUsers,
+      };
     });
 
     return res
