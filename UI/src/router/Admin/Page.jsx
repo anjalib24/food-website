@@ -16,6 +16,8 @@ import Reviews from "./Reviews/Page";
 import FAQs from "./Faqs/Page";
 import Blogs from "./Blogs/Page";
 import Charges from "./Charges/Page";
+import Users from "./Users/Page"
+import Orders from "./orders/page"
 
 const Page = () => {
   let match = useRouteMatch();
@@ -54,8 +56,11 @@ const Page = () => {
                 <Charges />
               </Route>
 
-              <Route path={`${match.path}/:ids`}>
-                <Test />
+              <Route path={`${match.path}/users`}>
+                <Users/>
+              </Route>
+             <Route path={`${match.path}/orders`}>
+                <Orders/>
               </Route>
             </Switch>
           }
@@ -66,14 +71,6 @@ const Page = () => {
   );
 };
 
-function Test() {
-  const { ids } = useParams();
 
-  return (
-    <div>
-      <h1>Test {ids}</h1>
-    </div>
-  );
-}
 
 export default Page;
