@@ -184,7 +184,6 @@ const Cart = () => {
   //   setCartCount(localData.length)
   // }
 
-  console.log(shipingCharge.shipingCharges,"=================");
   return (
     <>
       {isLoading && <Loader />}
