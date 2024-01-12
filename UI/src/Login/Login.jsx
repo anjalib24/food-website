@@ -54,7 +54,7 @@ const Login = () => {
           }));
           const token = localStorage.getItem('token');
 
-          const response = await axios.post('/api/api/v1/products/add-to-cart', 
+          const response = await axios.post('http://62.72.1.123:8000/api/v1/products/add-to-cart', 
             data
           , {
             headers: {

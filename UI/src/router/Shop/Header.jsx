@@ -52,7 +52,7 @@ const Header = ({ hideCart, hidebutton }) => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await axios.get('/api/api/v1/users/logout', {
+        await axios.get('http://62.72.1.123:8000/api/v1/users/logout', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
