@@ -4,10 +4,7 @@ import { createContext, useContext, useState } from "react";
 
 const ProductContext = createContext();
 
-
-
 export const ProductContexts = ({ children }) => {
-
   const [showAlert, setShowAlert] = useState(false);
   const [alertmsg, setAlertMsg] = useState()
   const [showcard, setShowCard] = useState(false)
@@ -40,7 +37,9 @@ export const ProductContexts = ({ children }) => {
             setShowAlert(false);
           }, 3000);
         } else {
-          const response = await axios.post('http://127.0.0.1:8000/api/v1/products/add-to-cart', [{
+          setLoading(true);
+
+          const response = await axios.post(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/add-to-cart', [{
             productId: item._id,
             quantity: 1,
           }], {
@@ -82,6 +81,8 @@ export const ProductContexts = ({ children }) => {
       }
     } catch (error) {
       console.error('Error handling add to cart:', error);
+    }finally {
+      setLoading(false)
     }
 
   };

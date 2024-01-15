@@ -27,7 +27,6 @@ const Page = () => {
         }
 
         const { data } = await result.json();
-        console.log(data);
         setBestSellers(data);
       } catch (e) {
         console.error("Error:", e);

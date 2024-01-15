@@ -22,7 +22,6 @@ const Page = () => {
 
     const [orders, setOrders] = useState([]);
     const navigateToOrderDetails = (user) => {
-        console.log(orders, "data in function ");
         history.push({
             pathname: `${match.path}/ordersdetail`,
             state: { detailData: user }
@@ -41,7 +40,6 @@ const Page = () => {
 
         fetchOrders();
     }, []);
-    console.log(orders, "orderssss");
     return (
         <>
             <Switch>

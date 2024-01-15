@@ -29,6 +29,7 @@ const AddProduct = () => {
     rank: "",
     best_seller: false,
     categoryID: "",
+    weight:""
   });
 
   const { countries, categories } = useAdminState();
@@ -76,7 +77,7 @@ const AddProduct = () => {
           body: formData,
         }
       );
-
+      setProduct("")
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -230,7 +231,7 @@ const AddProduct = () => {
               </Select>
             </FormControl>
           </Grid>
-          {product.images.length > 0 && (
+          {product?.images?.length > 0 && (
             <Grid item xs={12}>
               <Grid container gap={2}>
                 {Array.from(product.images).map((image, index) => (
@@ -244,6 +245,16 @@ const AddProduct = () => {
               </Grid>
             </Grid>
           )}
+
+<Grid item xs={12} sm={6}>
+            <TextField
+              name="weight"
+              label="Weight"
+              value={product.weight}
+              fullWidth
+              onChange={handleChange}
+            />
+          </Grid>
           <Grid item xs={12}>
             <TextField
               name="zipFile"

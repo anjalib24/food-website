@@ -100,7 +100,6 @@ const Page = () => {
   };
 
   const updateFixedShippingCharge = () => {
-    console.log("Updating fixed shipping charge...");
     fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/fixed-shipping-prices", {
       method: "PUT",
       headers: {

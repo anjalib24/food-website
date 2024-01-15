@@ -30,7 +30,7 @@ const ProductCard = (props) => {
           <div className="d-flex mx-auto h-100">
             <div>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-                <img src={import.meta.env.VITE_APP_BASE_API  + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
+                <img src={import.meta.env.VITE_APP_BASE_API+item.images[0]} className="text-center m-2 img-fluid" alt="#" />
               </div>              <div className="card-content mx-2">
                 <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{title}</strong></h3>
                 <div>

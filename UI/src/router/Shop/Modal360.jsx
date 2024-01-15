@@ -5,8 +5,6 @@ import { useProductState } from './context/ProductContext';
 
 const Modal360 = ({ data }) => {
     const { show360Modal, setShow360Modal } = useProductState();
-    console.log(data);
-
     useEffect(() => {
         const viewer = WR360.ImageRotator.Create("webrotate360");
         viewer.licenseCode = "your-license-code";

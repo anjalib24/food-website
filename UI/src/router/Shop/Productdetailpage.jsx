@@ -72,7 +72,7 @@ const Productdetailpage = () => {
                     setIsVideo(true);
                   }}
                 >
-                  <source src={"/api" + product.video_url} type="video/mp4" />
+                  <source src={import.meta.env.VITE_APP_BASE_API+product.video_url} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               )}
@@ -138,7 +138,7 @@ const Productdetailpage = () => {
                               </Stack>
                             </div>
                             </div>
-                                                    </>
+                         </>
                       )
                     })
                   }

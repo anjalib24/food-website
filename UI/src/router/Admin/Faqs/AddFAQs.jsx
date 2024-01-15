@@ -22,7 +22,6 @@ const AddFaqs = () => {
     event.preventDefault();
 
     // Submit the review...
-    console.log(faq);
     // return;
 
     try {
@@ -40,7 +39,6 @@ const AddFaqs = () => {
       }
 
       const { data } = await response.json();
-      console.log(data);
 
       setFaqs((prev) => [...prev, data.faq.at(-1)]);
 

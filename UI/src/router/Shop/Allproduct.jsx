@@ -31,7 +31,6 @@ export const Allproduct = () => {
     style: "currency",
     currency: "USD",
   });
-console.log(currentPage,"current");
 
 useEffect(() => {
   const fetchDataFromApi = async () => {
@@ -52,7 +51,6 @@ useEffect(() => {
 const totalPages = Math.ceil(totalproduct / itemsPerPage);
 const startIndex = (currentPage - 1) * itemsPerPage;
 let endIndex = Math.min(startIndex + itemsPerPage);
-console.log(endIndex,"endIndex");
 if (endIndex > data?.length) {
  endIndex = data.length;
 }

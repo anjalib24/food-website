@@ -15,7 +15,6 @@ const Yourprofile = () => {
 
   const history = useHistory();
   const handleClick = (item) => {
-    console.log(item, "item in the handle");
     history.push({
       pathname: '/userorderdetail',
       state: { orderDetails: item }

@@ -12,7 +12,6 @@ const AddBlog = () => {
   const [preview, setPreview] = useState(null);
 
   const handleImageChange = (event) => {
-    console.log(event.target);
     setBlog((blog) => ({
       ...blog,
       blog_image: event.target.files[0],
@@ -25,7 +24,6 @@ const AddBlog = () => {
     event.preventDefault();
 
     // Submit the review...
-    console.log(blog);
     // return;
     const formData = new FormData();
 
@@ -47,7 +45,6 @@ const AddBlog = () => {
       }
 
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error(error);
     }
