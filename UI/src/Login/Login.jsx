@@ -34,8 +34,9 @@ const Login = () => {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const apiUrl = "/api/api/v1/users/login";
-        const response = await axios.post(apiUrl, {
+
+        
+        const response = await axios.post(import.meta.env.VITE_APP_BASE_API+"/api/v1/users/login", {
           userData: {
             email: values.email,
             password: values.password,

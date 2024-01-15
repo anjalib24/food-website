@@ -60,8 +60,8 @@ const Registration = () => {
       };
 
       try {
-        const apiUrl = "/api/api/v1/users/register";
-        const response = await axios.post(apiUrl, requestData);
+       
+        const response = await axios.post(import.meta.env.VITE_APP_BASE_API+"/api/v1/users/register", requestData);
         // Check the response and show the appropriate alert
         if (response.status === 201) {
           showAlert("success", "Registration successful!");
