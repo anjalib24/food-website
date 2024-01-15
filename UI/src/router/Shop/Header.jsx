@@ -59,7 +59,7 @@ const Header = ({ hideCart, hidebutton }) => {
         });
         localStorage.clear();
         setIsLoggedIn(false);
-        navigate.push("/home");
+        navigate.push("/");
       } catch (error) {
         console.error('Error logging out:', error);
       }
@@ -86,7 +86,7 @@ const Header = ({ hideCart, hidebutton }) => {
                 <li><Link to="/#About">About Us</Link></li>
                 <li><Link to="/#review">Review</Link></li>
                 <li><Link to="/#Blog">Blog</Link></li>
-                <li><Link to="/#FAQ">FAQS</Link></li>
+                <li><Link to="/#FAQ">FAQ</Link></li>
                 <li onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}>Contact</li>
               </ul>
               <div className="d-flex justify-content-center align-items-center" style={{ flexDirection: 'row', gap: '5px' }}>
