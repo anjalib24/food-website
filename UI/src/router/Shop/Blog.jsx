@@ -89,7 +89,7 @@ export const Blog = (props) => {
                         {props?.blog?.map((blogItem, index) => (
                           <div key={index} className="single-box">
                             <div className="img-area">
-                              <img src={"/api" + blogItem.image} alt={`Blog ${index + 1}`} />
+                              <img src={import.meta.env.VITE_APP_BASE_API+blogItem.image} alt={`Blog ${index + 1}`} />
                             </div>
                             <div className="mt-3">
                               <p>
@@ -112,7 +112,6 @@ export const Blog = (props) => {
                                 textOverflow: 'ellipsis'
                               }}
                               dangerouslySetInnerHTML={createMarkup(blogItem?.content)}
-
                               >
                               </h6>
                             </div>
@@ -122,9 +121,6 @@ export const Blog = (props) => {
                ) : (
                 <p style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>There is no blog now</p>
                 )}
-
-
-          
                 </div>
               </div>
             </div>

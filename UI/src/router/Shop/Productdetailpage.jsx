@@ -38,7 +38,7 @@ const Productdetailpage = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const response = await fetch(`/api/api/v1/products/get-single-product/${id}`);
+      const response = await fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/get-single-product/${id}`);
       const data = await response.json();
       setProduct(data.data);
     };
@@ -82,11 +82,11 @@ const Productdetailpage = () => {
             <div className="large-image">
               {isVideo ? (
                 <video width="500" height="500" controls autoPlay>
-                  <source src={"/api" + selectedImage} type="video/mp4" />
+                  <source src={import.meta.env.VITE_APP_BASE_API+selectedImage} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               ) : (
-                <img src={"/api" + selectedImage} alt="" />
+                <img src={import.meta.env.VITE_APP_BASE_API+selectedImage} alt="" />
               )}
             </div>
           </Col>

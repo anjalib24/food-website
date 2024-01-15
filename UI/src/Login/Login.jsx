@@ -34,8 +34,6 @@ const Login = () => {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        
-        
         const response = await axios.post('http://62.72.1.123:8000/api/v1/users/login', {
           userData: {
             email: values.email,
@@ -54,7 +52,6 @@ const Login = () => {
 
           }));
           const token = localStorage.getItem('token');
-
           const response = await axios.post('http://62.72.1.123:8000/api/v1/products/add-to-cart', 
             data
           , {
@@ -69,7 +66,6 @@ const Login = () => {
 
         if (userType === 'user') {
                   showAlert("sucess", "Login sucessfully");
-
           history.push('/shop');
         } else if (userType === 'admin') {
           history.push('/admin');

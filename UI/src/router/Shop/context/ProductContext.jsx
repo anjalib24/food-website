@@ -25,7 +25,7 @@ export const ProductContexts = ({ children }) => {
     try {
       const token = localStorage.getItem('token');
       if (token) {
-        const response = await axios.get('http://127.0.0.1:8000/api/v1/products/get-cart', {
+        const response = await axios.get(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/get-cart', {
           headers: {
             'Authorization': `Bearer ${token}`
           }

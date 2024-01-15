@@ -32,7 +32,7 @@ const {setCartCount} = useProductState()
   };
 
   const getcart = async () =>{
-    const response = await axios.get('/api/api/v1/products/get-cart', {
+    const response = await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/get-cart', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
