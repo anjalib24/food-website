@@ -86,14 +86,14 @@ const Yourprofile = () => {
           <section className="module">
             <div className="module-inner">
               <div className="side-bar">
-                <div className="user-info">
+                {/* <div className="user-info">
                   <img className="img-profile img-circle img-responsive center-block" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" />
                   <ul className="meta list list-unstyled">
                     <li className="name">Rebecca Sanders
                       <label className="label label-info">UX Designer</label>
                     </li>
                   </ul>
-                </div>
+                </div> */}
                 <nav className="side-menu">
                   <ul className="nav">
                     <li className={selectedOption === 'profileInfo' ? 'active' : ''} onClick={() => handleOptionClick('profileInfo')}><a href="#/"><span className="fa fa-user"></span> Profile</a></li>
@@ -212,7 +212,11 @@ const Yourprofile = () => {
                 )}
                 {selectedOption === 'orders' && (
                   <>
-                    {orderHistory?.map((item) => {
+                    {
+                    
+                    orderHistory?.length > 0 ? (
+                    
+                    orderHistory?.map((item) => {
                       return (
                         <>
                           <div className="row product" onClick={() => handleClick(item)}>
@@ -247,7 +251,13 @@ const Yourprofile = () => {
                       )
 
                     }
-                    )}
+                    )
+                  
+                    ):(
+
+                      <div>There are no orders present.</div>
+                      )
+                  }
                   </>
                 )}
               </div>

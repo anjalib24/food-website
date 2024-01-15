@@ -27,19 +27,29 @@ const Page = () => {
             state: { detailData: user }
         });
     };
-
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/api/v1/order');
-                setOrders(response?.data?.data?.docs);
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-            }
-        };
-
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/v1/order');
+            setOrders(response?.data?.data?.docs);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
+     };
+     
+     useEffect(() => {
         fetchOrders();
-    }, []);
+     }, []);
+     
+     const oderdelevered = async(id) => {
+        try {
+            const response = await axios.put(import.meta.env.VITE_APP_BASE_API+`/api/v1/order/update-order-status/${id}`);
+            console.log(response.data);
+            // Fetch orders again after updating the order status
+            fetchOrders();
+        } catch (error) {
+            console.error('Error updating order status:', error);
+        }
+     };
     return (
         <>
             <Switch>
@@ -73,10 +83,12 @@ const Page = () => {
                                         <TableCell align="right">{user?.orderDate}</TableCell>
                                         <TableCell align="right">{user?.products?.length}</TableCell>
                                         <TableCell align="right">{user?.subTotal}</TableCell>
-
-                                            <TableCell align="right">
-                                                <Button onClick={() => navigateToOrderDetails(user)}>Details</Button>
-                                            </TableCell>                
+                                        <TableCell align="right">
+                                            {user?.status === "pending" &&
+                                                <Button onClick={() => oderdelevered(user?._id)}>delivered</Button>
+                                            }
+                                            <Button onClick={() => navigateToOrderDetails(user)}>Details</Button>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
