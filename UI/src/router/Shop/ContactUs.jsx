@@ -23,7 +23,6 @@ const ContactUs = () => {
     event.preventDefault();
     try {
       const response = await axios.post('/api/api/v1/contact-us', formValues);
-      console.log(response.data);
       setFormValues({
         name: '',
         email: '',

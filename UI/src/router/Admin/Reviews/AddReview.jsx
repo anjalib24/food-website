@@ -21,7 +21,6 @@ const AddReview = () => {
   const [preview, setPreview] = useState(null);
 
   const handleImageChange = (event) => {
-    console.log(event.target);
     setReview((review) => ({
       ...review,
       reviews_image: event.target.files[0],
@@ -31,7 +30,6 @@ const AddReview = () => {
   };
 
   const handleChange = (event) => {
-    console.log(event.target);
     setReview((review) => ({
       ...review,
       [event.target.name]:
@@ -45,7 +43,6 @@ const AddReview = () => {
     event.preventDefault();
 
     // Submit the review...
-    console.log(review);
     // return;
     const formData = new FormData();
 
@@ -68,7 +65,6 @@ const AddReview = () => {
       }
 
       const data = await response.json();
-      console.log(data);
 
       // setReview({
       //   name: "",

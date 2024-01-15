@@ -28,7 +28,6 @@ const EditProduct = () => {
   useEffect(() => {
     const prod = products.find((product) => product._id === id);
     if (prod) {
-      console.log("prod", prod);
       setProduct(formatProduct(prod));
     } else {
       fetch(
@@ -38,11 +37,9 @@ const EditProduct = () => {
       )
         .then((res) => res.json())
         .then(({ data }) => {
-          console.log("data", data);
           setProduct(formatProduct(data));
         });
 
-      console.log(product);
     }
   }, [id]);
 
@@ -85,10 +82,8 @@ const EditProduct = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(product);
     const formData = new FormData();
 
-    console.log(editedFields);
     editedFields.forEach((field) => {
       if (field === "images") {
         product.images.forEach((image) => {

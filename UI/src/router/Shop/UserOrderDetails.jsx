@@ -20,7 +20,6 @@ const UserOrderDetails = () => {
     setReviewModal(true);
     setroductId(item._id)
   };
-  console.log(orderDetails,"=-=------");
   return (
     <>
       <Header />

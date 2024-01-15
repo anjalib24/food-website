@@ -29,7 +29,6 @@ const EditBlog = () => {
         })
         .then((data) => {
           setBlog(data.data[0].blog);
-          console.log(data.data[0].blog);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -39,11 +38,9 @@ const EditBlog = () => {
     const blog = blogs.find((blog) => blog._id === id);
 
     if (blog) {
-      console.log("cache-blog", blog);
       setBlog(blog);
       setPreview(import.meta.env.VITE_APP_BASE_API + blog.image);
     } else {
-      console.log("fetch-blog");
       fetchBlog();
     }
 
@@ -63,7 +60,6 @@ const EditBlog = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(blog, editFields);
 
     // make a put request to edit the blogs
     const formData = new FormData();
@@ -85,10 +81,8 @@ const EditBlog = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const { data } = await response.json();
-      console.log(data.blog);
 
       const editedBlog = data.blog.find((blog) => blog._id === id);
-      console.log(editedBlog);
       setBlogs((blogs) => {
         const index = blogs.findIndex((blog) => blog._id === id);
         blogs[index] = editedBlog;

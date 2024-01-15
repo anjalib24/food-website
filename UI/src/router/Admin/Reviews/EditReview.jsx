@@ -37,7 +37,6 @@ const EditReview = () => {
           return response.json();
         })
         .then((data) => {
-          console.log("data", data);
           const reviews = data.data[0].reviews;
           const review = reviews.find((review) => review._id === id);
           setReviews(reviews);

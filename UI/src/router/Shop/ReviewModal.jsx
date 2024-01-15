@@ -29,7 +29,6 @@ export const StarContainer = styled.div`
 
 const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
 
-    console.log(reviewmodal, "reviewww");
     const [rate, setRate] = useState(0);
     const [comment, setComment] = useState('');
     const [alert, setAlert] = useState(null);
@@ -44,7 +43,6 @@ const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
     const handleClose = () => {
         setReviewModal(false);
     };
-console.log(alert,"-=---");
     const submitReview = async () => {
         try {
             const token = localStorage.getItem("token"); 
@@ -57,7 +55,6 @@ console.log(alert,"-=---");
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log(response.data);
             showAlert('success', 'Review submitted successfully');
 
         } catch (error) {

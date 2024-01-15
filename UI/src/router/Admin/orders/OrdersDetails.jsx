@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 const OrdersDetails = () => {
   const location = useLocation();
   const orderDetails = location?.state?.detailData;
-  console.log(orderDetails, "ordersdetailpage");
   let subtotalofproduct = orderDetails.products.reduce((total, item) => total + item.price, 0);
 
   return (

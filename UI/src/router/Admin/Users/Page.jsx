@@ -23,7 +23,6 @@ const Page = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/users/get-users?limit=50');
-        console.log(response, "userdara");
         setUsers(response?.data?.data?.docs);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -33,7 +32,6 @@ const Page = () => {
     fetchUsers();
   }, []);
   const navigateToOrderDetails = (user) => {
-    console.log(user, "data in function ");
     history.push({
         pathname: `${match.path}/useredit`,
         state: { detailData: user }

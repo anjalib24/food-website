@@ -74,7 +74,6 @@ const Login = () => {
         }
 
       } catch (error) {
-        console.log(error);
         console.error("Error submitting the form:", error);
         showAlert("danger", error.response.data.error);
       } finally {

@@ -2,7 +2,6 @@ import React from 'react';
 import { useProductState } from './context/ProductContext';
 
 const VideoModal = ({data , title }) => {
-console.log(data);
   const {showvideomodal , setShowvideomodal} = useProductState()
   const handleClose = () => {
     const video = document.getElementById('videoPlayer');
