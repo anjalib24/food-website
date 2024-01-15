@@ -102,3 +102,14 @@ export const shipmentRateStateCsvFileUpload = async (req, res) => {
     return res.status(500).json(new ApiError(500, error.message));
   }
 };
+
+export const getShipmentRateState = async (req, res) => {
+  try {
+    const getData = await ShipmentRateState.find();
+    return res.json(
+      new ApiResponse(200, getData, "Get shipment rate state successfully.")
+    );
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, error.message));
+  }
+};

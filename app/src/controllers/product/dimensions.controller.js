@@ -5,6 +5,17 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import Dimension from "../../models/Dimensions.model.js";
 import DimensionWeightRange from "../../models/dimensionWeightRange.model.js";
 
+export const getDimension = async (req, res) => {
+  try {
+    const getData = await Dimension.find();
+    res
+      .status(200)
+      .json(new ApiResponse(200, getData, `Get dimension successfully.`));
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, error.message));
+  }
+};
+
 export const dimensionCsvFileUpload = async (req, res) => {
   try {
     if (!req.file) {
@@ -106,6 +117,23 @@ export const dimensionCsvFileUpload = async (req, res) => {
     });
   } catch (error) {
     console.error("Error processing CSV file:", error.message);
+    return res.status(500).json(new ApiError(500, error.message));
+  }
+};
+
+export const getDimensionWeightRange = async (req, res) => {
+  try {
+    const getData = await DimensionWeightRange.find();
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          getData,
+          `Get dimension weight range  successfully.`
+        )
+      );
+  } catch (error) {
     return res.status(500).json(new ApiError(500, error.message));
   }
 };
