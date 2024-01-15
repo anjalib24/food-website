@@ -6,40 +6,54 @@ import fs from "fs";
 
 export const createFreeZipCode = async (req, res) => {
   try {
-    const { zipCode, shipment_delivery_message } = req.body;
+    const {
+      zipCode,
+      shipment_delivery_message,
+      stateCode,
+      stateName,
+      city,
+      county,
+      countyAll,
+      timeZone,
+      latitude,
+      longitude,
+    } = req.body;
+
     const isFreeZipCodeExist = await FreeZipCode.findOne({ zipCode });
 
     if (isFreeZipCodeExist) {
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            isFreeZipCodeExist,
-            "Free zip code already exists."
-          )
-        );
+      return res.status(200).json({
+        status: 200,
+        data: isFreeZipCodeExist,
+        message: "Free zip code already exists.",
+      });
     }
 
     const newFreeZipCode = new FreeZipCode({
       zipCode,
       shipment_delivery_message,
+      stateCode,
+      stateName,
+      city,
+      county,
+      countyAll,
+      timeZone,
+      latitude,
+      longitude,
     });
+
     const savedFreeZipCode = await newFreeZipCode.save();
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          savedFreeZipCode,
-          "Free zip code created successfully."
-        )
-      );
+    return res.status(200).json({
+      status: 200,
+      data: savedFreeZipCode,
+      message: "Free zip code created successfully.",
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(400, error.message || error.Error));
+    return res.status(500).json({
+      status: 500,
+      error: error.message || error.Error,
+    });
   }
 };
 
@@ -124,17 +138,51 @@ export const freeZipCodeCsvFileUpload = async (req, res) => {
     let documentsProcessedCount = 0;
     const promises = [];
 
-    stream.on("data", (row) => {
-      const { zip_code: zipCode, shipment_delivery_message } = row;
+    stream.on("data", async (row) => {
+      const {
+        "Zip Code": zipCode,
+        "Shipment Delivery Message": shipment_delivery_message,
+        "State Code": stateCode,
+        "State Name": stateName,
+        City: city,
+        County: county,
+        "County All": countyAll,
+        "Time Zone": timeZone,
+        Latitude: latitude,
+        Longitude: longitude,
+      } = row;
 
       const filter = { zipCode };
-      const update = { $set: { shipment_delivery_message } };
+      const update = {
+        $set: {
+          shipment_delivery_message,
+          stateCode,
+          stateName,
+          city,
+          county,
+          countyAll,
+          timeZone,
+          latitude,
+          longitude,
+        },
+      };
       const options = { upsert: true, new: true };
 
       const promise = FreeZipCode.findOneAndUpdate(filter, update, options)
         .then((updatedFreeZipCode) => {
           if (!updatedFreeZipCode) {
-            return FreeZipCode.create({ zipCode, shipment_delivery_message });
+            return FreeZipCode.create({
+              zipCode,
+              shipment_delivery_message,
+              stateCode,
+              stateName,
+              city,
+              county,
+              countyAll,
+              timeZone,
+              latitude,
+              longitude,
+            });
           }
           return updatedFreeZipCode;
         })
