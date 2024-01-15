@@ -50,6 +50,11 @@ export const links = [
         to: "/admin/orders",
         icon: <FiShoppingBag />,
       },
+      {
+        name: "ShipingHandle",
+        to: "/admin/Shipinghandle",
+        icon: <FiShoppingBag />,
+      },
     ],
   },
 ];

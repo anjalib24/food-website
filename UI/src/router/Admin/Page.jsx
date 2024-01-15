@@ -18,6 +18,7 @@ import Blogs from "./Blogs/Page";
 import Charges from "./Charges/Page";
 import Users from "./Users/Page"
 import Orders from "./orders/page"
+import ShipingHandle from "./ShipingHandle/page"
 
 const Page = () => {
   let match = useRouteMatch();
@@ -27,6 +28,9 @@ const Page = () => {
         <Layout
           Page={
             <Switch>
+               <Route path={`${match.path}/Shipinghandle`}>
+                <ShipingHandle />
+              </Route>
               <Route path={`${match.path}/products`}>
                 <ProductsPage />
               </Route>
