@@ -45,7 +45,7 @@ const Cart = () => {
     try {
       const result = await fetchData("products/get-product", { limit: 32 });
       if (token) {
-        const response = await axios.get('/api/api/v1/products/get-cart', {
+        const response = await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/get-cart', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -107,7 +107,7 @@ const Cart = () => {
   const updateQuantity = async (index, newQuantity, item, incordec) => {
     const token = localStorage.getItem('token');
     if (token) {
-      const response = await axios.post('/api/api/v1/products/add-to-cart', [{
+      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/add-to-cart', [{
         productId: item?.product?._id,
         quantity: incordec,
       }], {

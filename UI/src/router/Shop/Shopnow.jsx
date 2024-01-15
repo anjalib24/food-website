@@ -2,8 +2,9 @@ import React from 'react'
 import "./style.css"
 
 export const Shopnow = (props) => {
+  console.log(props?.herosection?.image,"imageeeeeeeeeeee");
   const sectionStyle = {
-    backgroundImage: `url('/api${props?.herosection?.image}')`,
+    backgroundImage: `url('http://62.72.1.123:8000${props?.herosection?.image}')`,
   };
   const scrollToBestseller = () => {
     const bestsellerSection = document.getElementById('bestsellers');

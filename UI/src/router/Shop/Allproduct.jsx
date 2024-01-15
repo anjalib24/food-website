@@ -322,7 +322,7 @@ if (loading) return <Loader />;
 
                   <div key={item.id} className="col-6 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-                      <img src={"/api" + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
+                      <img src={import.meta.env.VITE_APP_BASE_API+ item.images[0]} className="text-center m-2 img-fluid" alt="#" />
                     </div>
                     <div className="product-info">
                       <div>

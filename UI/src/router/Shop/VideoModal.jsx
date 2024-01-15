@@ -21,7 +21,7 @@ console.log(data);
           </div>
           <div className="modal-body" style={{ height: "89%" }}>
             <video id="videoPlayer" controls width="100%" height="100%" style={{ maxHeight:"360px",minHeight:"330px"}}>
-              <source src={"/api"+data?.video_url} type="video/mp4" />
+              <source src={import.meta.env.VITE_APP_BASE_API+data?.video_url} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>

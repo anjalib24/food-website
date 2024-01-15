@@ -96,7 +96,7 @@ const Reviews = (props) => {
                     <div id="card_top" >
                       <div id="profile" className="">
                         <div id="profile_image">
-                          <img src={item.image ? `/api${item.image}` : defaultpersonimg} alt="Item" />
+                          <img src={item.image ? import.meta.env.VITE_APP_BASE_API +item.image : defaultpersonimg} alt="Item" />
                           Copy
 
                         </div>

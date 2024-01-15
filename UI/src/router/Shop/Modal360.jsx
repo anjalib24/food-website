@@ -10,8 +10,8 @@ const Modal360 = ({ data }) => {
     useEffect(() => {
         const viewer = WR360.ImageRotator.Create("webrotate360");
         viewer.licenseCode = "your-license-code";
-        viewer.settings.configFileURL = `/api${data?.zipFile?.xml_url}`;
-        viewer.settings.graphicsPath = `?api${data?.zipFile.image_url}`;
+        viewer.settings.configFileURL = import.meta.env.VITE_APP_BASE_API + data?.zipFile?.xml_url;
+        viewer.settings.graphicsPath = import.meta.env.VITE_APP_BASE_API+data?.zipFile.image_url;
         viewer.settings.alt = "Your alt image description";
         viewer.settings.responsiveBaseWidth = 800;
         viewer.settings.responsiveMinHeight = 300;
