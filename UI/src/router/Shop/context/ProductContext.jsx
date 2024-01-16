@@ -37,8 +37,7 @@ export const ProductContexts = ({ children }) => {
             setShowAlert(false);
           }, 3000);
         } else {
-          setLoading(true);
-
+          setAlertMsg("Product added to the cart");
           const response = await axios.post(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/add-to-cart', [{
             productId: item._id,
             quantity: 1,
@@ -47,7 +46,6 @@ export const ProductContexts = ({ children }) => {
               'Authorization': `Bearer ${token}`
             }
           });
-          setAlertMsg("Product added to the cart");
           setCartCount(prevCount => prevCount + 1);
           setShowAlert(true);
           setTimeout(() => {
@@ -81,10 +79,7 @@ export const ProductContexts = ({ children }) => {
       }
     } catch (error) {
       console.error('Error handling add to cart:', error);
-    }finally {
-      setLoading(false)
     }
-
   };
   const createMarkup = (htmlContent) => {
     return { __html: DOMPurify.sanitize(htmlContent) };

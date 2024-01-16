@@ -13,9 +13,11 @@ import "slick-carousel/slick/slick.css";
 import ContactUs from "./ContactUs";
 import PaymentCancel from "./PaymentCancel";
 import UserOrderDetails from "./UserOrderDetails";
+import WithAuth from "@/components/WithAuth";
 
 const Page = () => {
   return (
+    <WithAuth>
     <Switch>
       <ProductContexts>
         <Route exact path="/contactus">
@@ -58,6 +60,8 @@ const Page = () => {
         </Route>
       </ProductContexts>
     </Switch>
+    </WithAuth>
+
   );
 };
 

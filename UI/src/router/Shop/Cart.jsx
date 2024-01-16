@@ -105,7 +105,6 @@ const Cart = () => {
   };
 
   const updateQuantity = async (index, newQuantity, item, incordec) => {
-    setIsLoading(true);
 
     const token = localStorage.getItem('token');
     if (token) {
@@ -185,7 +184,7 @@ const Cart = () => {
   // } else {
   //   setCartCount(localData.length)
   // }
-
+console.log(localData,"localdata");
   return (
     <>
       {isLoading && <Loader />}

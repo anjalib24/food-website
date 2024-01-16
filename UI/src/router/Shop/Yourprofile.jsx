@@ -35,7 +35,7 @@ const Yourprofile = () => {
       const token = localStorage.getItem("token");
       try {
 
-        await axios.put(`/api/api/v1/users/update-user/${userData._id}`, {
+        await axios.put(import.meta.env.VITE_APP_BASE_API+`/api/v1/users/update-user/${userData._id}`, {
           userData: userData,
         }, {
           headers: {
@@ -51,7 +51,7 @@ const Yourprofile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    axios.get('/api/api/v1/users/get-current', {
+    axios.get(import.meta.env.VITE_APP_BASE_API+'api/v1/users/get-current', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -62,7 +62,7 @@ const Yourprofile = () => {
       .catch(error => {
         console.error('Error fetching data: ', error);
       });
-    axios.get('/api/api/v1/users/get-user-order-history', {
+    axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/get-user-order-history', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
