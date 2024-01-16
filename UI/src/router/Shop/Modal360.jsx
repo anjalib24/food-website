@@ -27,7 +27,8 @@ const Modal360 = ({ data }) => {
 
     const handleClose = () => {
         setShow360Modal(false);
-        window.location.reload(); // Refresh the page
+        let currentUrl = window.location.href;
+        window.location.href = currentUrl; 
     };
 
     return (

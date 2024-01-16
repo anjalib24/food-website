@@ -13,7 +13,9 @@ const WithAuth = (props) => {
       const decodedToken = jwtDecode(cookie_token);
       const userType = decodedToken.role;
       if (userType === "user") {
-        // history.push('/login');
+         history.push('/shop');
+      }else{
+        history.push("/admin")
       }
     } else {
       history.push("/shop");
