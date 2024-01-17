@@ -19,16 +19,19 @@ const BestSellers = () => {
       try {
         const response = await axios.get(
           import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-best-seller-product",
-          
-          { mode: 'cors' }
+          {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
         );
         const bestSellers = response.data.data
         setData(bestSellers);
-      } catch (error) {
+     } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);  
-      }
+     } finally {
+        setLoading(false); 
+     }
     };
    
     fetchDataFromApi();
