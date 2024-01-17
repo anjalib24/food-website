@@ -19,18 +19,33 @@ import Charges from "./Charges/Page";
 import Users from "./Users/Page"
 import Orders from "./orders/page"
 import ShipingHandle from "./ShipingHandle/page"
+import Zipcode from "./Zipcode/Page"
+import ShipmentState from "./ShipmentState/Page"
+import Dimension from "./Dimension/Page"
 
 const Page = () => {
   let match = useRouteMatch();
-  return (
+  return (    
     <WithAuth>
       <AdminContext>
         <Layout
           Page={
             <Switch>
+                 <Route path={`${match.path}/dimension`}>
+                <Dimension />
+              </Route>
+               <Route path={`${match.path}/shipmentstate`}>
+                <ShipmentState />
+              </Route>
+               
+              <Route path={`${match.path}/zipcode`}>
+                <Zipcode />
+              </Route>
+               
                <Route path={`${match.path}/Shipinghandle`}>
                 <ShipingHandle />
               </Route>
+             
               <Route path={`${match.path}/products`}>
                 <ProductsPage />
               </Route>

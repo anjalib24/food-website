@@ -29,7 +29,7 @@ const Page = () => {
     };
     const fetchOrders = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/v1/order');
+            const response = await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/order');
             setOrders(response?.data?.data?.docs);
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -42,8 +42,6 @@ const Page = () => {
      
      const oderdelevered = async(id) => {
         try {
-
-            
             const response = await axios.put(import.meta.env.VITE_APP_BASE_API+`/api/v1/order/update-order-status/${id}`);
             console.log(response.data);
             // Fetch orders again after updating the order status

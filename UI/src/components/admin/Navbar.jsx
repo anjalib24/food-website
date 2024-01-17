@@ -1,5 +1,5 @@
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { MdKeyboardArrowDown } from "react-icons/md";
 
@@ -25,6 +25,8 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 );
 
 const Navbar = () => {
+    const [userData,setUserData] = useState()
+
     const {
         currentColor,
         activeMenu,
@@ -54,7 +56,31 @@ const Navbar = () => {
     }, [screenSize]);
 
     const handleActiveMenu = () => setActiveMenu(!activeMenu);
+    useEffect(() => {
+        const fetchuser = () => {
+            const token = localStorage.getItem("token");
 
+          fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/users/get-current",{
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then((data) => {
+                setUserData(data?.data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        };
+    
+        fetchuser();
+      }, []);
     return (
         <div className="flex justify-between p-2 md:mx-6 relative">
             <NavButton

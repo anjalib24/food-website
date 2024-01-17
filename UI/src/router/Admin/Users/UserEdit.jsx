@@ -26,7 +26,7 @@ const UserEdit = () => {
    if (isEditable) {
      const token = localStorage.getItem("token");
      try {
-       await axios.put(`/api/api/v1/users/update-user/${userData._id}`, {
+       await axios.put(import.meta.env.VITE_APP_BASE_API+`/api/v1/users/update-user/${userData._id}`, {
          userData: userData,
        }, {
          headers: {

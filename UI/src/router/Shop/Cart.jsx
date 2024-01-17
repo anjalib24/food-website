@@ -160,7 +160,6 @@ const Cart = () => {
     }
   };
 
-
   const payment = async () => {
 
     const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
@@ -272,7 +271,7 @@ console.log(localData,"localdata");
                               <div className="_2nQDXZ">
                                 <a href="/nb-nicky-boy-printed-men-round-neck-black-t-shirt/p/itmb1c6b5e8551de?pid=TSHGW3FNAGC9UJ7X&amp;lid=LSTTSHGW3FNAGC9UJ7XCU0GGF&amp;marketplace=FLIPKART"><span>
                                   <div className="CXW8mj" style={{ height: '112px', width: '112px' }}>
-                                    <img loading="lazy" className="_396cs4" alt="productImg" src={"/api" + item.images[0]} />
+                                    <img loading="lazy" className="_396cs4" alt="productImg" src={  import.meta.env.VITE_APP_BASE_API + item.images[0]} />
                                   </div></span></a>
                                 <div className="_3fSRat">
                                   <div className="_2-uG6-">

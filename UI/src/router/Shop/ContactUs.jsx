@@ -22,7 +22,7 @@ const ContactUs = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('/api/api/v1/contact-us', formValues);
+      const response = await axios.post(  import.meta.env.VITE_APP_BASE_API+'/api/v1/contact-us', formValues);
       setFormValues({
         name: '',
         email: '',

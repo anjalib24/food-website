@@ -20,6 +20,9 @@ const Page = () => {
     <WithAuth>
     <Switch>
       <ProductContexts>
+      <Route exact path="/productdetail/:id">
+          <Productdetailpage />
+        </Route>
         <Route exact path="/contactus">
           <ContactUs />
         </Route>
@@ -52,9 +55,7 @@ const Page = () => {
         <Route exact path="/yourprofile">
           <Yourprofile />
         </Route>
-        <Route exact path="/productdetail/:id">
-          <Productdetailpage />
-        </Route>
+        
         <Route exact path="/">
           <Home />
         </Route>

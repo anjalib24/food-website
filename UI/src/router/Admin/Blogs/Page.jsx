@@ -33,6 +33,7 @@ const Page = () => {
         })
         .then((data) => {
           setBlogs(data.data[0].blog);
+          console.log(data.data[0].blog);
         })
         .catch((error) => {
           console.error("Error:", error);
