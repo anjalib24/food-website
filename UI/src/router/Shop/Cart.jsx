@@ -184,7 +184,7 @@ const Cart = () => {
   // } else {
   //   setCartCount(localData.length)
   // }
-console.log(localData,"localdata");
+console.log(cartData,"localdata");
   return (
     <>
       {isLoading && <Loader />}

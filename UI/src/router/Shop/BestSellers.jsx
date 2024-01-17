@@ -19,9 +19,8 @@ const BestSellers = () => {
       try {
         const response = await axios.get(
           import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-best-seller-product",
-          { mode: 'cors' }
           
-
+          { mode: 'cors' }
         );
         const bestSellers = response.data.data
         setData(bestSellers);
