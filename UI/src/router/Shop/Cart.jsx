@@ -170,6 +170,7 @@ const Cart = () => {
       }    });
     const { data } = await response.json()
     const sessionID = data?.sessionID
+    console.log(sessionID,"idd");
     const result = await stripe.redirectToCheckout({
       sessionId: sessionID,
     });
