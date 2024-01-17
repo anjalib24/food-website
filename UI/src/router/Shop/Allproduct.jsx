@@ -36,7 +36,8 @@ useEffect(() => {
   const fetchDataFromApi = async () => {
     setLoading(true); // Set loading to true before fetching data
     try {
-      const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`);
+      const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}` 
+      );
       setData(result.data.docs);
       setTotalproduct(result?.data?.totalDocs);
     } catch (error) {

@@ -15,18 +15,17 @@ export const getshowingdata = async (endpoint) => {
 };
 
 export const fetchData = async (endpoint, params = {}) => {
-    const url = new URL(`${apiUrl}/${endpoint}`);
-    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-  
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-  };
+  const url = new URL(`${apiUrl}/${endpoint}`);
+  Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
-  export const registration = async (endpoint) => {
-    const response = await fetch(`${apiUrl}/${endpoint}`);
-    const data = await response.json();
-    return data;
+  const response = await fetch(url, {
+    method: 'GET', // or 'PUT', 'POST', etc.
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  const data = await response.json();
+  return data;
 };
 
 
