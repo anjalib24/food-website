@@ -51,7 +51,7 @@ const Yourprofile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    axios.get(import.meta.env.VITE_APP_BASE_API+'api/v1/users/get-current', {
+    axios.get("http://62.72.1.123:8000/api/v1/users/get-current", {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -221,7 +221,7 @@ const Yourprofile = () => {
                         <>
                           <div className="row product" onClick={() => handleClick(item)}>
                             <div className="col-md-2">
-                              <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={"/api" + `${item?.productDetails[0]?.images[0]}`} />
+                              <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={import.meta.env.VITE_APP_BASE_API + `${item?.productDetails[0]?.images[0]}`} />
                             </div>
                             <div className="col-md-6 product-detail" style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                               <div>

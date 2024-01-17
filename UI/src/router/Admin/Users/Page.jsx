@@ -23,7 +23,7 @@ const Page = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/users/get-users?limit=50');
-        setUsers(response?.data?.data?.docs);
+        setUsers(response?.data?.data);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -36,7 +36,9 @@ const Page = () => {
         pathname: `${match.path}/useredit`,
         state: { detailData: user }
     });
-};  return (
+};  
+console.log(users,"--------");
+return (
     <>
       <Switch>
       <Route path={match.path + "/useredit"}>

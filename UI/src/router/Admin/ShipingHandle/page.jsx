@@ -26,6 +26,10 @@ const [dimensionsWeightRange, setDimensionsWeightRange] = useState({
 const [freezipcode, setFreezipcode] = useState({
   csvFile: "",
 });
+const [tax, setTax] = useState({
+  csvFile: "",
+});
+
 
 
  const handleSubmit = async (event) => {
@@ -34,7 +38,7 @@ const [freezipcode, setFreezipcode] = useState({
   try {
     const formData = new FormData();
     formData.append('csvFile', ShipingRatesState.csvFile);
-    const response = await fetch("http://127.0.0.1:8000/api/v1/shipment-rate-state/csv-file-upload",
+    const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/shipment-rate-state/csv-file-upload",
       {
         method: "POST",
         body: formData,
@@ -57,7 +61,7 @@ const handleDimensions = async (event) => {
   try {
     const formData = new FormData();
     formData.append('csvFile', dimensions.csvFile);
-    const response = await fetch("http://127.0.0.1:8000/api/v1/dimensions/csv-file-upload",
+    const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/dimensions/csv-file-upload",
       {
         method: "POST",
         body: formData,
@@ -80,7 +84,7 @@ const handleDimensionsWeightRange = async (event) => {
   try {
     const formData = new FormData();
     formData.append('csvFile', dimensionsWeightRange.csvFile);
-    const response = await fetch("http://127.0.0.1:8000/api/v1/dimensions/csv-file-upload/dimension-weight-range",
+    const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/dimensions/csv-file-upload/dimension-weight-range",
       {
         method: "POST",
         body: formData,
@@ -100,8 +104,30 @@ const handleZipcode = async (event) => {
   event.preventDefault();
   try {
     const formData = new FormData();
-    formData.append('csvFile', dimensionsWeightRange.csvFile);
+    formData.append('csvFile', freezipcode.csvFile);
     const response = await fetch("http://127.0.0.1:8000/api/v1/free-zip-codes/csv-file-upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+   
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+   } catch (error) {
+    console.error(error);
+   }
+   
+};
+
+const handletax = async (event) => {
+  event.preventDefault();
+  try {
+    const formData = new FormData();
+    formData.append('csvFile', tax.csvFile);
+    const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/tax/csv-file-upload",
       {
         method: "POST",
         body: formData,
@@ -220,7 +246,29 @@ return (
     </Grid>
 </Grid>
 </form>
+<form  onSubmit={handletax}  className="!my-4 mt-5">
 
+      <Grid container spacing={3}>
+<Grid item xs={12}>
+      <TextField
+        name="csvFile"
+        label="Tax-File"
+        type="file"
+        onChange={(e) =>
+          setTax((prev) => ({ ...prev, csvFile: e.target.files[0] }))
+        }
+        fullWidth
+        InputLabelProps={{ shrink: true }}
+        inputProps={{ accept: ".csv" }}
+      />
+    </Grid>
+    <Grid item xs={12} sm={6}>
+      <Button type="submit" variant="contained">
+        Submit
+      </Button>
+    </Grid>
+</Grid>
+</form>
 </Paper>
 
 </>

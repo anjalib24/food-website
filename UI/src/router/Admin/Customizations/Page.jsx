@@ -45,7 +45,7 @@ const Page = () => {
             <h1 className="text-3xl font-medium">Customization</h1>
           </div>
           <div>
-            <Link to={match.path + "/new"}>
+            {/* <Link to={match.path + "/new"}>
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
@@ -53,7 +53,7 @@ const Page = () => {
               >
                 Add Product
               </Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
 
