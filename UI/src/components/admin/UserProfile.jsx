@@ -88,11 +88,11 @@ const Button = ({
 
     const handleClick = async () => {
         setIsClicked(initialState);
-        await axios.get('http://62.72.1.123:8000/api/v1/users/logout', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+        // await axios.get('http://62.72.1.123:8000/api/v1/users/logout', {
+        //     headers: {
+        //       'Authorization': `Bearer ${token}`
+        //     }
+        //   });
           localStorage.clear();
         navigate.push("/");
     };
