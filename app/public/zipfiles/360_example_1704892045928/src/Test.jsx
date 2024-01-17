@@ -13,7 +13,6 @@ const Test = () => {
     viewer.settings.responsiveMinHeight = 300;
 
     viewer.settings.apiReadyCallback = (api, isFullScreen) => {
-      console.log("puru");
       api.images.onDrag((event) => {
         console.log(
           `${

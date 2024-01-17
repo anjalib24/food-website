@@ -69,6 +69,9 @@ const Reviews = (props) => {
       setIsLoaded(true);
     }
   };
+
+
+ 
   return (
     <>
       <section id="review" className="m-5 mb-5">
