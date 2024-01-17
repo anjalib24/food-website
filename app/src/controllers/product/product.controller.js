@@ -551,16 +551,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
     throw new ApiError(400, "At least one non-empty product is required!");
   }
 
-  const token =
-    req.headers["authorization"]?.replace("Bearer", "").trim() ||
-    req.cookies["cookie_token"];
-
-  if (!token) {
-    throw new ApiError(400, "Unauthorized user!");
-  }
-  const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-
-  const existedUser = await User.findOne({ _id: userID });
+  const existedUser = await User.findOne({ _id: req?.user?._id });
 
   if (!existedUser) {
     throw new ApiError(404, "User Not Found!");
@@ -725,15 +716,11 @@ const addItemToCart = asyncHandler(async (req, res) => {
 });
 
 const getCart = asyncHandler(async (req, res) => {
-  const token =
-    req.headers["authorization"]?.replace("Bearer", "").trim() ||
-    req.cookies["cookie_token"];
-  if (!token) {
+  if (!req?.user?._id) {
     throw new ApiError(400, "Unauthorized user!");
   }
 
-  const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-  let cart = await cartRepository(userID);
+  let cart = await cartRepository(req?.user?._id);
   if (!cart) {
     return res.status(200).json(new ApiResponse(200, {}, "Cart not Found!"));
   }
@@ -743,15 +730,11 @@ const getCart = asyncHandler(async (req, res) => {
 });
 
 const emptyCart = asyncHandler(async (req, res) => {
-  const token =
-    req.headers["authorization"]?.replace("Bearer", "").trim() ||
-    req.cookies["cookie_token"];
-  if (!token) {
+  if (!req?.user?._id) {
     throw new ApiError(400, "Unauthorized user!");
   }
 
-  const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-  let cart = await cartRepository(userID);
+  let cart = await cartRepository(req?.user?._id);
   cart.items = [];
   cart.subTotal = 0;
   cart.subTotalWeight = 0;
@@ -772,21 +755,11 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Product ID is required!");
     }
 
-    const token =
-      req.headers["authorization"]?.replace("Bearer", "").trim() ||
-      req.cookies["cookie_token"];
-
-    if (!token) {
-      throw new ApiError(401, "Unauthorized user! Token not found.");
+    if (!req?.user?._id) {
+      throw new ApiError(401, "Unauthorized user!");
     }
 
-    const userID = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)._id;
-
-    if (!userID) {
-      throw new ApiError(401, "Invalid user token.");
-    }
-
-    const user = await User.findById(userID);
+    const user = await User.findById(req.user._id);
     if (!user) {
       throw new ApiError(404, "User not found!");
     }
@@ -796,7 +769,7 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Product not found!");
     }
 
-    let cart = await Cart.findOne({ user_id: userID });
+    let cart = await Cart.findOne({ user_id: req.user._id });
 
     if (!cart) {
       throw new ApiError(404, "Cart not found for the user.");

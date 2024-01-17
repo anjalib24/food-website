@@ -155,16 +155,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const accessToken = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET);
 
-    const expiresAt = new Date().setFullYear(new Date().getFullYear() + 1);
-    const options = {
-      httpOnly: true,
-      secure: false,
-      sameSite: "None",
-      maxAge: expiresAt,
-    };
-
-    res.cookie("cookie_token", accessToken, options);
-
     res.status(201).json(new ApiResponse(200, accessToken, "User Logged In!"));
   } else {
     throw new ApiError(400, "Email and password fields are incorrect!");
@@ -173,8 +163,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
 // User logout part-
 const logoutUser = asyncHandler(async (req, res) => {
-  res.clearCookie("cookie_token");
-
   res.status(200).json(new ApiResponse(200, null, "User Logout!"));
 });
 

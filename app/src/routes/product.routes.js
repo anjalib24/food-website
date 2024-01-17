@@ -52,12 +52,12 @@ router.route("/create-product-review/:id").post(userAuth, createProductReview);
 
 router.route("/get-all-category").get(getAllCategory);
 
-router.route("/add-to-cart").post(addItemToCart);
+router.route("/add-to-cart").post(userAuth, addItemToCart);
 
-router.route("/get-cart").get(getCart);
+router.route("/get-cart").get(userAuth, getCart);
 
-router.route("/remove-all-items-from-cart").get(emptyCart);
-router.route("/remove-items-from-cart/:id").get(removeItemsFromCart);
+router.route("/remove-all-items-from-cart").get(userAuth, emptyCart);
+router.route("/remove-items-from-cart/:id").get(userAuth, removeItemsFromCart);
 
 router.route("/create-country").post(createCountry);
 

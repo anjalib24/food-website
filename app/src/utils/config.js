@@ -4,8 +4,8 @@ const config = {
     mongoUri: process.env.MONGODB_DEV_URI,
   },
   production: {
-    port: process.env.PRODUCTION_PORT || 3000,
-    mongoUri: process.env.MONGODB_DEV_URI,
+    port: process.env.PRODUCTION_PORT || 8000,
+    mongoUri: process.env.MONGODB_PROD_URI,
   },
 };
 

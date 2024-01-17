@@ -3,21 +3,34 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import path from "path";
+import compression from "compression";
+import helmet from "helmet";
 // import { createProxyMiddleware } from "http-proxy-middleware";
 // import { getShippoData } from "./utils/shippo.js";
 // getShippoData();
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
+if (process.env.NODE_ENV === "production") {
+  app.use(
+    cors({
+      origin: process.env.PRODUCTION_APP_BASE_API,
+      credentials: true,
+    })
+  );
+} else {
+  app.use(
+    cors({
+      origin: `http://localhost:${process.env.PORT}`,
+      credentials: true,
+    })
+  );
+}
 
+app.use(helmet());
+app.use(compression());
 app.use(morgan("dev"));
-app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
