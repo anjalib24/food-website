@@ -10,22 +10,23 @@ import helmet from "helmet";
 // getShippoData();
 const app = express();
 
-if (process.env.NODE_ENV === "production") {
-  app.use(
-    cors({
-      origin: process.env.PRODUCTION_APP_BASE_API,
-      credentials: true,
-    })
-  );
-} else {
-  app.use(
-    cors({
-      origin: `http://localhost:${process.env.PORT}`,
-      credentials: true,
-    })
-  );
-}
+// if (process.env.NODE_ENV === "production") {
+//   app.use(
+//     cors({
+//       origin: process.env.PRODUCTION_APP_BASE_API,
+//       credentials: true,
+//     })
+//   );
+// } else {
+//   app.use(
+//     cors({
+//       origin: `http://localhost:${process.env.PORT}`,
+//       credentials: true,
+//     })
+//   );
+// }
 
+app.use(cors());
 app.use(helmet());
 app.use(compression());
 app.use(morgan("dev"));
