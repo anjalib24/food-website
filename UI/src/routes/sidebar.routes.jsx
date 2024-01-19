@@ -70,6 +70,11 @@ export const links = [
         to: "/admin/dimension",
         icon: <FiShoppingBag />,
       },
+      {
+        name: "Dimension Weight Range",
+        to: "/admin/dimensionweight",
+        icon: <FiShoppingBag />,
+      },
     ],
   },
 ];

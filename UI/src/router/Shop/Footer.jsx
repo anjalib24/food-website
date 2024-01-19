@@ -7,7 +7,6 @@ export const Footer = () => {
     const handleContactClick = () => {
       history.push('/contactus');
     };
-  
   return (
 <>
 <section id="footer" className="mt-5">

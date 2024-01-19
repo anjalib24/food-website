@@ -81,10 +81,7 @@ export const Blog = (props) => {
             <div className="row">
               <div className="col-md-12">
                 <div id="blog_main">
-
-
-
-                {props?.blog?.length > 0 ? (
+                     {props?.blog?.length > 0 ? (
                         <Slider ref={slickRef} {...settings} afterChange={handleAfterChange}>
                         {props?.blog?.map((blogItem, index) => (
                           <div key={index} className="single-box">

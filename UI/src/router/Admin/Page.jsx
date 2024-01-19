@@ -22,7 +22,7 @@ import ShipingHandle from "./ShipingHandle/page"
 import Zipcode from "./Zipcode/Page"
 import ShipmentState from "./ShipmentState/Page"
 import Dimension from "./Dimension/Page"
-
+import DimensionWeight from "./Diemesion Weight/Page"
 const Page = () => {
   let match = useRouteMatch();
   return (    
@@ -31,6 +31,9 @@ const Page = () => {
         <Layout
           Page={
             <Switch>
+              <Route path={`${match.path}/dimensionweight`}>
+                <DimensionWeight />
+              </Route>
                  <Route path={`${match.path}/dimension`}>
                 <Dimension />
               </Route>

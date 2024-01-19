@@ -11,9 +11,6 @@ const BestSellers = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
-
-
-
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {

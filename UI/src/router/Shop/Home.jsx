@@ -17,38 +17,46 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 export const Home = () => {
   const [show, setShow] = useState()
   const token = localStorage.getItem('token');
-const {setCartCount} = useProductState()
+  const { setCartCount } = useProductState()
+
   useEffect(() => {
     fetchDataFromApi();
-    getcart();
+    if(token){
+
+      getcart();
+
+    }
   }, []);
+  
   const fetchDataFromApi = async () => {
     try {
       const result = await getshowingdata("views/get-views");
       setShow(result.data[0]);
     } catch (error) {
-      console.error('Error fetching data:', error); 
+      console.error('Error fetching data:', error);
     }
   };
 
-  const getcart = async () =>{
-    const response = await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/get-cart', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    setCartCount(response?.data?.data?.items.length)
+  
+    const getcart = async () => {
+      const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/get-cart', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setCartCount(response?.data?.data?.items.length)
+    }
+  
 
-  }
 
-  if(!token){
+  if (!token) {
     const cart = JSON.parse(localStorage.getItem('cart'));
     setCartCount(cart?.length || 0)
   }
-  
+
   return (
     <>
-      <Header/>
+      <Header />
       <Shopnow herosection={show?.hero_section} />
       <BestSellers />
       <Allproduct />

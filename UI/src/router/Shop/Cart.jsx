@@ -129,7 +129,7 @@ const Cart = () => {
     if (token) {
       try {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
-        const response = await axios.get(`http://62.67.1.123:8000/api/v1/products/remove-items-from-cart/${productId}`, {
+        const response = await axios.get(`http://62.72.1.123:8000/api/v1/products/remove-items-from-cart/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
