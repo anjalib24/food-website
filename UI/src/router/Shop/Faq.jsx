@@ -29,14 +29,14 @@ export const Faq = (props) => {
                   </button>
                 </h2>
                 <div
- id={`flush-collapse${index}`}
- className={`accordion-collapse collapse ${openIndex === index ? "show" : ""}`}
- aria-labelledby={`flush-heading${index}`}
- data-bs-parent="#accordionFlushExample"
- style={{ visibility: 'visible' }} // Add this line
->
- <div className="accordion-body">{item.answer}</div>
-</div>
+                  id={`flush-collapse${index}`}
+                  className={`accordion-collapse collapse ${openIndex === index ? "show" : ""}`}
+                  aria-labelledby={`flush-heading${index}`}
+                  data-bs-parent="#accordionFlushExample"
+                  style={{ visibility: 'visible' }} // Add this line
+                >
+                  <div className="accordion-body">{item.answer}</div>
+                </div>
               </div>
             ))}
           </div>
