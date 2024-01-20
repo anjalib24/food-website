@@ -28,6 +28,7 @@ export const emptyCartAfterOrder = async (userID) => {
   cart.subTotal = 0;
   cart.subTotalWeight = 0;
   cart.shippingCharge = 0;
+  cart.shipment_delivery_message = "";
   cart.tax = 0;
 
   return await cart.save();
@@ -58,7 +59,8 @@ export const addShippingCharge = async (cartData) => {
 
           return cartData.save();
         }
-        return cartData;
+        cartData.shipment_delivery_message = "1-2 days";
+        return cartData.save();
       } else if (
         matchingFreeZipCode &&
         userDetails.zipcode === matchingFreeZipCode.zipCode &&
@@ -67,6 +69,7 @@ export const addShippingCharge = async (cartData) => {
       ) {
         cartData.shippingCharge = fixedShippingPrice.fixed_shipping_price;
         cartData.subTotal += fixedShippingPrice.fixed_shipping_price;
+        cartData.shipment_delivery_message = "1-2 days";
 
         return cartData.save();
       } else if (
@@ -74,13 +77,23 @@ export const addShippingCharge = async (cartData) => {
         benchmarkData &&
         benchmarkData.benchmark1 < cartData.subTotal
       ) {
+        const getShipmentRateStateData = await ShipmentRateState.find();
+
+        const isStateMatch =
+          userDetails?.state &&
+          getShipmentRateStateData.find(
+            (x) => x.state?.toLowerCase() === userDetails?.state?.toLowerCase()
+          );
+
         if (cartData.shippingCharge > 0) {
           cartData.subTotal -= cartData.shippingCharge;
           cartData.shippingCharge = 0;
 
           return cartData.save();
         }
-        return cartData;
+        cartData.shipment_delivery_message =
+          isStateMatch.shipment_delivery_message;
+        return cartData.save();
       } else if (
         !matchingFreeZipCode &&
         benchmarkData &&
@@ -114,6 +127,8 @@ export const addShippingCharge = async (cartData) => {
           cartData.subTotal +=
             getDimention.shipment_dimension_price +
             isStateMatch.shipment_state_rate;
+          cartData.shipment_delivery_message =
+            isStateMatch.shipment_delivery_message;
 
           return cartData.save();
         }

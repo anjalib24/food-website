@@ -20,6 +20,7 @@ import { Cart } from "../../models/cart.model.js";
 import Tax from "../../models/tax.model.js";
 import ShipmentRateState from "../../models/shipmentRateState.model.js";
 import ProductsReview from "../../models/productsReviews.model.js";
+import rimraf from "rimraf";
 
 //------------get best seller------------
 
@@ -317,6 +318,48 @@ const deleteProductData = asyncHandler(async (req, res) => {
       throw new ApiError(500, "Something went wrong while deleting product");
     }
 
+    const __dirname = path.resolve();
+
+    if (deleteProduct?.video_url) {
+      const dirPath = path.join(__dirname, "/public", deleteProduct?.video_url);
+      fs.unlink(dirPath, (err) => {
+        if (err) {
+          console.error("Error deleting video file:", err.message);
+        } else {
+          console.log("File deleted video successfully.");
+        }
+      });
+    }
+
+    if (deleteProduct?.images && deleteProduct.images.length > 0) {
+      deleteProduct.images.forEach((imageUrl) => {
+        const dirPath = path.join(__dirname, "/public", imageUrl);
+        fs.unlink(dirPath, (err) => {
+          if (err) {
+            console.error("Error deleting images file:", err.message);
+          } else {
+            console.log("File deleted images successfully.");
+          }
+        });
+      });
+    }
+
+    if (deleteProduct?.zipFile?.zipfileDirUrl) {
+      const dirPath = path.join(
+        __dirname,
+        "/public",
+        deleteProduct?.zipFile?.zipfileDirUrl
+      );
+
+      rimraf(dirPath, (err) => {
+        if (err) {
+          console.error("Error deleting directory:", err.message);
+        } else {
+          console.log("Directory deleted successfully.");
+        }
+      });
+    }
+
     return res
       .status(201)
       .json(
@@ -347,7 +390,7 @@ const extractZip = async (zipFilePath, uploadDir) => {
       }
     }
   });
-
+  result.zipfileDirUrl = uploadDir;
   return result;
 };
 
@@ -739,6 +782,7 @@ const emptyCart = asyncHandler(async (req, res) => {
   cart.subTotal = 0;
   cart.subTotalWeight = 0;
   cart.shippingCharge = 0;
+  cart.shipment_delivery_message = "";
   cart.tax = 0;
 
   let data = await cart.save();
@@ -823,6 +867,7 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
       updatedCartData.subTotal = 0;
       updatedCartData.subTotalWeight = 0;
       updatedCartData.shippingCharge = 0;
+      updateProductData.shipment_delivery_message = "";
       updatedCartData.tax = 0;
 
       await updatedCartData.save();

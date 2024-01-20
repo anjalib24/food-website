@@ -56,6 +56,9 @@ const CartSchema = new Schema(
       default: 0,
       type: Number,
     },
+    shipment_delivery_message: {
+      type: String,
+    },
   },
   {
     timestamps: true,

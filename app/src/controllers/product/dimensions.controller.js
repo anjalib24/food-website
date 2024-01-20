@@ -31,9 +31,17 @@ export const createDimension = async (req, res) => {
 export const getDimension = async (req, res) => {
   try {
     const getData = await Dimension.find();
+
+    const shortDimentionsData = getData.sort((a, b) => {
+      if (a.dimensions === b.dimensions) return 0;
+      return a.dimensions > b.dimensions ? 1 : -1;
+    });
+
     res
       .status(200)
-      .json(new ApiResponse(200, getData, `Get dimension successfully.`));
+      .json(
+        new ApiResponse(200, shortDimentionsData, `Get dimension successfully.`)
+      );
   } catch (error) {
     return res.status(500).json(new ApiError(500, error.message));
   }
@@ -234,12 +242,18 @@ export const createDimensionWeightRange = async (req, res) => {
 export const getDimensionWeightRange = async (req, res) => {
   try {
     const getData = await DimensionWeightRange.find();
+
+    const shortDimentionWeightRangeData = getData.sort((a, b) => {
+      if (a.dimensions === b.dimensions) return 0;
+      return a.dimensions > b.dimensions ? 1 : -1;
+    });
+
     res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          getData,
+          shortDimentionWeightRangeData,
           `Get dimension weight range  successfully.`
         )
       );
