@@ -407,14 +407,10 @@ const deleteReviews = asyncHandler(async (req, res) => {
 
 //---------------------update about us section------------------------
 const updateAboutUs = asyncHandler(async (req, res) => {
-  const { text } = req.body;
+  const { text, about_us_video } = req.body;
 
   const about_us_image =
     (req.files["about_us_image"] && req.files["about_us_image"][0].filename) ||
-    "";
-
-  const about_us_video =
-    (req.files["about_us_video"] && req.files["about_us_video"][0].filename) ||
     "";
 
   let aboutAttribute = {};

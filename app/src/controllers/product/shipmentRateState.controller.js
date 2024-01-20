@@ -103,6 +103,43 @@ export const shipmentRateStateCsvFileUpload = async (req, res) => {
   }
 };
 
+export const createShipmentRateState = async (req, res) => {
+  try {
+    const existingState = await ShipmentRateState.findOne({
+      state: req.body.state?.toUpperCase(),
+    });
+
+    if (existingState) {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "State already exists"));
+    }
+
+    const newShipmentRateState = await ShipmentRateState.create({
+      state: req.body.state?.toUpperCase(),
+      postal: req.body.postal,
+      shipment_state_rate: isNaN(req.body.shipment_state_rate)
+        ? 0
+        : req.body.shipment_state_rate,
+      shipment_delivery_message: req.body.shipment_delivery_message,
+      state_code: req.body.state_code,
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          newShipmentRateState,
+          "Shipment rate state created successfully."
+        )
+      );
+  } catch (error) {
+    console.error("Error creating shipment rate state:", error);
+    return res.status(500).json(new ApiError(500, "Internal server error"));
+  }
+};
+
 export const getShipmentRateState = async (req, res) => {
   try {
     const getData = await ShipmentRateState.find();
@@ -111,5 +148,85 @@ export const getShipmentRateState = async (req, res) => {
     );
   } catch (error) {
     return res.status(500).json(new ApiError(500, error.message));
+  }
+};
+export const updateShipmentRateState = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    let updateData = {};
+
+    if (req.body.state) {
+      updateData = { ...updateData, state: req.body.state?.toUpperCase() };
+    }
+
+    if (req.body.postal) {
+      updateData = { ...updateData, postal: req.body.postal };
+    }
+    if (req.body.shipment_delivery_message) {
+      updateData = {
+        ...updateData,
+        shipment_delivery_message: req.body.shipment_delivery_message,
+      };
+    }
+
+    if (req.body.state_code) {
+      updateData = {
+        ...updateData,
+        state_code: req.body.state_code,
+      };
+    }
+
+    if (req.body.shipment_state_rate) {
+      const shipmentStateRate = parseFloat(req.body.shipment_state_rate);
+      updateData = { ...updateData, shipment_state_rate: shipmentStateRate };
+    }
+
+    const updatedState = await ShipmentRateState.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
+
+    if (!updatedState) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "State not found"));
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          updatedState,
+          "Shipment rate state updated successfully."
+        )
+      );
+  } catch (error) {
+    console.error("Error updating state:", error);
+    return res.status(500).json(new ApiError(500, "Internal server error"));
+  }
+};
+
+export const deleteShipmentRateState = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedState = await ShipmentRateState.findByIdAndDelete(id);
+
+    if (!deletedState) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "State not found"));
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, null, "Shipment rate state deleted successfully.")
+      );
+  } catch (error) {
+    console.error("Error deleting state:", error);
+    return res.status(500).json(new ApiError(500, "Internal server error"));
   }
 };

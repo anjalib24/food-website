@@ -5,6 +5,29 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import Dimension from "../../models/Dimensions.model.js";
 import DimensionWeightRange from "../../models/dimensionWeightRange.model.js";
 
+export const createDimension = async (req, res) => {
+  try {
+    const { dimensions, Length, Width, Height, shipment_dimension_price } =
+      req.body;
+
+    const createData = await Dimension.create({
+      dimensions: dimensions,
+      length: parseFloat(Length),
+      width: parseFloat(Width),
+      height: parseFloat(Height),
+      shipment_dimension_price: shipment_dimension_price,
+    });
+
+    res
+      .status(201)
+      .json(
+        new ApiResponse(201, createData, "Dimension created successfully.")
+      );
+  } catch (error) {
+    console.error("Error creating dimension:", error);
+    res.status(500).json(new ApiError(500, "Internal server error"));
+  }
+};
 export const getDimension = async (req, res) => {
   try {
     const getData = await Dimension.find();
@@ -13,6 +36,66 @@ export const getDimension = async (req, res) => {
       .json(new ApiResponse(200, getData, `Get dimension successfully.`));
   } catch (error) {
     return res.status(500).json(new ApiError(500, error.message));
+  }
+};
+
+export const updateDimension = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { dimensions, Length, Width, Height, shipment_dimension_price } =
+      req.body;
+
+    const updatedData = await Dimension.findByIdAndUpdate(
+      id,
+      {
+        dimensions: dimensions,
+        length: parseFloat(Length),
+        width: parseFloat(Width),
+        height: parseFloat(Height),
+        shipment_dimension_price: shipment_dimension_price
+          ? parseFloat(shipment_dimension_price.replace("$", ""))
+          : 0,
+      },
+      { new: true }
+    );
+
+    if (!updatedData) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "Dimension not found"));
+    }
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedData, "Dimension updated successfully")
+      );
+  } catch (error) {
+    console.error("Error updating dimension:", error);
+    res.status(500).json(new ApiError(500, "Internal server error"));
+  }
+};
+
+export const deleteDimension = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedData = await Dimension.findByIdAndDelete(id);
+
+    if (!deletedData) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "Dimension not found"));
+    }
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, deletedData, "Dimension deleted successfully")
+      );
+  } catch (error) {
+    console.error("Error deleting dimension:", error);
+    res.status(500).json(new ApiError(500, "Internal server error"));
   }
 };
 
@@ -121,6 +204,33 @@ export const dimensionCsvFileUpload = async (req, res) => {
   }
 };
 
+export const createDimensionWeightRange = async (req, res) => {
+  try {
+    const { dimensions, Length, Width, Height, weight_range } = req.body;
+
+    const createData = await DimensionWeightRange.create({
+      dimensions,
+      weight_range,
+      length: parseFloat(Length),
+      width: parseFloat(Width),
+      height: parseFloat(Height),
+    });
+
+    res
+      .status(201)
+      .json(
+        new ApiResponse(
+          201,
+          createData,
+          "Dimension weight range created successfully."
+        )
+      );
+  } catch (error) {
+    console.error("Error creating dimension weight range:", error);
+    res.status(500).json(new ApiError(500, "Internal server error"));
+  }
+};
+
 export const getDimensionWeightRange = async (req, res) => {
   try {
     const getData = await DimensionWeightRange.find();
@@ -135,6 +245,71 @@ export const getDimensionWeightRange = async (req, res) => {
       );
   } catch (error) {
     return res.status(500).json(new ApiError(500, error.message));
+  }
+};
+
+export const updateDimensionWeightRange = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { dimensions, Length, Width, Height, weight_range } = req.body;
+
+    const updatedData = await DimensionWeightRange.findByIdAndUpdate(
+      id,
+      {
+        dimensions: dimensions,
+        length: parseFloat(Length),
+        width: parseFloat(Width),
+        height: parseFloat(Height),
+        weight_range,
+      },
+      { new: true }
+    );
+
+    if (!updatedData) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "Dimension weight range not found"));
+    }
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          updatedData,
+          "Dimension weight wange updated successfully"
+        )
+      );
+  } catch (error) {
+    console.error("Error updating d imension weight range:", error);
+    res.status(500).json(new ApiError(500, "Internal server error"));
+  }
+};
+
+export const deleteDimensionWeightRange = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedData = await DimensionWeightRange.findByIdAndDelete(id);
+
+    if (!deletedData) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "Dimension weight range not found"));
+    }
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          deletedData,
+          "Dimension weight range deleted successfully"
+        )
+      );
+  } catch (error) {
+    console.error("Error deleting Dimension weight range:", error);
+    res.status(500).json(new ApiError(500, "Internal server error"));
   }
 };
 

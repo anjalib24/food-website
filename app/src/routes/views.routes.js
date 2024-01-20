@@ -50,13 +50,9 @@ router
 
 router.route("/delete-reviews-views/:id").delete(deleteReviews);
 
-router.route("/update-about-us").put(
-  upload.fields([
-    { name: "about_us_image", maxCount: 1 },
-    { name: "about_us_video", maxCount: 1 },
-  ]),
-  updateAboutUs
-);
+router
+  .route("/update-about-us")
+  .put(upload.fields([{ name: "about_us_image", maxCount: 1 }]), updateAboutUs);
 
 router
   .route("/create-blog-views")

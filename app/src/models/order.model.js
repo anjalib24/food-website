@@ -17,7 +17,6 @@ const orderSchema = new mongoose.Schema(
     },
     pyamentOrderId: {
       type: String,
-      required: true,
     },
     products: [
       {

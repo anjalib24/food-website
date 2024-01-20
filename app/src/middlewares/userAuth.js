@@ -19,6 +19,11 @@ const userAuth = async (req, res, next) => {
       throw new ApiError(404, "User Not Found");
     }
 
+    if (existedUser.role == "admin") {
+      req.user = existedUser;
+      next();
+    }
+
     if (existedUser.role !== "user") {
       throw new ApiError(401, "Not permissions");
     }

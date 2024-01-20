@@ -101,7 +101,7 @@ const getProductData = asyncHandler(async (req, res) => {
     } = req.query;
 
     const price = req.body.price || 0;
-    origin_country = origin_country && origin_country.toLowerCase();
+    origin_country = origin_country && origin_country?.toLowerCase();
 
     const filter = {};
 
@@ -484,7 +484,7 @@ const getAllCategory = asyncHandler(async (req, res) => {
 //create country part -
 const createCountry = asyncHandler(async (req, res) => {
   let { name } = req.body.countryData;
-  name = name && name.toLowerCase();
+  name = name && name?.toLowerCase();
 
   if (!name) {
     throw new ApiError(400, "Country name is required!");

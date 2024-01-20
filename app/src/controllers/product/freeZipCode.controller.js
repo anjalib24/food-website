@@ -85,10 +85,9 @@ export const getOneFreeZipCode = async (req, res) => {
 // Update FreeZipCode by ID
 export const updateFreeZipCode = async (req, res) => {
   try {
-    const { zipCode, shipment_delivery_message } = req.body;
     const updatedFreeZipCode = await FreeZipCode.findByIdAndUpdate(
       req.params.id,
-      { zipCode, shipment_delivery_message },
+      req.body,
       { new: true }
     );
 

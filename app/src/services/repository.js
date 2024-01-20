@@ -88,11 +88,11 @@ export const addShippingCharge = async (cartData) => {
       ) {
         const getShipmentRateStateData = await ShipmentRateState.find();
 
-        const isStateMatch = getShipmentRateStateData.find(
-          (x) =>
-            x.state.toLocaleLowerCase() ===
-            userDetails?.state?.toLocaleLowerCase()
-        );
+        const isStateMatch =
+          userDetails?.state &&
+          getShipmentRateStateData.find(
+            (x) => x.state?.toLowerCase() === userDetails?.state?.toLowerCase()
+          );
 
         const totalWeight = cartData?.subTotalWeight;
         const packageDimension = await DimensionWeightRange.findOne({

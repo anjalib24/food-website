@@ -59,7 +59,7 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       username: existedUser.username,
       email: existedUser.email,
       products: productIds,
-      pyamentOrderId: stripeOrderData.id,
+      pyamentOrderId: null,
       status: "pending",
       tax: cartData.tax,
       shippingCharge: cartData.shippingCharge,

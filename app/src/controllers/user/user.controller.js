@@ -163,7 +163,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 // User logout part-
 const logoutUser = asyncHandler(async (req, res) => {
-  res.status(200).json(new ApiResponse(200, null, "User Logout!"));
+  return res.status(200).json(new ApiResponse(200, null, "User Logout!"));
 });
 
 // get user order history
