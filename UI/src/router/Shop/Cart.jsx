@@ -15,7 +15,7 @@ import { Footer } from './Footer';
 const Cart = () => {
   const [cartData, setCartData] = useState([]);
   const [localData, setLocalData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState();
   const [cartId, setCartId] = useState()
   const [shipingCharge, setShipingCharge] = useState({
     deliveryCharge: 0,
@@ -105,31 +105,38 @@ const Cart = () => {
   };
 
   const updateQuantity = async (index, newQuantity, item, incordec) => {
-
+    setIsLoading(true);
     const token = localStorage.getItem('token');
     if (token) {
-      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/add-to-cart', [{
-        productId: item?.product?._id,
-        quantity: incordec,
-      }], {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      fetchDataFromApi();
+      try {
+        const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/add-to-cart', [{
+          productId: item?.product?._id,
+          quantity: incordec,
+        }], {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        fetchDataFromApi();
+      } catch (error) {
+        console.error('Error updating quantity:', error);
+      }finally {
+        setIsLoading(false)
+      }
     } else {
       const updatedCart = [...localData];
       updatedCart[index].quantity = newQuantity;
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       countCartItems();
     }
-  };
+   };
 
   const deleteProduct = async (index) => {
+    setIsLoading(true);
     if (token) {
       try {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
-        const response = await axios.get(`http://62.72.1.123:8000/api/v1/products/remove-items-from-cart/${productId}`, {
+        const response = await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/remove-items-from-cart/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -139,6 +146,8 @@ const Cart = () => {
         setCartCount(prev=>prev-1)
       } catch (error) {
         console.error('Error deleting the product:', error);
+      }finally {
+        setIsLoading(false)
       }
     } else {
       const updatedCart = [...localData]; // Use localData instead of cartData
@@ -161,24 +170,25 @@ const Cart = () => {
   };
 
   const payment = async () => {
-
-    const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
-    const response = await fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/order/create-order/${cartId}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }    });
-    const { data } = await response.json()
-    const sessionID = data?.sessionID
-    console.log(sessionID,"idd");
-    const result = await stripe.redirectToCheckout({
-      sessionId: sessionID,
-    });
-    if (result.error) {
-      console.error(result.error.message);
+    try {
+      const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
+      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+`/api/v1/order/create-order/${cartId}`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const sessionID = response.data?.sessionID;
+      console.log(sessionID, "idd");
+      const result = await stripe.redirectToCheckout({
+        sessionId: sessionID,
+      });
+      if (result.error) {
+        console.error(result.error.message);
+      }
+    } catch (error) {
+      console.error('Error during payment:', error);
     }
   };
-
   // if (token) {
   //   setCartCount(cartData?.filteredData?.length)
   // } else {

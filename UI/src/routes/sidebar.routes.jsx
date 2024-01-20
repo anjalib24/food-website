@@ -75,6 +75,11 @@ export const links = [
         to: "/admin/dimensionweight",
         icon: <FiShoppingBag />,
       },
+      {
+        name: "Tax",
+        to: "/admin/tax",
+        icon: <FiShoppingBag />,
+      },
     ],
   },
 ];

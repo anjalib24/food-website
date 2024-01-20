@@ -12,39 +12,40 @@ import Reviews from './Reviews'
 import axios from 'axios'
 import { useProductState } from './context/ProductContext'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Loader from '@/components/Loader'
 
 
 export const Home = () => {
   const [show, setShow] = useState()
   const token = localStorage.getItem('token');
+  const [loader,setLoader] = useState()
   const { setCartCount } = useProductState()
-
   useEffect(() => {
     fetchDataFromApi();
     if(token){
-
       getcart();
-
     }
   }, []);
   
   const fetchDataFromApi = async () => {
+    setLoader(true)
     try {
       const result = await getshowingdata("views/get-views");
       setShow(result.data[0]);
     } catch (error) {
       console.error('Error fetching data:', error);
+    }finally{
+      setLoader(false)
     }
   };
 
-  
-    const getcart = async () => {
+   const getcart = async () => {
       const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/get-cart', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      setCartCount(response?.data?.data?.items.length)
+      setCartCount(response?.data?.data?.items?.length)
     }
   
 
@@ -53,9 +54,11 @@ export const Home = () => {
     const cart = JSON.parse(localStorage.getItem('cart'));
     setCartCount(cart?.length || 0)
   }
+  if (loader) return <Loader/>;
 
   return (
     <>
+
       <Header />
       <Shopnow herosection={show?.hero_section} />
       <BestSellers />

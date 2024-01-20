@@ -13,7 +13,7 @@ const EditShipmentstate = () => {
       if (!editFields.includes(name)) {
         setEditFields([...editFields, name]);
       }
-    };
+    };           
     useEffect(() => {
       const fetchZipCodeData = async () => {
           try {
@@ -44,9 +44,9 @@ const EditShipmentstate = () => {
   
       editFields.forEach((key) => {
         formData.append(key, zipcodeData[key]);
-      });
-      try {
-        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/zip-codes/${id}`, {
+      });   
+      try {     
+        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/shipment-rate-state/${id}`, {
           method: 'PUT',
           body: formData,
         });

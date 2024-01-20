@@ -6,7 +6,6 @@ import vectorimg from "./images/Vector.png"
 import { fetchData } from './services/Api'
 import Modal360 from './Modal360';
 import Socialmedia from './Socialmedia'
-import Loader from '@/components/Loader'
 import videoimg from "./images/Group.png"
 import VideoModal from './VideoModal'
 import Alert from './Alert'
@@ -25,40 +24,40 @@ export const Allproduct = () => {
   const [searchInput, setSearchInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(32);
-  const [totalproduct,setTotalproduct] = useState()
-  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, setLoading, loading } = useProductState();
+  const [totalproduct, setTotalproduct] = useState()
+  const [loading, setLoading] = useState()
+  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
 
-useEffect(() => {
-  const fetchDataFromApi = async () => {
-    setLoading(true); // Set loading to true before fetching data
-    try {
-      const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}` 
-      );
-      setData(result.data.docs);
-      setTotalproduct(result?.data?.totalDocs);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false); // Set loading to false after data is fetched or in case of an error
-    }
-  };
-  fetchDataFromApi();
-}, [currentPage, itemsPerPage]);
+  useEffect(() => {
+    setLoading(true)
+    const fetchDataFromApi = async () => {
+      try {
+        const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`
+        );
+        setData(result.data.docs);
+        setTotalproduct(result?.data?.totalDocs);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false)
+      }
+    };
+    fetchDataFromApi();
+  }, [currentPage, itemsPerPage]);
 
-const totalPages = Math.ceil(totalproduct / itemsPerPage);
-const startIndex = (currentPage - 1) * itemsPerPage;
-let endIndex = Math.min(startIndex + itemsPerPage);
-if (endIndex > data?.length) {
- endIndex = data.length;
-}
-const currentItems = data?.slice(0, 32);
+  const totalPages = Math.ceil(totalproduct / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  let endIndex = Math.min(startIndex + itemsPerPage);
+  if (endIndex > data?.length) {
+    endIndex = data.length;
+  }
+  const currentItems = data?.slice(0, 32);
 
   const handleOriginCheckboxChange = (value) => {
-    setLoading(true)
     setSelectedOrigin((prevSelected) => {
       if (prevSelected.includes(value)) {
         return prevSelected.filter((item) => item !== value);
@@ -66,11 +65,9 @@ const currentItems = data?.slice(0, 32);
         return [...prevSelected, value];
       }
     });
-    setLoading(false)
   };
 
   const handlePriceCheckboxChange = (value) => {
-    setLoading(true)
 
     setSelectedPriceRange((prevSelected) => {
       if (prevSelected.includes(value)) {
@@ -79,7 +76,6 @@ const currentItems = data?.slice(0, 32);
         return [...prevSelected, value];
       }
     });
-    setLoading(false)
 
   };
   const getPriceRange = (price) => {
@@ -94,7 +90,6 @@ const currentItems = data?.slice(0, 32);
     }
   };
 
-if (loading) return <Loader />;
 
   return (
     <>
@@ -289,9 +284,8 @@ if (loading) return <Loader />;
                 {loading && (
                   <div className="col-md-12 text-center">
                     <div className="spinner-border" role="status">
-             <Loader/>
-                    </div>
-                  </div>
+                      <span className="sr-only">Loading...</span>
+                    </div>              </div>
                 )}
                 {!loading && currentItems && currentItems?.length === 0 && (
                   <div className="col-md-12 text-center">
@@ -321,7 +315,7 @@ if (loading) return <Loader />;
 
                   <div key={item.id} className="col-6 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-                      <img src={import.meta.env.VITE_APP_BASE_API+ item.images[0]} className="text-center m-2 img-fluid" alt="#" />
+                      <img src={import.meta.env.VITE_APP_BASE_API + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
                     </div>
                     <div className="product-info">
                       <div>
@@ -333,9 +327,9 @@ if (loading) return <Loader />;
                         </p>
                       </div>
                       <div className='d-flex flex-row align-items-center'>
-                  <h5>Origin County:</h5>
-                  <img src={usflag} alt="#" className='my-auto' />
-                </div>
+                        <h5>Origin County:</h5>
+                        <img src={usflag} alt="#" className='my-auto' />
+                      </div>
                     </div>
                     <div className="product-actions">
                       <div className='d-flex flex-row '>
@@ -400,20 +394,20 @@ if (loading) return <Loader />;
                   </div>
                 ))}
 
-          </div>
+              </div>
             </div>
             <div className="col-md-12 d-flex justify-content-center">
-    <Pagination 
-className='flex'
-count={totalPages}
-      variant="outlined"
-      color="primary"
-      page={currentPage}
-      onChange={(event, page) => {
-        setCurrentPage(page);
-      }}
-    />
-  </div>
+              <Pagination
+                className='flex'
+                count={totalPages}
+                variant="outlined"
+                color="primary"
+                page={currentPage}
+                onChange={(event, page) => {
+                  setCurrentPage(page);
+                }}
+              />
+            </div>
           </div>
         </section>
       </div>
