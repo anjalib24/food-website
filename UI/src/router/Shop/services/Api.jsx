@@ -8,10 +8,10 @@ const token = localStorage.getItem('token');
 //     const data = await response.json();
 //     return data;
 // };
+
 export const getshowingdata = async (endpoint) => {
-    const response = await fetch(`${apiUrl}/${endpoint}`);
-    const data = await response.json();
-    return data;
+  const response = await axios.get(`${apiUrl}/${endpoint}`);
+  return response.data;
 };
 
 export const fetchData = async (endpoint, params = {}) => {

@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./style.css"
-import { fetchData } from './services/Api'
 import ProductCard from './ProductCard';
 import Slider from 'react-slick';
-import Loader from '@/components/Loader';
 import axios from 'axios';
-
 
 const BestSellers = () => {
   const [data, setData] = useState(null);
@@ -13,6 +10,7 @@ const BestSellers = () => {
   const sliderRef = useRef(null);
   useEffect(() => {
     const fetchDataFromApi = async () => {
+      setLoading(true)
       try {
         const response = await axios.get(
           import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-best-seller-product",
@@ -24,15 +22,14 @@ const BestSellers = () => {
         );
         const bestSellers = response.data.data
         setData(bestSellers);
-     } catch (error) {
+      } catch (error) {
         console.error('Error fetching data:', error);
-     } finally {
-        setLoading(false); 
-     }
+      } finally {
+        setLoading(false);
+      }
     };
-   
     fetchDataFromApi();
-   }, []);
+  }, []);
 
   const settings = {
     dots: false,
@@ -40,10 +37,9 @@ const BestSellers = () => {
     infinite: false,
     slidesToShow: 5,
     slidesToScroll: 1,
-    swipe: true,  // Enable swipe
-  draggable: true,  // Enable drag
-  swipeToSlide: true,  // Enable swipe to any slide
-
+    swipe: true,
+    draggable: true,
+    swipeToSlide: true,
     responsive: [
       {
         breakpoint: 1024,
@@ -62,13 +58,12 @@ const BestSellers = () => {
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
-          dots:true,
-          arrows:false
+          dots: true,
+          arrows: false
         },
       },
     ],
   };
-
   return (
     <>
       <div className="container" id='bestsellers'>
@@ -76,25 +71,26 @@ const BestSellers = () => {
           <div className="col-md-12 mt-5 mb-5 text-center">
             <h1>Bestsellers</h1>
           </div>
-          <div className="row">
+          <div className="row" style={{ minHeight: '50vh' }}>
             {loading ? (
-              <div className="col-md-12 text-center">
-                <Loader />
+              <div className="col-md-12 d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
+                <div className="spinner-border" role="status">
+                  <span className="sr-only">Loading...</span>
+                </div>
               </div>
-            ) : data && data.length ?
-              (
-                <div className='container'>
-                  <Slider ref={sliderRef} {...settings} className='d-flex'>
-                    {data.map((item, key) => {
-                      return <ProductCard key={key} item={item} />
-                    })}
-                  </Slider>
-                </div>
-              ) : (
-                <div className="col-md-12 text-center">
-                  <p>No products available at the moment.</p>
-                </div>
-              )}
+            ) : data && data.length ? (
+              <div className='container'>
+                <Slider ref={sliderRef} {...settings} className='d-flex'>
+                  {data.map((item, key) => {
+                    return <ProductCard key={key} item={item} />
+                  })}
+                </Slider>
+              </div>
+            ) : (
+              <div className="col-md-12 text-center">
+                <p>No products available at the moment.</p>
+              </div>
+            )}
           </div>
         </section>
       </div>
@@ -102,3 +98,4 @@ const BestSellers = () => {
   )
 }
 export default BestSellers
+

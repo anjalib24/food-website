@@ -1,5 +1,4 @@
 import React from 'react'
-import productimg from "./images/image 5 (1).png"
 import png360 from "./images/360.png"
 import usflag from "./images/USA_Flag_icon.png"
 import vectorimg from "./images/Vector.png"

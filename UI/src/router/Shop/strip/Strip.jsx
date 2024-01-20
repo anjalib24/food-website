@@ -1,40 +1,87 @@
-import React from 'react'
-import { loadStripe } from '@stripe/stripe-js';
-import * as jwt_decode from "jwt-decode";
-
+import React, { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 
 const Strip = () => {
+  const [loading, setLoading] = useState(false);
+  const [stripe, setStripe] = useState(null);
+  const [card, setCard] = useState(null);
+  const [clientSecret, setClientSecret] = useState("");
 
+  useEffect(() => {
+    const fetchPaymentIntent = async () => {
+      try {
+        const response = await fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/order/create-order/${cartId}`);
+        const { clientSecret } = await response.json();
+        setClientSecret(clientSecret);
 
-  const payment = async () => {
-    const token = localStorage.getItem('token');
-    const decodedToken = jwt_decode(token);
-    const userId = decodedToken.userId;
+        const stripeInstance = await loadStripe("YOUR_PUBLISHABLE_KEY");
+        setStripe(stripeInstance);
 
-    const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
+        const elements = stripeInstance.elements();
+        const cardElement = elements.create("card");
+        setCard(cardElement);
 
-    const response = await fetch(`/api/api/v1/order/create-order/${userId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const {data} =  await response.json()
-    const sessionID = data?.sessionID
-    const result = await stripe.redirectToCheckout({
-      sessionId: sessionID,
-    });
+        cardElement.mount("#card-element");
 
-    if (result.error) {
-      console.error(result.error.message);
+        cardElement.on("change", (event) => {
+          document.getElementById("submit").disabled = event.empty;
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchPaymentIntent();
+  }, []);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: "card",
+        card: card,
+      });
+
+      if (error) {
+        console.error(error);
+        setLoading(false);
+      } else {
+        // Now you can send the payment method ID and clientSecret to your server
+        const result = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: paymentMethod.id,
+        });
+
+        if (result.error) {
+          console.error(result.error);
+          setLoading(false);
+        } else {
+          console.log("Payment confirmed successfully:", result.paymentIntent);
+          // You can perform additional actions on successful payment confirmation
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
     }
   };
 
   return (
-    <form>
-      <button onClick={payment}>
-        Pay
+    <form id="payment-form" onSubmit={handleSubmit}>
+      <div id="card-element"></div>
+      <button id="submit" type="submit" disabled={loading}>
+        {loading ? "Processing..." : "Pay Now"}
       </button>
     </form>
   );
 };
 
+
 export default Strip;
+
+
+
+
+

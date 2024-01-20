@@ -11,14 +11,12 @@ import { Footer } from './Footer';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Rating } from '@mui/material';
 import defaultpersonimg from "./images/defaultperson.png"
-
-
-
-
+import Loader from '@/components/Loader';
+import axios from 'axios';
 
 const Productdetailpage = () => {
   const [product, setProduct] = useState(null);
-  const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false); 
   const [selectedImage, setSelectedImage] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
   const { handleaddtocard, showAlert, setShowAlert, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart } = useProductState();
@@ -37,16 +35,23 @@ const Productdetailpage = () => {
   }, [product]);
 
   useEffect(() => {
+    setIsLoading(true); 
     const fetchProduct = async () => {
-      const response = await fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/get-single-product/${id}`);
-      const data = await response.json();
-      setProduct(data.data);
-    };
+      try {
+         const response = await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/get-single-product/${id}`);
+         setProduct(response.data.data);
+      } catch (error) {
+         console.error('Error fetching product:', error);
+      } finally {
+         setIsLoading(false); 
+      }
+     };
     fetchProduct();
-  }, []);
+  }, [id]);
 
   return (
     <>
+     {isLoading && <Loader />}
       <Header />
       {showAlert && <Alert type="success" message={alertmsg} />}
       <Container className='mt-5'>
@@ -115,10 +120,10 @@ const Productdetailpage = () => {
 
                 </div>
                 <div style={{marginTop:"30px"}}>
-                  {
-                    product?.reviews?.map((item) => {
-                      return (
-                        <>
+
+                {product?.reviews?.length > 0 ? (
+            product.reviews.map((item) => (
+<>
                           <div className="row" style={{ display: "flex", flexDirection: "column", margin:"auto"  , marginTop:"10px"}}  >
                             <div className="col-md-4 " style={{ display: "flex" , gap:"10px" }}>
                               <div>
@@ -139,9 +144,10 @@ const Productdetailpage = () => {
                             </div>
                             </div>
                          </>
-                      )
-                    })
-                  }
+              ))
+          ) : (
+            <p>There are no reviews available for this product.</p>
+          )}
                 </div>
               </div>
             </div>

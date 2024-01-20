@@ -7,6 +7,7 @@ import defaultpersonimg from "./images/defaultperson.png"
 import { HashLink as Link } from 'react-router-hash-link';
 import axios from 'axios';
 import { useProductState } from './context/ProductContext';
+import Alert from './Alert';
 
 const Header = ({ hideCart, hidebutton }) => {
   const navStyles = {
@@ -22,8 +23,17 @@ const Header = ({ hideCart, hidebutton }) => {
   };
 
   const navigate = useHistory();
+  const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { cartCount } = useProductState()
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
   useEffect(() => {
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
@@ -49,19 +59,26 @@ const Header = ({ hideCart, hidebutton }) => {
   }, []);
 
   const handleLogout = async () => {
+    setLoading(true)
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await axios.get('http://62.72.1.123:8000/api/v1/users/logout', {
+        await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/logout', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         localStorage.clear();
+        showAlert("danger", "Logout sucessfully");
         setIsLoggedIn(false);
-        navigate.push("/");
+        setTimeout(() => {
+          navigate.push("/");
+        }, 1000);
       } catch (error) {
         console.error('Error logging out:', error);
+        showAlert("danger", "Logout failed. Please try again.");
+      }finally {
+        setLoading(false);
       }
     }
   }
@@ -73,6 +90,7 @@ const Header = ({ hideCart, hidebutton }) => {
   }
   return (
     <>
+      {alert && <Alert type={alert.type} message={alert.message} />}
       <header>
         <div className="main-header">
           <div className="container">

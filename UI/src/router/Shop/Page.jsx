@@ -20,6 +20,9 @@ const Page = () => {
     <WithAuth>
     <Switch>
       <ProductContexts>
+      <Route exact path="/strip">
+          <Strip/>
+        </Route>
       <Route exact path="/productdetail/:id">
           <Productdetailpage />
         </Route>
