@@ -5,12 +5,14 @@ import Header from './Header';
 import { Footer } from './Footer';
 import { useHistory } from 'react-router-dom';
 import "./Yourprofile.css"
+import Loader from '@/components/Loader';
 
 
 const Yourprofile = () => {
   const [selectedOption, setSelectedOption] = useState('profileInfo');
   const [userData, setUserData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [orderHistory, setOrderHistory] = useState([]);
 
   const history = useHistory();
@@ -50,8 +52,9 @@ const Yourprofile = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    axios.get("http://62.72.1.123:8000/api/v1/users/get-current", {
+    const token = localStorage.getItem("token");
+    setIsLoading(true); // Start loading
+    axios.get(import.meta.env.VITE_APP_BASE_API+"/api/v1/users/get-current", {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -61,7 +64,11 @@ const Yourprofile = () => {
       })
       .catch(error => {
         console.error('Error fetching data: ', error);
+      })
+      .finally(() => {
+        setIsLoading(false); // Stop loading after user data is fetched
       });
+
     axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/get-user-order-history', {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -72,13 +79,16 @@ const Yourprofile = () => {
       })
       .catch(error => {
         console.error('Error fetching order history: ', error);
+      })
+      .finally(() => {
+        setIsLoading(false); // Stop loading after order history is fetched
       });
-
-
   }, []);
 
   return (
     <div>
+            {isLoading && <Loader />}
+
       <Header />
       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
       <div className="container">

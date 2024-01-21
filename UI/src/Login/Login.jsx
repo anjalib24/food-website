@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import Header from "@/router/Shop/Header";
 import { Footer } from "@/router/Shop/Footer";
 import Alert from "@/router/Shop/Alert";
+import Loader from "@/components/Loader";
 const initialValues = {
   email: "",
   password: "",
@@ -33,8 +34,9 @@ const Login = () => {
     initialValues,
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting }) => {
+      setLoading(true);
       try {
-        const response = await axios.post('http://62.72.1.123:8000/api/v1/users/login', {
+        const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/login', {
           userData: {
             email: values.email,
             password: values.password,
@@ -49,10 +51,9 @@ const Login = () => {
           const data = cart.map(item => ({
             productId: item._id,
             quantity: item.quantity || 1,
-
           }));
           const token = localStorage.getItem('token');
-          const response = await axios.post('http://62.72.1.123:8000/api/v1/products/add-to-cart', 
+          const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/add-to-cart', 
             data
           , {
             headers: {
@@ -63,21 +64,22 @@ const Login = () => {
         } else {
           console.log('No items in cart.');
         }
-
         if (userType === 'user') {
-                  showAlert("sucess", "Login sucessfully");
-          history.push('/shop');
+          showAlert("success", "Login sucessfully");
+          setTimeout(() => {
+            history.push('/shop');
+           }, 1000);
         } else if (userType === 'admin') {
           history.push('/admin');
         } else {
           console.error('Invalid user type:', userType);
         }
-
       } catch (error) {
         console.error("Error submitting the form:", error);
         showAlert("danger", error.response.data.error);
       } finally {
         setSubmitting(false);
+        setLoading(false);
       }
 
     },
@@ -85,6 +87,7 @@ const Login = () => {
 
   return (
     <>
+        {loading && <Loader />}
       <div>
       {alert && <Alert type={alert.type} message={alert.message} />}
         <Header hidebutton={true} />

@@ -19,6 +19,7 @@ export const ProductContexts = ({ children }) => {
   const [cartCount, setCartCount] = useState(0)
   
   const handleaddtocard = async (item) => {
+    setLoading(true)
     try {
       const token = localStorage.getItem('token');
       if (token) {
@@ -79,6 +80,8 @@ export const ProductContexts = ({ children }) => {
       }
     } catch (error) {
       console.error('Error handling add to cart:', error);
+    }finally{
+      setLoading(false)
     }
   };
   const createMarkup = (htmlContent) => {

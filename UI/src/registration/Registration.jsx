@@ -8,6 +8,7 @@ import Alert from "@/router/Shop/Alert";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { Footer } from "@/router/Shop/Footer";
 import Header from "@/router/Shop/Header";
+import Loader from "@/components/Loader";
 
 const registrationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -33,6 +34,8 @@ const initialValues = {
 };
 
 const Registration = () => {
+  const [loading, setLoading] = useState(false);
+
   const {
     values,
     errors,
@@ -45,6 +48,7 @@ const Registration = () => {
     initialValues,
     validationSchema: registrationSchema,
     onSubmit: async (values, action) => {
+      setLoading(true);
       const requestData = {
         userData: {
           username: values.username,
@@ -72,6 +76,8 @@ const Registration = () => {
       } catch (error) {
         console.error("Error submitting the form:", error);
         showAlert("danger", error.response.data.error);
+      }finally {
+        setLoading(false); 
       }
     },
   });
@@ -86,6 +92,8 @@ const Registration = () => {
 
   return (
     <>
+        {loading && <Loader/>}
+
       <div>
         {alert && <Alert type={alert.type} message={alert.message} />}
         <Header hideCart={true} />

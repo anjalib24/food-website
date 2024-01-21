@@ -29,7 +29,7 @@ const AddProduct = () => {
     rank: "",
     best_seller: false,
     categoryID: "",
-    weight:""
+    weight: ""
   });
 
   const { countries, categories } = useAdminState();
@@ -246,7 +246,7 @@ const AddProduct = () => {
             </Grid>
           )}
 
-<Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={6}>
             <TextField
               name="weight"
               label="Weight"
@@ -296,12 +296,13 @@ const AddProduct = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+       
+        </Grid>
+        <Grid item xs={12} sm={6}>
             <Button type="submit" variant="contained">
               Submit
             </Button>
           </Grid>
-        </Grid>
       </form>
     </Paper>
   );

@@ -73,31 +73,14 @@ const AboutSection = ({ data }) => {
       <TextField
         margin="normal"
         name="video"
-        label="Vedeo"
-        type="file"
-        onChange={(e) => handleMediaChange(e, setVideo)}
+        label="Video Link"
+        type="text"
+        value={video || ''} 
+        onChange={(e) => setVideo(e.target.value)}
         fullWidth
         required
         InputLabelProps={{ shrink: true }}
-        inputProps={{ accept: "video/*" }}
-      />
-
-      {/* Videos */}
-      {vid && (
-        <Box sx={{ mt: 1 }}>
-          <video className="w-full object-cover rounded-md" controls>
-            <source
-              src={
-                vid == data.video
-                  ? import.meta.env.VITE_APP_BASE_API + vid
-                  : URL.createObjectURL(vid)
-              }
-              type="video/mp4"
-            />
-            Your browser does not support the video tag.
-          </video>
-        </Box>
-      )}
+      />    
 
       <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
         Submit
