@@ -429,7 +429,7 @@ const updateAboutUs = asyncHandler(async (req, res) => {
   if (about_us_video) {
     aboutAttribute = {
       ...aboutAttribute,
-      "about_us.video_url": `/videos/${about_us_video}`,
+      "about_us.video_url": about_us_video,
     };
   }
 

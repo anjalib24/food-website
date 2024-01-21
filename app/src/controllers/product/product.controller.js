@@ -20,7 +20,7 @@ import { Cart } from "../../models/cart.model.js";
 import Tax from "../../models/tax.model.js";
 import ShipmentRateState from "../../models/shipmentRateState.model.js";
 import ProductsReview from "../../models/productsReviews.model.js";
-import rimraf from "rimraf";
+import { rimraf } from "rimraf";
 
 //------------get best seller------------
 
@@ -351,13 +351,13 @@ const deleteProductData = asyncHandler(async (req, res) => {
         deleteProduct?.zipFile?.zipfileDirUrl
       );
 
-      rimraf(dirPath, (err) => {
-        if (err) {
-          console.error("Error deleting directory:", err.message);
-        } else {
-          console.log("Directory deleted successfully.");
-        }
-      });
+      try {
+        rimraf(dirPath);
+
+        console.log("Directory deleted successfully.");
+      } catch (error) {
+        console.error("Error deleting directory:", error.message);
+      }
     }
 
     return res
