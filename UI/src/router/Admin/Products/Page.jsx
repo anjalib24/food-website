@@ -10,10 +10,11 @@ import { useAdminState } from "@/contexts/AdminContext";
 import EditProduct from "./EditProduct";
 const Page = () => {
   const { products, setProducts } = useAdminState();
-
+  const [isLoading, setIsLoading] = useState(true); 
   const match = useRouteMatch();
 
   useEffect(() => {
+    setIsLoading(true);
     fetch(
       import.meta.env.VITE_APP_BASE_API +
         "/api/v1/products/get-product?limit=40"
@@ -21,7 +22,9 @@ const Page = () => {
       .then((res) => res.json())
       .then(({ data }) => {
         setProducts(data.docs);
-      });
+      }).finally(() => {
+        setIsLoading(false); 
+            });
   }, []);
 
   const formatter = new Intl.NumberFormat("en-US", {
@@ -29,7 +32,6 @@ const Page = () => {
     currency: "USD",
   });
 
-  if (products.length === 0) return <Loader />;
 
   function toggleBestSeller(id, best_seller) {
     fetch(
@@ -93,6 +95,7 @@ const Page = () => {
         console.error("Error:", error);
       });
   }
+  if (isLoading) return <Loader />;
 
   return (
     <Switch>

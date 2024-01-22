@@ -15,6 +15,7 @@ import { useProductState } from './context/ProductContext'
 import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
 import { Pagination } from '@mui/material'
+import Loader from '@/components/Loader'
 
 export const Allproduct = () => {
   const history = useHistory();
@@ -25,29 +26,26 @@ export const Allproduct = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(32);
   const [totalproduct, setTotalproduct] = useState()
-  const [loading, setLoading] = useState()
-  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial } = useProductState();
+  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading,setLoading} = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
-
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const fetchDataFromApi = async () => {
       try {
-        const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`
-        );
+        const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`);
         setData(result.data.docs);
         setTotalproduct(result?.data?.totalDocs);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     };
     fetchDataFromApi();
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage, setLoading]);
 
   const totalPages = Math.ceil(totalproduct / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -90,9 +88,10 @@ export const Allproduct = () => {
     }
   };
 
-
+console.log(loading);
   return (
     <>
+    {loading && <Loader/>}
       {showAlert && <Alert type="success" message={alertmsg} />}
       {showsocial && <Socialmedia productId={productId} />}
       {show360Modal && <Modal360 data={selectedItem} />}
@@ -284,8 +283,9 @@ export const Allproduct = () => {
                 {loading && (
                   <div className="col-md-12 text-center">
                     <div className="spinner-border" role="status">
-                      <span className="sr-only">Loading...</span>
-                    </div>              </div>
+                      <span className="sr-only">loading...</span>
+                    </div>             
+                     </div>
                 )}
                 {!loading && currentItems && currentItems?.length === 0 && (
                   <div className="col-md-12 text-center">

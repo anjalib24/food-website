@@ -38,7 +38,15 @@ const AddDimension = () => {
                 body: JSON.stringify(formData),
             });
             const data = await response.json();
-            console.log(data);
+            setFormData(
+                {
+                    dimension: '',
+        height: '',
+        length: '',
+        shipment_dimension_price: '',
+        width: ''
+                }
+            )
         } catch (error) {
             console.error('Error submitting form:', error);
         }

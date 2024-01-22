@@ -295,6 +295,25 @@ const EditProduct = () => {
                 </Grid>
               </Grid>
             )}
+                 <Grid item xs={12} sm={6}>
+            <TextField
+              name="weight"
+              label="Weight"
+              value={product.weight}
+              fullWidth
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="youtube_video_url"
+              label="youtube_video_url"
+              value={product.youtube_video_url}
+              fullWidth
+              onChange={handleChange}
+            />
+          </Grid>
             <Grid item xs={12}>
               <TextField
                 name="zipFile"

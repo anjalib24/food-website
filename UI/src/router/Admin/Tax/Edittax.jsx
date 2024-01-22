@@ -2,40 +2,41 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { TextField, Button, Paper, Grid } from '@mui/material';
 
-const EditdimensionWeight = () => {
+const Edittax = () => {
     const { id } = useParams();
-    const [zipcodeData, setZipcodeData] = useState(null);
+    const [taxData, setTaxData] = useState(null);
     const [editFields, setEditFields] = useState([]);
-    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; // Replace with your actual keys
+    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; 
     const history = useHistory();
+    
   
     const addToEditList = (name) => {
       if (!editFields.includes(name)) {
         setEditFields([...editFields, name]);
       }
-    };
+    };           
     useEffect(() => {
-      const fetchZipCodeData = async () => {
+      const fetchTaxData = async () => {
           try {
-            const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/dimensions/get-product-weight-range-dimension");
+            const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/tax");
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
             const filteredData = data?.data?.find(item => item._id === id);
-            setZipcodeData(filteredData);
+            setTaxData(filteredData);
           } catch (error) {
             console.error("Error:", error);
           }
          };
   
-      fetchZipCodeData();
+      fetchTaxData();
     }, [id]);
   
     const handleChange = (e) => {
       const { name, value } = e.target;
       addToEditList(name);
-      setZipcodeData({ ...zipcodeData, [name]: value });
+      setTaxData({ ...taxData, [name]: value });
     };
   
     const handleSubmit = async (e) => {
@@ -43,10 +44,10 @@ const EditdimensionWeight = () => {
       const formData = new FormData();
   
       editFields.forEach((key) => {
-        formData.append(key, zipcodeData[key]);
-      });
-      try {
-        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/zip-codes/${id}`, {
+        formData.append(key, taxData[key]);
+      });   
+      try {     
+        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/tax/${id}`, {
           method: 'PUT',
           body: formData,
         });
@@ -54,28 +55,26 @@ const EditdimensionWeight = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
-        history.push('/admin/dimensionweight');
+        history.push('/admin/tax');
       } catch (error) {
         console.error(error);
       }
     };
   
-    if (!zipcodeData) {
+    if (!taxData) {
       return <div>Loading...</div>;
     }
-  console.log(zipcodeData,"zippppppppppppp");
     return (
       <Paper className="w-full p-4 space-y-1">
     <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
-        {Object.keys(zipcodeData).map((key) => (
+        {Object.keys(taxData).map((key) => (
           !ignoredKeys.includes(key) && (
             <Grid item xs={12} key={key}>
               <TextField
                 name={key}
                 label={key}
-                value={zipcodeData[key]}
+                value={taxData[key]}
                 onChange={handleChange}
                 fullWidth
               />
@@ -91,6 +90,6 @@ const EditdimensionWeight = () => {
     </form>
    </Paper>
     );
-  };
+}
 
-export default EditdimensionWeight
+export default Edittax

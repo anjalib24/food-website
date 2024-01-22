@@ -40,7 +40,17 @@ import {
                 body: JSON.stringify(formData),
             });
             const data = await response.json();
-            console.log(data);
+            setFormData(  {
+                    city: '',
+            county: '',
+            countyAll: '',
+            latitude: '',
+            longitude: '',
+            shipment_delivery_message: '',
+            stateCode: '',
+            stateName: '',
+            zipCode: ''
+        })
         } catch (error) {
             console.error('Error submitting form:', error);
         }

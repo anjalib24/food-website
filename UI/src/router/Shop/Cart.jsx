@@ -117,7 +117,7 @@ const Cart = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        fetchDataFromApi();
+       await fetchDataFromApi();
       } catch (error) {
         console.error('Error updating quantity:', error);
       }finally {
@@ -131,23 +131,23 @@ const Cart = () => {
     }
    };
 
-  const deleteProduct = async (index) => {
+   const deleteProduct = async (index) => {
     setIsLoading(true);
     if (token) {
       try {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
-        const response = await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/remove-items-from-cart/${productId}`, {
+        await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/remove-items-from-cart/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         showAlert("danger", "Product Delete Sucessfully");
-        fetchDataFromApi();
-        setCartCount(prev=>prev-1)
+        await fetchDataFromApi(); // Wait for fetchDataFromApi to finish
+        setCartCount(prev => prev - 1);
       } catch (error) {
         console.error('Error deleting the product:', error);
-      }finally {
-        setIsLoading(false)
+      } finally {
+        setIsLoading(false); // Stop the loader here after fetchDataFromApi is done
       }
     } else {
       const updatedCart = [...localData]; // Use localData instead of cartData
