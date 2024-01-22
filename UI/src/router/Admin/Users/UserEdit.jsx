@@ -33,6 +33,8 @@ const UserEdit = () => {
            'Authorization': `Bearer ${token}`,
          },
        });
+       history.push("/admin/users");
+
      } catch (error) {
        console.error('Error updating user data:', error);
      }
@@ -47,7 +49,7 @@ const UserEdit = () => {
        <div className="view-account">
          <section className="module">
            <div className="module-inner">
-             <div className="content-panel">
+           <div className="content-panel" style={{borderLeft:"none"}}>
                 {selectedOption === 'profileInfo' && (
                   <>
                     <h2 className="title">Profile</h2>

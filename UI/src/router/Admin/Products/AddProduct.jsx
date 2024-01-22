@@ -1,5 +1,7 @@
 import Editor from "@/components/Editor";
+import Loader from "@/components/Loader";
 import { useAdminState } from "@/contexts/AdminContext";
+import Alert from "@/router/Shop/Alert";
 import {
   Button,
   FormControl,
@@ -29,10 +31,18 @@ const AddProduct = () => {
     rank: "",
     best_seller: false,
     categoryID: "",
-    weight: ""
+    weight: "",
+    youtube_video_url:""
   });
-
+  const [alert, setAlert] = useState(null);
   const { countries, categories } = useAdminState();
+  const [isLoading, setIsLoading] = useState(); 
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
 
   const handleImageChange = (event) => {
     setProduct((product) => ({
@@ -57,7 +67,6 @@ const AddProduct = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const formData = new FormData();
     Object.keys(product).forEach((key) => {
       if (key === "images") {
@@ -68,8 +77,8 @@ const AddProduct = () => {
         formData.append(key, product[key]);
       }
     });
-
     try {
+      setIsLoading(true);
       const response = await fetch(
         import.meta.env.VITE_APP_BASE_API + "/api/v1/products/create-product",
         {
@@ -79,19 +88,28 @@ const AddProduct = () => {
       );
       setProduct("")
       if (!response.ok) {
+        const data = await response.json();
+        console.log(data);
+        showAlert("danger", data?.error);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
     } catch (error) {
       console.error(error);
-    }
+
+    }finally{
+        setIsLoading(false); 
+          }
   };
 
   function temp(argv) {
     console.log(argv);
   }
+  if (isLoading) return <Loader/>;
 
   return (
+<>
+{alert && <Alert type={alert.type} message={alert.message} />}
+
     <Paper className="w-full p-4 space-y-1">
       <Typography variant="h5" gutterBottom marginBottom={"20px"}>
         Create New Products
@@ -255,6 +273,16 @@ const AddProduct = () => {
               onChange={handleChange}
             />
           </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="youtube_video_url"
+              label="youtube_video_url"
+              value={product.youtube_video_url}
+              fullWidth
+              onChange={handleChange}
+            />
+          </Grid>
           <Grid item xs={12}>
             <TextField
               name="zipFile"
@@ -305,6 +333,7 @@ const AddProduct = () => {
           </Grid>
       </form>
     </Paper>
+    </>
   );
 };
 

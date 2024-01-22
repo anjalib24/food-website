@@ -7,7 +7,11 @@ import axios from 'axios';
 
 const UserProfile = () => {
     const { currentColor } = useAdminState();
-  
+    const navigate = useHistory();
+    const handleClick = async () => {
+          localStorage.clear();
+          navigate.push("/");
+    };
     return (
         <div className="nav-item absolute  top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">
             <div className="flex justify-between items-center">
@@ -40,7 +44,8 @@ const UserProfile = () => {
                     text="Logout"
                     borderRadius="10px"
                     width="full"
-                
+                    onClick={handleClick}
+
                />
             </div>
         </div>
@@ -48,29 +53,6 @@ const UserProfile = () => {
     );
 };
 
-// const Button = ({
-//     icon,
-//     bgColor,
-//     color,
-//     bgHoverColor,
-//     size,
-//     text,
-//     borderRadius,
-//     width,
-// }) => {
-//     const { setIsClicked, initialState } = useAdminState();
-
-//     return (
-//         <button
-//             type="button"
-//             onClick={() => setIsClicked(initialState)}
-//             style={{ backgroundColor: bgColor, color, borderRadius }}
-//             className={` text-${size} p-3 w-${width} hover:drop-shadow-xl hover:bg-${bgHoverColor}`}
-//         >
-//             {icon} {text}
-//         </button>
-//     );
-// };
 const Button = ({
     icon,
     bgColor,
@@ -80,34 +62,19 @@ const Button = ({
     text,
     borderRadius,
     width,
- }) => {
+    onClick, // Add this line
+}) => {
     const { setIsClicked, initialState } = useAdminState();
-    const token = localStorage.getItem('token');
-    const navigate = useHistory();
 
-
-    const handleClick = async () => {
-        setIsClicked(initialState);
-        // await axios.get('http://62.72.1.123:8000/api/v1/users/logout', {
-        //     headers: {
-        //       'Authorization': `Bearer ${token}`
-        //     }
-        //   });
-          localStorage.clear();
-        navigate.push("/");
-    };
- 
     return (
         <button
             type="button"
-            onClick={handleClick}
+            onClick={onClick} // And this line
             style={{ backgroundColor: bgColor, color, borderRadius }}
             className={` text-${size} p-3 w-${width} hover:drop-shadow-xl hover:bg-${bgHoverColor}`}
         >
             {icon} {text}
         </button>
     );
- };
- 
-
+};
 export default UserProfile;

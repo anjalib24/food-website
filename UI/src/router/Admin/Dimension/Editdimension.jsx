@@ -6,7 +6,7 @@ const Editdimension = () => {
     const { id } = useParams();
     const [zipcodeData, setZipcodeData] = useState(null);
     const [editFields, setEditFields] = useState([]);
-    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; // Replace with your actual keys
+    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; 
     const history = useHistory();
   
     const addToEditList = (name) => {
@@ -55,7 +55,7 @@ const Editdimension = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
   
-        history.push('/admin/zip-codes');
+        history.push('/admin/dimension');
       } catch (error) {
         console.error(error);
       }

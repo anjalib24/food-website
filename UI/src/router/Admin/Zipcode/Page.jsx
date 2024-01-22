@@ -12,15 +12,18 @@ import { useHistory } from 'react-router-dom';
 import EditFreeZipCode from "./EditFreeZipCode"
 import { Add as AddIcon } from "@mui/icons-material";
 import AddFreeZipCode from './AddFreeZipCode';
+import Loader from '@/components/Loader';
 
 
 const Page = () => {
   const match = useRouteMatch();
   const history = useHistory();
+  const [isLoading, setIsLoading] = useState(true); 
   const [zipcode, setZipcode] = useState([]);
 
   useEffect(() => {
     const fetchReviews = () => {
+      setIsLoading(true);
       fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/free-zip-codes")
         .then((response) => {
           if (!response.ok) {
@@ -33,13 +36,15 @@ const Page = () => {
         })
         .catch((error) => {
           console.error("Error:", error);
+        }).finally(() => {
+          setIsLoading(false); 
         });
     };
 
     fetchReviews();
   }, []);
 
-  console.log(zipcode, "ghjkl")
+  if (isLoading) return <Loader />;
   return (
     <>
       <Switch>
@@ -107,6 +112,7 @@ const Page = () => {
                           color="primary"
                           style={{ opacity: 0.9 }}
                           onClick={() => {
+                            setIsLoading(true);
                             fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/free-zip-codes/${user._id}`, {
                               method: 'DELETE',
                             })
@@ -117,6 +123,8 @@ const Page = () => {
                               })
                               .catch((error) => {
                                 console.error('Error:', error);
+                              }).finally(() => {
+                                setIsLoading(false); 
                               });
                           }}
                         >

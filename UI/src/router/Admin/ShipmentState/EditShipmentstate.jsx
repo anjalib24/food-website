@@ -6,7 +6,7 @@ const EditShipmentstate = () => {
     const { id } = useParams();
     const [zipcodeData, setZipcodeData] = useState(null);
     const [editFields, setEditFields] = useState([]);
-    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; // Replace with your actual keys
+    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; 
     const history = useHistory();
   
     const addToEditList = (name) => {
@@ -17,7 +17,7 @@ const EditShipmentstate = () => {
     useEffect(() => {
       const fetchZipCodeData = async () => {
           try {
-            const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/shipment-rate-state/get-shipment-rate-state");
+            const response = await fetch("http://127.0.0.1:8000/api/v1/shipment-rate-state/get-shipment-rate-state");
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -54,8 +54,7 @@ const EditShipmentstate = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
-        history.push('/admin/zip-codes');
+        history.push('/admin/shipmentstate');
       } catch (error) {
         console.error(error);
       }
@@ -64,7 +63,6 @@ const EditShipmentstate = () => {
     if (!zipcodeData) {
       return <div>Loading...</div>;
     }
-  console.log(zipcodeData,"zippppppppppppp");
     return (
       <Paper className="w-full p-4 space-y-1">
     <form onSubmit={handleSubmit}>

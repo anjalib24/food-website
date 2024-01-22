@@ -11,6 +11,7 @@ const AboutSection = ({ data }) => {
     func(e.target.files[0]);
   };
 
+
   const img = image || data.image;
   const vid = video || data.video;
 
@@ -41,7 +42,6 @@ const AboutSection = ({ data }) => {
         console.error("Error:", error);
       });
   };
-
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate>
       <Box component={Editor} content={about} setContent={setAbout} />
@@ -69,7 +69,6 @@ const AboutSection = ({ data }) => {
           sx={{ mt: 1 }}
         />
       )}
-
       <TextField
         margin="normal"
         name="video"
@@ -81,7 +80,6 @@ const AboutSection = ({ data }) => {
         required
         InputLabelProps={{ shrink: true }}
       />    
-
       <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
         Submit
       </Button>

@@ -22,13 +22,22 @@ const AddShipmentSatae = () => {
    const handleSubmit = async (event) => {
        event.preventDefault();
        try {                   
-           const response = await fetch(import.meta.env.VITE_APP_BASE_API +'/api/v1/shipment-rate-state', {
+           const response = await fetch('http//127.0.0.1:8000/api/v1/shipment-rate-state', {
                method: 'POST',
                headers: {
                   'Content-Type': 'application/json',
                },
                body: JSON.stringify(formData),
            });
+           setFormData(
+            {
+                state_code: '',
+                postal: '',
+                shipment_delivery_message: '',
+                shipment_state_rate: '',
+                state: ''
+            }
+           )
            const data = await response.json();
            console.log(data);
        } catch (error) {
