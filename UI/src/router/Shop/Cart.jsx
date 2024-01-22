@@ -105,9 +105,9 @@ const Cart = () => {
   };
 
   const updateQuantity = async (index, newQuantity, item, incordec) => {
-    setIsLoading(true);
     const token = localStorage.getItem('token');
     if (token) {
+      setIsLoading(true);
       try {
         const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/add-to-cart', [{
           productId: item?.product?._id,
@@ -132,8 +132,8 @@ const Cart = () => {
    };
 
    const deleteProduct = async (index) => {
-    setIsLoading(true);
     if (token) {
+      setIsLoading(true);
       try {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
         await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/remove-items-from-cart/${productId}`, {
@@ -177,7 +177,7 @@ const Cart = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      const sessionID = response.data?.sessionID;
+      const sessionID = response.data?.data?.sessionID;
       console.log(sessionID, "idd");
       const result = await stripe.redirectToCheckout({
         sessionId: sessionID,

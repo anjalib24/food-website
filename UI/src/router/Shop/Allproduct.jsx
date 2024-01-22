@@ -32,9 +32,10 @@ export const Allproduct = () => {
     currency: "USD",
   });
   useEffect(() => {
-    setLoading(true);
     const fetchDataFromApi = async () => {
+      console.log('Loading started'); // Log when loading starts
       try {
+        setLoading(true);
         const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`);
         setData(result.data.docs);
         setTotalproduct(result?.data?.totalDocs);
@@ -42,10 +43,12 @@ export const Allproduct = () => {
         console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
+        console.log('Loading finished'); // Log when loading finishes
       }
     };
     fetchDataFromApi();
-  }, [currentPage, itemsPerPage, setLoading]);
+  }, [currentPage, itemsPerPage]);
+  
 
   const totalPages = Math.ceil(totalproduct / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -91,7 +94,6 @@ export const Allproduct = () => {
 console.log(loading);
   return (
     <>
-    {loading && <Loader/>}
       {showAlert && <Alert type="success" message={alertmsg} />}
       {showsocial && <Socialmedia productId={productId} />}
       {show360Modal && <Modal360 data={selectedItem} />}

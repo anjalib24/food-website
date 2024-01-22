@@ -32,7 +32,7 @@ const BestSellers = () => {
       setLoading(true)
       try {
         const response = await axios.get(
-          import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-best-seller-product",
+          import.meta.env.VITE_APP_BASE_API+"/api/v1/products/get-best-seller-product",
           {
             headers: {
               "Content-Type": "application/json"
