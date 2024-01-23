@@ -38,18 +38,26 @@ const Edittax = () => {
       addToEditList(name);
       setTaxData({ ...taxData, [name]: value });
     };
-  
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-  
+      const data = {};
       editFields.forEach((key) => {
-        formData.append(key, taxData[key]);
-      });   
+        if (key === 'state_code') {
+           data['stateCode'] = taxData['state_code'];
+        } else if (key === 'state_tax_rate') {
+           data['stateTaxRate'] = taxData['state_tax_rate'];
+        } else {
+           data[key] = taxData[key];
+        }
+       });
+     
       try {     
         const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/tax/${id}`, {
           method: 'PUT',
-          body: formData,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data),
         });
   
         if (!response.ok) {

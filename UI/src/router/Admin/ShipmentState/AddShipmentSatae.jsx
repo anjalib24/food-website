@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { TextField, Button, Paper, Grid, Typography } from '@mui/material';
+import { TextField, Button, Paper, Grid, Typography, Box } from '@mui/material';
 
 const AddShipmentSatae = () => {
 
@@ -22,7 +22,7 @@ const AddShipmentSatae = () => {
    const handleSubmit = async (event) => {
        event.preventDefault();
        try {                   
-           const response = await fetch('http//127.0.0.1:8000/api/v1/shipment-rate-state', {
+           const response = await fetch(import.meta.env.VITE_APP_BASE_API+'/api/v1/shipment-rate-state', {
                method: 'POST',
                headers: {
                   'Content-Type': 'application/json',
@@ -98,9 +98,14 @@ const AddShipmentSatae = () => {
                           </Grid>
                       </Grid>
                       <Grid item xs={12} sm={6}>
+                      <Box mt={5}>
+
                           <Button type="submit" variant="contained">
-                              Submit
+                            Submit
+
                           </Button>
+                          </Box>
+
                       </Grid>
                   </form>
                </Typography>

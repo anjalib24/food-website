@@ -17,10 +17,12 @@ export const ProductContexts = ({ children }) => {
   const [videodata, setVideoData] = useState()
   const [loading, setLoading] = useState(true);
   const [cartCount, setCartCount] = useState(0)
+  const [allproductLoader,setallproductLoader] = useState()
+
   
   const handleaddtocard = async (item) => {
-    setLoading(true)
     try {
+      setLoading(true)
       const token = localStorage.getItem('token');
       if (token) {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/get-cart', {
@@ -102,7 +104,7 @@ export const ProductContexts = ({ children }) => {
   return (
     <ProductContext.Provider
       value={{
-        setCartCount,
+        setallproductLoader,allproductLoader, setCartCount,
         cartCount, setLoading, loading, handleaddtocard, showAlert, setShowAlert, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, createMarkup, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setShow360Modal, show360Modal, setProductId, productId, setShowSocial, showsocial, setVideoData, videodata, showvideomodal, setShowvideomodal
       }}>
       {children}

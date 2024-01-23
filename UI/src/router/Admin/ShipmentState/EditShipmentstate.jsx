@@ -17,7 +17,7 @@ const EditShipmentstate = () => {
     useEffect(() => {
       const fetchZipCodeData = async () => {
           try {
-            const response = await fetch("http://127.0.0.1:8000/api/v1/shipment-rate-state/get-shipment-rate-state");
+            const response = await fetch(import.meta.env.VITE_APP_BASE_API+"/api/v1/shipment-rate-state/get-shipment-rate-state");
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -40,25 +40,29 @@ const EditShipmentstate = () => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-  
+      const jsonData = {};
+     
       editFields.forEach((key) => {
-        formData.append(key, zipcodeData[key]);
+         jsonData[key] = zipcodeData[key];
       });   
+     
       try {     
-        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/shipment-rate-state/${id}`, {
-          method: 'PUT',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        history.push('/admin/shipmentstate');
+         const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/shipment-rate-state/${id}`, {
+           method: 'PUT',
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(jsonData),
+         });
+     
+         if (!response.ok) {
+           throw new Error(`HTTP error! status: ${response.status}`);
+         }
+         history.push('/admin/shipmentstate');
       } catch (error) {
-        console.error(error);
+         console.error(error);
       }
-    };
+     };
   
     if (!zipcodeData) {
       return <div>Loading...</div>;

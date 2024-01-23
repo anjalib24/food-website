@@ -139,6 +139,7 @@ const location = useLocation()
                                 color="primary"
                                 style={{ opacity: 0.9 }}
                                 onClick={() => {
+                                  setIsLoading(true)
                                   fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/shipment-rate-state/${data._id}`, {
                                     method: 'DELETE',
                                   })
@@ -146,9 +147,12 @@ const location = useLocation()
                                     .then(data => {
                                       console.log('Success:', data);
                                       setShipment(shipment.filter(item => item._id !== data._id));
+                                      fetchReviews();
                                     })
                                     .catch((error) => {
                                       console.error('Error:', error);
+                                    }).finally(() => {
+                                      setIsLoading(false);
                                     });
                                 }}
                               >

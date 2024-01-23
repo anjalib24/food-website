@@ -13,11 +13,11 @@ import {
 
 const AddDimension = () => {
     const [formData, setFormData] = useState({
-        dimension: '',
-        height: '',
-        length: '',
+        dimensions: '',
+        Height: '',
+        Length: '',
         shipment_dimension_price: '',
-        width: ''
+        Width: ''
     });
 
     const handleChange = (event) => {
@@ -30,7 +30,7 @@ const AddDimension = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch(import.meta.env.VITE_APP_BASE_API + '/api/v1/dimensions', {
+            const response = await fetch(import.meta.env.VITE_APP_BASE_API + '/api/v1/dimensions/create-product-dimension', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,11 +40,11 @@ const AddDimension = () => {
             const data = await response.json();
             setFormData(
                 {
-                    dimension: '',
-        height: '',
-        length: '',
-        shipment_dimension_price: '',
-        width: ''
+                    dimensions: '',
+                    Height: '',
+                    Length: '',
+                    shipment_dimension_price: '',
+                    Width: ''
                 }
             )
         } catch (error) {
@@ -60,27 +60,27 @@ const AddDimension = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="dimension"
+                                    name="dimensions"
                                     label="dimension"
-                                    value={formData.dimension}
+                                    value={formData.dimensions}
                                     fullWidth
                                     onChange={handleChange}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="height"
+                                    name="Height"
                                     label="height"
-                                    value={formData.height}
+                                    value={formData.Height}
                                     fullWidth
                                     onChange={handleChange}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="length"
+                                    name="Length"
                                     label="length"
-                                    value={formData.length}
+                                    value={formData.Length}
                                     fullWidth
                                     onChange={handleChange}
                                 />
@@ -96,18 +96,22 @@ const AddDimension = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="width"
+                                    name="Width"
                                     label="width"
-                                    value={formData.width}
+                                    value={formData.Width}
                                     fullWidth
                                     onChange={handleChange}
                                 />
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sm={6}>
+                            <Box mt={5}>
                             <Button type="submit" variant="contained">
                                 Submit
                             </Button>
+
+                            </Box>
+                       
                         </Grid>
                     </form>
                 </Typography>

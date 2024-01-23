@@ -38,7 +38,15 @@ const Adddimensionweight = () => {
                 body: JSON.stringify(formData),
             });
             const data = await response.json();
-            console.log(data);
+            setFormData(
+                {
+                    "dimensions": "",
+                    "Length": "",
+                    "Width": "",
+                    "Height": "",
+                    "weight_range": ""
+                }
+            )
         } catch (error) {
             console.error('Error submitting form:', error);
         }
@@ -97,9 +105,11 @@ const Adddimensionweight = () => {
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <Button type="submit" variant="contained">
-                                Submit
-                            </Button>
+                            <Box mt={2}>
+                                <Button type="submit" variant="contained">
+                                    Submit
+                                </Button>
+                            </Box>
                         </Grid>
                     </form>
                 </Typography>
