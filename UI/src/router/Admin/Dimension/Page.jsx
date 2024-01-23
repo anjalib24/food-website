@@ -115,16 +115,19 @@ const Page = () => {
                           color="primary"
                           style={{ opacity: 0.9 }}
                           onClick={() => {
+                            setIsLoading(true);
                             fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/dimensions/${data._id}`, {
                               method: 'DELETE',
                             })
                               .then(response => response.json())
                               .then(data => {
-                                console.log('Success:', data);
                                 setDimension(dimension.filter(item => item._id !== data._id));
+                                fetchReviews();
                               })
                               .catch((error) => {
                                 console.error('Error:', error);
+                              }).finally(() => {
+                                setIsLoading(false);
                               });
                           }}
                         >

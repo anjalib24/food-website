@@ -113,8 +113,6 @@ const Page = () => {
                             })
                               .then(response => response.json())
                               .then(data => {
-                                console.log('Success:', data);
-                                // Call fetchReviews to re-fetch the data
                                 fetchReviews();
                               })
                               .catch((error) => {

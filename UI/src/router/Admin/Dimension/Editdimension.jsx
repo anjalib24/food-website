@@ -40,26 +40,30 @@ const Editdimension = () => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-  
+      let jsonData = {};
+     
       editFields.forEach((key) => {
-        formData.append(key, zipcodeData[key]);
+         jsonData[key] = zipcodeData[key];
       });
+     
       try {
-        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/zip-codes/${id}`, {
-          method: 'PUT',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        history.push('/admin/dimension');
+         const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/dimensions/${id}`, {
+           method: 'PUT',
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(jsonData),
+         });
+     
+         if (!response.ok) {
+           throw new Error(`HTTP error! status: ${response.status}`);
+         }
+     
+         history.push('/admin/dimension');
       } catch (error) {
-        console.error(error);
+         console.error(error);
       }
-    };
+     };
   
     if (!zipcodeData) {
       return <div>Loading...</div>;
