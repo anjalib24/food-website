@@ -22,6 +22,12 @@ const Page = () => {
          <Route exact path="/productdetail/:id">
           <Productdetailpage />
         </Route>
+        <Route exact path="/paymentsucess">
+          <PaymentSuccess />
+        </Route>
+        <Route exact path="/PaymentCancel">
+          <PaymentCancel />
+        </Route>
     </Switch>
     <WithAuth>
     <Switch>
@@ -32,15 +38,9 @@ const Page = () => {
         <Route exact path="/contactus">
           <ContactUs />
         </Route>
-        <Route exact path="/PaymentCancel">
-          <PaymentCancel />
-        </Route>
         <Route exact path="/userorderdetail">
           <UserOrderDetails />
-        </Route>
-        <Route exact path="/paymentsucess">
-          <PaymentSuccess />
-        </Route>
+        </Route>  
         <Route exact path="/strip">
           <Strip />
         </Route>
@@ -61,7 +61,6 @@ const Page = () => {
         <Route exact path="/yourprofile">
           <Yourprofile />
         </Route>
-        
         <Route exact path="/">
           <Home />
         </Route>

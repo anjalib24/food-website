@@ -80,22 +80,36 @@ const AddProduct = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        import.meta.env.VITE_APP_BASE_API + "/api/v1/products/create-product",
+        import.meta.env.VITE_APP_BASE_API+"/api/v1/products/create-product",
         {
           method: "POST",
           body: formData,
         }
       );
-      setProduct("")
+      setProduct({
+        title: "",
+        short_description: "",
+        description: "",
+        origin_country: "",
+        images: [],
+        price: "",
+        video: "",
+        zipFile: "",
+        expiry_date: "",
+        promotion_code: "",
+        rank: "",
+        best_seller: false,
+        categoryID: "",
+        weight: "",
+        youtube_video_url:""
+      })
       if (!response.ok) {
         const data = await response.json();
-        console.log(data);
         showAlert("danger", data?.error);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
       console.error(error);
-
     }finally{
         setIsLoading(false); 
           }

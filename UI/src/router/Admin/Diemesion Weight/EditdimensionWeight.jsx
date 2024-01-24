@@ -52,7 +52,6 @@ const EditdimensionWeight = () => {
             data[key] = zipcodeData[key];
         }
     });
-           console.log(data,"aaaaaaaaaaaaaaaaa");
       try {
         const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/dimensions/weight-range/${id}`, {
           method: 'PUT',

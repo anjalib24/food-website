@@ -83,7 +83,6 @@ const BestSellers = () => {
       },
     ],
   };
-  console.log(data);
   return (
     <>
       <div className="container" id='bestsellers'>

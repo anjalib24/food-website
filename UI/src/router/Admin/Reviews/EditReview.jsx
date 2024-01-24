@@ -115,7 +115,6 @@ const EditReview = () => {
     setReview({ ...review, reviews_image: file });
     setPreview(URL.createObjectURL(file));
   };
-console.log(editFields,"fghjkl");
   if (!review) return <Loader />;
   return (
     <Paper className="w-full p-4 space-y-1">
