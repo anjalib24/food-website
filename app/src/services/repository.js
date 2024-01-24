@@ -59,7 +59,6 @@ export const addShippingCharge = async (cartData) => {
 
           return cartData.save();
         }
-        cartData.shipment_delivery_message = "1-2 days";
         return cartData.save();
       } else if (
         matchingFreeZipCode &&
@@ -92,7 +91,7 @@ export const addShippingCharge = async (cartData) => {
           return cartData.save();
         }
         cartData.shipment_delivery_message =
-          isStateMatch.shipment_delivery_message;
+          isStateMatch?.shipment_delivery_message;
         return cartData.save();
       } else if (
         !matchingFreeZipCode &&
@@ -128,7 +127,7 @@ export const addShippingCharge = async (cartData) => {
             getDimention.shipment_dimension_price +
             isStateMatch.shipment_state_rate;
           cartData.shipment_delivery_message =
-            isStateMatch.shipment_delivery_message;
+            isStateMatch?.shipment_delivery_message;
 
           return cartData.save();
         }
