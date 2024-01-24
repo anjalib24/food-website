@@ -61,8 +61,13 @@ const EditReview = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     addToEditList(name);
-    setReview({ ...review, [name]: value });
-  };
+    if (name === 'age') {
+       setReview({ ...review, [name]: Number(value) });
+    } else {
+       setReview({ ...review, [name]: value });
+    }
+   };
+   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,9 +92,7 @@ const EditReview = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const { data } = await response.json();
-
       const updateReview = data.reviews.find((review) => review._id === id);
 
       setReviews((reviews) => {
@@ -112,7 +115,7 @@ const EditReview = () => {
     setReview({ ...review, reviews_image: file });
     setPreview(URL.createObjectURL(file));
   };
-
+console.log(editFields,"fghjkl");
   if (!review) return <Loader />;
   return (
     <Paper className="w-full p-4 space-y-1">

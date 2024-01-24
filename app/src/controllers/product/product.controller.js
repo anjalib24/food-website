@@ -782,7 +782,6 @@ const emptyCart = asyncHandler(async (req, res) => {
   cart.subTotal = 0;
   cart.subTotalWeight = 0;
   cart.shippingCharge = 0;
-  cart.shipment_delivery_message = "";
   cart.tax = 0;
 
   let data = await cart.save();
@@ -867,7 +866,7 @@ const removeItemsFromCart = asyncHandler(async (req, res) => {
       updatedCartData.subTotal = 0;
       updatedCartData.subTotalWeight = 0;
       updatedCartData.shippingCharge = 0;
-      updateProductData.shipment_delivery_message = "";
+      updatedCartData.shipment_delivery_message = "";
       updatedCartData.tax = 0;
 
       await updatedCartData.save();

@@ -21,7 +21,7 @@ import { useProductState } from './context/ProductContext';
 
 const Socialmedia = ({ showModal, setShowModal , productId }) => {
   const {showsocial , setShowSocial} = useProductState()
-  const shareUrl = `http://62.72.1.123/productdetail/${productId}`;
+  const shareUrl = `https://www.ethnicfoods.com/productdetail/${productId}`;
   const title = 'Check out this awesome product!';
 
   return (
@@ -30,7 +30,6 @@ const Socialmedia = ({ showModal, setShowModal , productId }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h3>
-
                 Social Media
             </h3>
             <button type="button" className="close"  data-dismiss="modal" onClick={() => setShowModal(false)} aria-label="Close">

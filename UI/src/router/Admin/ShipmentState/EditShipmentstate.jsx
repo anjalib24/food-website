@@ -6,7 +6,7 @@ const EditShipmentstate = () => {
     const { id } = useParams();
     const [zipcodeData, setZipcodeData] = useState(null);
     const [editFields, setEditFields] = useState([]);
-    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; // Replace with your actual keys
+    const ignoredKeys = ["_id", "__v","createdAt","latitude","longitude","updatedAt"]; 
     const history = useHistory();
   
     const addToEditList = (name) => {
@@ -40,31 +40,33 @@ const EditShipmentstate = () => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-  
+      const jsonData = {};
+     
       editFields.forEach((key) => {
-        formData.append(key, zipcodeData[key]);
+         jsonData[key] = zipcodeData[key];
       });   
+     
       try {     
-        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/shipment-rate-state/${id}`, {
-          method: 'PUT',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        history.push('/admin/zip-codes');
+         const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/shipment-rate-state/${id}`, {
+           method: 'PUT',
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(jsonData),
+         });
+     
+         if (!response.ok) {
+           throw new Error(`HTTP error! status: ${response.status}`);
+         }
+         history.push('/admin/shipmentstate');
       } catch (error) {
-        console.error(error);
+         console.error(error);
       }
-    };
+     };
   
     if (!zipcodeData) {
       return <div>Loading...</div>;
     }
-  console.log(zipcodeData,"zippppppppppppp");
     return (
       <Paper className="w-full p-4 space-y-1">
     <form onSubmit={handleSubmit}>

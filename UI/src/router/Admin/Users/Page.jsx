@@ -11,21 +11,28 @@ import Paper from '@mui/material/Paper';
 import axios from 'axios';
 import UserEdit from './UserEdit';
 import { useHistory } from 'react-router-dom';
+import Loader from '@/components/Loader';
 
 
 
 const Page = () => {
   const match = useRouteMatch();
   const history = useHistory();
+  const [isLoading, setIsLoading] = useState(true); 
+
 
   const [users, setUsers] = useState([]);
   useEffect(() => {
+    setIsLoading(true);
+
     const fetchUsers = async () => {
       try {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/users/get-users?limit=50');
         setUsers(response?.data?.data);
       } catch (error) {
         console.error('Error fetching users:', error);
+      }finally{
+        setIsLoading(false)
       }
     };
 
@@ -37,7 +44,7 @@ const Page = () => {
         state: { detailData: user }
     });
 };  
-console.log(users,"--------");
+if (isLoading) return <Loader />;
 return (
     <>
       <Switch>

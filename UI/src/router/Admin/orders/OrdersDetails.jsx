@@ -112,7 +112,6 @@ const OrdersDetails = () => {
           })
         }
       </div>
-
     </>
   )
 }

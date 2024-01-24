@@ -11,40 +11,46 @@ import Button from "@mui/material/Button";
 import EditdimensionWeight from "./EditdimensionWeight"
 import Adddimensionweight from './Adddimensionweight';
 import { Add as AddIcon } from "@mui/icons-material";
+import Loader from '@/components/Loader';
 
 const Page = () => {
   const match = useRouteMatch();
+  const [isLoading, setIsLoading] = useState(true);
   const [dimensionWeight, setdimensionWeightWeight] = useState([]);
+  const location = useLocation()
+  const fetchReviews = () => {
+    setIsLoading(true);
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/dimensions/get-product-weight-range-dimension")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setdimensionWeightWeight(data.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      }).finally(() => {
+        setIsLoading(false); // Stop loading after fetching
+      });
+  };
   useEffect(() => {
-    const fetchReviews = () => {
-      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/dimensions/get-product-weight-range-dimension")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setdimensionWeightWeight(data.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    };
     fetchReviews();
-  }, []);
-  console.log(dimensionWeight, "hyjkl");
+  }, [location]);
+  if (isLoading) return <Loader />;
   return (
     <>
       <Switch>
-      <Route path={match.path + "/adddimensionweight"}>
+        <Route path={match.path + "/adddimensionweight"}>
           <Adddimensionweight />
         </Route>
         <Route path={match.path + "/:id"}>
           <EditdimensionWeight />
         </Route>
         <Route path={match.path}>
-        <div className="w-full py-2 flex justify-between items-center flex-row mb-3">
+          <div className="w-full py-2 flex justify-between items-center flex-row mb-3">
             <div>
               <h1 className="text-3xl font-medium">Dimension</h1>
             </div>
@@ -86,31 +92,33 @@ const Page = () => {
                     <TableCell style={{ width: '20%' }} align="right">{data?.height}</TableCell>
                     <TableCell style={{ width: '20%' }} align="right">{data?.weight_range}</TableCell>
                     <TableCell style={{ width: '20%' }} align="right">
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <Link to={`${match.path}/${data._id}`}>
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <Link to={`${match.path}/${data._id}`}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ opacity: 0.9 }}
+                          >
+                            Edit
+                          </Button>
+                        </Link>
                         <Button
                           variant="contained"
                           color="primary"
                           style={{ opacity: 0.9 }}
-                        >
-                          Edit
-                        </Button>
-                      </Link>
-                      <Button
-                          variant="contained"
-                          color="primary"
-                          style={{ opacity: 0.9 }}
                           onClick={() => {
-                            fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/dimensions/weight-range/${data._id}`, {
+                            setIsLoading(true);
+                            fetch(import.meta.env.VITE_APP_BASE_API + `/api/v1/dimensions/weight-range/${data._id}`, {
                               method: 'DELETE',
                             })
                               .then(response => response.json())
                               .then(data => {
-                                console.log('Success:', data);
-                                setdimensionWeightWeight(dimensionWeight.filter(item => item._id !== data._id));
+                                fetchReviews();
                               })
                               .catch((error) => {
                                 console.error('Error:', error);
+                              }).finally(() => {
+                                setIsLoading(false);
                               });
                           }}
                         >

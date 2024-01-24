@@ -86,7 +86,7 @@ export const Blog = (props) => {
                         {props?.blog?.map((blogItem, index) => (
                           <div key={index} className="single-box">
                             <div className="img-area">
-                              <img src={import.meta.env.VITE_APP_BASE_API+blogItem.image} alt={`Blog ${index + 1}`} />
+                              <img src={import.meta.env.VITE_APP_BASE_API+blogItem.image} alt={`Blog ${index + 1}`}  style={{height: '220px'}}/>
                             </div>
                             <div className="mt-3">
                               <p>

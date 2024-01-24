@@ -40,22 +40,34 @@ const EditdimensionWeight = () => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-  
+
+
+      const data = {};
       editFields.forEach((key) => {
-        formData.append(key, zipcodeData[key]);
-      });
+        if (key === 'length') {
+            data['Length'] = Number(zipcodeData['length']);
+        } else if (key === 'height') {
+            data['Height'] = Number(zipcodeData['height']);
+        } else {
+            data[key] = zipcodeData[key];
+        }
+    });
+           console.log(data,"aaaaaaaaaaaaaaaaa");
       try {
-        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/zip-codes/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_APP_BASE_API}/api/v1/dimensions/weight-range/${id}`, {
           method: 'PUT',
-          body: formData,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data),
         });
+    
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
   
-        history.push('/admin/zip-codes');
+        history.push('/admin/dimensionweight');
       } catch (error) {
         console.error(error);
       }
@@ -64,7 +76,6 @@ const EditdimensionWeight = () => {
     if (!zipcodeData) {
       return <div>Loading...</div>;
     }
-  console.log(zipcodeData,"zippppppppppppp");
     return (
       <Paper className="w-full p-4 space-y-1">
     <form onSubmit={handleSubmit}>

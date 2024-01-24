@@ -45,7 +45,7 @@ const Cart = () => {
     try {
       const result = await fetchData("products/get-product", { limit: 32 });
       if (token) {
-        const response = await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/get-cart', {
+        const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/get-cart', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -105,11 +105,11 @@ const Cart = () => {
   };
 
   const updateQuantity = async (index, newQuantity, item, incordec) => {
-    setIsLoading(true);
     const token = localStorage.getItem('token');
     if (token) {
+      setIsLoading(true);
       try {
-        const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/add-to-cart', [{
+        const response = await axios.post(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/add-to-cart', [{
           productId: item?.product?._id,
           quantity: incordec,
         }], {
@@ -117,10 +117,10 @@ const Cart = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        fetchDataFromApi();
+        await fetchDataFromApi();
       } catch (error) {
         console.error('Error updating quantity:', error);
-      }finally {
+      } finally {
         setIsLoading(false)
       }
     } else {
@@ -129,25 +129,25 @@ const Cart = () => {
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       countCartItems();
     }
-   };
+  };
 
   const deleteProduct = async (index) => {
-    setIsLoading(true);
     if (token) {
+      setIsLoading(true);
       try {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
-        const response = await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/remove-items-from-cart/${productId}`, {
+        await axios.get(import.meta.env.VITE_APP_BASE_API + `/api/v1/products/remove-items-from-cart/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         showAlert("danger", "Product Delete Sucessfully");
-        fetchDataFromApi();
-        setCartCount(prev=>prev-1)
+        await fetchDataFromApi(); // Wait for fetchDataFromApi to finish
+        setCartCount(prev => prev - 1);
       } catch (error) {
         console.error('Error deleting the product:', error);
-      }finally {
-        setIsLoading(false)
+      } finally {
+        setIsLoading(false); // Stop the loader here after fetchDataFromApi is done
       }
     } else {
       const updatedCart = [...localData]; // Use localData instead of cartData
@@ -172,13 +172,13 @@ const Cart = () => {
   const payment = async () => {
     try {
       const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
-      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+`/api/v1/order/create-order/${cartId}`, {}, {
+      const response = await axios.post(import.meta.env.VITE_APP_BASE_API + `/api/v1/order/create-order/${cartId}`, {}, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      const sessionID = response.data?.sessionID;
-      console.log(sessionID, "idd");
+      const sessionID = response.data?.data?.sessionID;
+      console.log(sessionID, 'session');
       const result = await stripe.redirectToCheckout({
         sessionId: sessionID,
       });
@@ -194,12 +194,12 @@ const Cart = () => {
   // } else {
   //   setCartCount(localData.length)
   // }
-console.log(cartData,"localdata");
+  console.log(cartData, "localdata");
   return (
     <>
       {isLoading && <Loader />}
       {alert && <Alert type={alert.type} message={alert.message} />}
-      <Header hideCart={true}/>
+      <Header hideCart={true} />
       <section className="h-100 gradient-custom">
         <div className="container py-5">
           <div className="row d-flex flex-row  justify-content-center my-4">
@@ -227,7 +227,7 @@ console.log(cartData,"localdata");
                               <div className="_2nQDXZ">
                                 <a href="/nb-nicky-boy-printed-men-round-neck-black-t-shirt/p/itmb1c6b5e8551de?pid=TSHGW3FNAGC9UJ7X&amp;lid=LSTTSHGW3FNAGC9UJ7XCU0GGF&amp;marketplace=FLIPKART"><span>
                                   <div className="CXW8mj" style={{ height: '112px', width: '112px' }}>
-                                    <img loading="lazy" className="_396cs4" alt="productImg" src={ import.meta.env.VITE_APP_BASE_API + item?.product?.images[0]} />
+                                    <img loading="lazy" className="_396cs4" alt="productImg" src={import.meta.env.VITE_APP_BASE_API + item?.product?.images[0]} />
                                   </div></span></a>
                                 <div className="_3fSRat">
                                   <div className="_2-uG6-">
@@ -282,7 +282,7 @@ console.log(cartData,"localdata");
                               <div className="_2nQDXZ">
                                 <a href="/nb-nicky-boy-printed-men-round-neck-black-t-shirt/p/itmb1c6b5e8551de?pid=TSHGW3FNAGC9UJ7X&amp;lid=LSTTSHGW3FNAGC9UJ7XCU0GGF&amp;marketplace=FLIPKART"><span>
                                   <div className="CXW8mj" style={{ height: '112px', width: '112px' }}>
-                                    <img loading="lazy" className="_396cs4" alt="productImg" src={  import.meta.env.VITE_APP_BASE_API + item.images[0]} />
+                                    <img loading="lazy" className="_396cs4" alt="productImg" src={import.meta.env.VITE_APP_BASE_API + item.images[0]} />
                                   </div></span></a>
                                 <div className="_3fSRat">
                                   <div className="_2-uG6-">
@@ -347,58 +347,64 @@ console.log(cartData,"localdata");
             {cartData?.length === 0 && localData?.length === 0 ? (
               <></>
             ) : (
-              <div id="pricedetails" className="col-md-4" style={{ position: "sticky", top: "0" }}>
-                <div className="card mb-4">
-                  <div className="card-header py-3">
-                    <h5 className="mb-0">Price Details</h5>
-                  </div>
-                  <div className="card-body">
-                    <ul className="list-group list-group-flush">
-                      <li
-                        className="list-group-item d-flex justify-content-between flex-row border-0 px-0 pb-0">
-                        <div>
-                          Price
-                        </div>
-                        <div>
-                          {totalPrice}
-                        </div>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between flex-row  px-0">
-                        <div>
-                          Delivery Charges
-                        </div>
-                        <div>
-                          {shipingCharge?.deliveryCharge}
-                        </div>
+              <>
+                <div id="pricedetails" className="col-md-4" style={{ position: "sticky", top: "0" }}>
+                  <div className="card mb-4">
+                    <div className="card-header py-3">
+                      <h5 className="mb-0">Price Details</h5>
+                    </div>
+                    <div className="card-body">
+                      <ul className="list-group list-group-flush">
+                        <li
+                          className="list-group-item d-flex justify-content-between flex-row border-0 px-0 pb-0">
+                          <div>
+                            Price
+                          </div>
+                          <div>
+                            {totalPrice}
+                          </div>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between flex-row  px-0">
+                          <div>
+                            Delivery Charges
+                          </div>
+                          <div>
+                            {shipingCharge?.deliveryCharge}
+                          </div>
 
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between flex-row  px-0">
-                        <div>
-                          Tax
-                        </div>
-                        <div>
-                          {shipingCharge?.tax}
-                        </div>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between flex-row  px-0">
+                          <div>
+                            Tax
+                          </div>
+                          <div>
+                            {shipingCharge?.tax}
+                          </div>
 
-                      </li>
-                      <li
-                        className="list-group-item d-flex justify-content-between flex-row border-0 px-0 mb-3">
-                        <div>
-                          <strong>Total amount</strong>
-                        </div>
-                        <div>
-                          <span><strong>${(totalPrice + shipingCharge?.deliveryCharge + shipingCharge?.tax)}</strong></span>
-                        </div>
-                      </li>
-                    </ul>
+                        </li>
+                        <li
+                          className="list-group-item d-flex justify-content-between flex-row border-0 px-0 mb-3">
+                          <div>
+                            <strong>Total amount</strong>
+                          </div>
+                          <div>
+                            <span><strong>${(totalPrice + shipingCharge?.deliveryCharge + shipingCharge?.tax)}</strong></span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
+                  {cartData?.shipment_delivery_message && <div>Delivered in {cartData?.shipment_delivery_message}</div>}
+
                 </div>
-              </div>
+
+
+              </>
             )
             }     </div>
         </div>
       </section>
-      <Footer/>
+      <Footer />
     </>
   );
 };

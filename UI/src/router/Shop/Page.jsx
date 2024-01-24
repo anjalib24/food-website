@@ -17,14 +17,17 @@ import WithAuth from "@/components/WithAuth";
 
 const Page = () => {
   return (
+    <>
+    <Switch>
+         <Route exact path="/productdetail/:id">
+          <Productdetailpage />
+        </Route>
+    </Switch>
     <WithAuth>
     <Switch>
       <ProductContexts>
       <Route exact path="/strip">
           <Strip/>
-        </Route>
-      <Route exact path="/productdetail/:id">
-          <Productdetailpage />
         </Route>
         <Route exact path="/contactus">
           <ContactUs />
@@ -65,6 +68,7 @@ const Page = () => {
       </ProductContexts>
     </Switch>
     </WithAuth>
+    </>
 
   );
 };

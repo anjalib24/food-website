@@ -12,32 +12,42 @@ import { useHistory } from 'react-router-dom';
 import Editdimension from "./Editdimension";
 import { Add as AddIcon } from "@mui/icons-material";
 import AddDimension from './AddDimension';
+import Loader from '@/components/Loader';
 
 
 const Page = () => {
   const match = useRouteMatch();
   const history = useHistory();
   const [dimension, setDimension] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); 
+  const location = useLocation()
 
+  const fetchReviews = () => {
+    setIsLoading(true);
+    fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/dimensions/get-product-dimension")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setDimension(data.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      }).finally(() => {
+        setIsLoading(false); 
+      });
+  };
   useEffect(() => {
-    const fetchReviews = () => {
-      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/dimensions/get-product-dimension")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setDimension(data.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    };
+ 
 
     fetchReviews();
-  }, []);
+  }, [location]);
+
+  if (isLoading) return <Loader />;
+
   return (
     <>
       <Switch>
@@ -105,16 +115,19 @@ const Page = () => {
                           color="primary"
                           style={{ opacity: 0.9 }}
                           onClick={() => {
+                            setIsLoading(true);
                             fetch(import.meta.env.VITE_APP_BASE_API+`/api/v1/dimensions/${data._id}`, {
                               method: 'DELETE',
                             })
                               .then(response => response.json())
                               .then(data => {
-                                console.log('Success:', data);
                                 setDimension(dimension.filter(item => item._id !== data._id));
+                                fetchReviews();
                               })
                               .catch((error) => {
                                 console.error('Error:', error);
+                              }).finally(() => {
+                                setIsLoading(false);
                               });
                           }}
                         >

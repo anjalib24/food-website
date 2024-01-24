@@ -13,10 +13,12 @@ import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
 import OrdersDetails from './OrdersDetails';
+import Loader from '@/components/Loader';
 
 const Page = () => {
     const match = useRouteMatch();
     const history = useHistory();
+    const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -28,28 +30,33 @@ const Page = () => {
         });
     };
     const fetchOrders = async () => {
+        setIsLoading(true);
         try {
-            const response = await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/order');
+            const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/order');
             setOrders(response?.data?.data?.docs);
         } catch (error) {
             console.error('Error fetching orders:', error);
+        } finally {
+            setIsLoading(false); // Stop loading after fetching
         }
-     };
-     
-     useEffect(() => {
+    };
+
+    useEffect(() => {
         fetchOrders();
-     }, []);
-     
-     const oderdelevered = async(id) => {
+    }, []);
+
+    const oderdelevered = async (id) => {
         try {
-            const response = await axios.put(import.meta.env.VITE_APP_BASE_API+`/api/v1/order/update-order-status/${id}`);
+            const response = await axios.put(import.meta.env.VITE_APP_BASE_API + `/api/v1/order/update-order-status/${id}`);
             console.log(response.data);
             // Fetch orders again after updating the order status
             fetchOrders();
         } catch (error) {
             console.error('Error updating order status:', error);
         }
-     };
+    };
+    if (isLoading) return <Loader />;
+
     return (
         <>
             <Switch>
@@ -80,7 +87,13 @@ const Page = () => {
                                             {user.username}
                                         </TableCell>
                                         <TableCell align="right">{user?.email}</TableCell>
-                                        <TableCell align="right">{user?.orderDate}</TableCell>
+                                        <TableCell align="right"> <div>
+                                            Ordered on  {new Date(user?.orderDate).toLocaleDateString('en-US', {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric',
+                                            })}
+                                        </div></TableCell>
                                         <TableCell align="right">{user?.products?.length}</TableCell>
                                         <TableCell align="right">{user?.subTotal}</TableCell>
                                         <TableCell align="right">

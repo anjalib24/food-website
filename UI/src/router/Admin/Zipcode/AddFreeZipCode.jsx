@@ -40,7 +40,17 @@ import {
                 body: JSON.stringify(formData),
             });
             const data = await response.json();
-            console.log(data);
+            setFormData(  {
+                    city: '',
+            county: '',
+            countyAll: '',
+            latitude: '',
+            longitude: '',
+            shipment_delivery_message: '',
+            stateCode: '',
+            stateName: '',
+            zipCode: ''
+        })
         } catch (error) {
             console.error('Error submitting form:', error);
         }
@@ -125,9 +135,13 @@ import {
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sm={6}>
+                            <Box mt={5}>
+
                             <Button type="submit" variant="contained">
                                 Submit
                             </Button>
+                            </Box>
+
                         </Grid>
                     </form>
                 </Typography>
