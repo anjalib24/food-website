@@ -53,19 +53,41 @@ export const updateDimension = async (req, res) => {
     const { dimensions, Length, Width, Height, shipment_dimension_price } =
       req.body;
 
-    const updatedData = await Dimension.findByIdAndUpdate(
-      id,
-      {
-        dimensions: dimensions,
-        length: parseFloat(Length),
-        width: parseFloat(Width),
-        height: parseFloat(Height),
-        shipment_dimension_price: shipment_dimension_price
-          ? parseFloat(shipment_dimension_price.replace("$", ""))
-          : 0,
-      },
-      { new: true }
-    );
+    const updateFields = {};
+
+    if (dimensions) {
+      updateFields.dimensions = dimensions;
+    }
+
+    if (Length) {
+      updateFields.length = parseFloat(Length);
+    }
+
+    if (Width) {
+      updateFields.width = parseFloat(Width);
+    }
+
+    if (Height) {
+      updateFields.height = parseFloat(Height);
+    }
+
+    if (shipment_dimension_price) {
+      updateFields.shipment_dimension_price = parseFloat(
+        shipment_dimension_price.replace("$", "")
+      );
+    }
+
+    if (Object.keys(updateFields).length === 0) {
+      return res
+        .status(400)
+        .json(
+          new ApiResponse(400, null, "No valid fields provided for update")
+        );
+    }
+
+    const updatedData = await Dimension.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
 
     if (!updatedData) {
       return res
@@ -267,15 +289,46 @@ export const updateDimensionWeightRange = async (req, res) => {
     const { id } = req.params;
     const { dimensions, Length, Width, Height, weight_range } = req.body;
 
+    let updateDimensionWeightRangeData = {};
+
+    if (dimensions) {
+      updateDimensionWeightRangeData = {
+        ...updateDimensionWeightRangeData,
+        dimensions: dimensions,
+      };
+    }
+
+    if (Length) {
+      updateDimensionWeightRangeData = {
+        ...updateDimensionWeightRangeData,
+        length: parseFloat(Length),
+      };
+    }
+
+    if (Width) {
+      updateDimensionWeightRangeData = {
+        ...updateDimensionWeightRangeData,
+        width: parseFloat(Width),
+      };
+    }
+
+    if (Height) {
+      updateDimensionWeightRangeData = {
+        ...updateDimensionWeightRangeData,
+        height: parseFloat(Height),
+      };
+    }
+
+    if (weight_range) {
+      updateDimensionWeightRangeData = {
+        ...updateDimensionWeightRangeData,
+        weight_range,
+      };
+    }
+
     const updatedData = await DimensionWeightRange.findByIdAndUpdate(
       id,
-      {
-        dimensions: dimensions,
-        length: parseFloat(Length),
-        width: parseFloat(Width),
-        height: parseFloat(Height),
-        weight_range,
-      },
+      updateDimensionWeightRangeData,
       { new: true }
     );
 
@@ -291,15 +344,14 @@ export const updateDimensionWeightRange = async (req, res) => {
         new ApiResponse(
           200,
           updatedData,
-          "Dimension weight wange updated successfully"
+          "Dimension weight range updated successfully"
         )
       );
   } catch (error) {
-    console.error("Error updating d imension weight range:", error);
+    console.error("Error updating dimension weight range:", error);
     res.status(500).json(new ApiError(500, "Internal server error"));
   }
 };
-
 export const deleteDimensionWeightRange = async (req, res) => {
   try {
     const { id } = req.params;
