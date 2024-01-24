@@ -59,6 +59,7 @@ export const addShippingCharge = async (cartData) => {
 
           return cartData.save();
         }
+        cartData.shipment_delivery_message = "1-2 days";
         return cartData.save();
       } else if (
         matchingFreeZipCode &&
