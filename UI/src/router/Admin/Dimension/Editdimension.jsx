@@ -68,7 +68,6 @@ const Editdimension = () => {
     if (!zipcodeData) {
       return <div>Loading...</div>;
     }
-  console.log(zipcodeData,"zippppppppppppp");
     return (
       <Paper className="w-full p-4 space-y-1">
     <form onSubmit={handleSubmit}>

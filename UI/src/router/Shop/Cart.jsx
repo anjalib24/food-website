@@ -178,7 +178,6 @@ const Cart = () => {
         }
       });
       const sessionID = response.data?.data?.sessionID;
-      console.log(sessionID, 'session');
       const result = await stripe.redirectToCheckout({
         sessionId: sessionID,
       });
@@ -194,7 +193,6 @@ const Cart = () => {
   // } else {
   //   setCartCount(localData.length)
   // }
-  console.log(cartData, "localdata");
   return (
     <>
       {isLoading && <Loader />}
@@ -222,7 +220,7 @@ const Cart = () => {
                     token ? (cartData?.filteredData?.map((item, index) => {
                       return (
                         <>
-                          {<div className="_1AtVbE col-12-12" key={index}>
+                          {<div className="_1AtVbE col-12-12"  key={`cartItem-${item.product._id}`}>
                             <div className="zab8Yh _10k93p">
                               <div className="_2nQDXZ">
                                 <a href="/nb-nicky-boy-printed-men-round-neck-black-t-shirt/p/itmb1c6b5e8551de?pid=TSHGW3FNAGC9UJ7X&amp;lid=LSTTSHGW3FNAGC9UJ7XCU0GGF&amp;marketplace=FLIPKART"><span>
@@ -395,10 +393,7 @@ const Cart = () => {
                     </div>
                   </div>
                   {cartData?.shipment_delivery_message && <div>Delivered in {cartData?.shipment_delivery_message}</div>}
-
                 </div>
-
-
               </>
             )
             }     </div>

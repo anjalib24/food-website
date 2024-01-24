@@ -32,7 +32,6 @@ const Page = () => {
         })
         .then((data) => {
           setTaxes(data.data);
-          console.log(data.data);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -95,7 +94,6 @@ const Page = () => {
                               })
                                 .then(response => response.json())
                                 .then(data => {
-                                  console.log('Success:', data);
                                   setTaxes(taxes.filter(item => item._id !== data?.data._id));
                                 })
                                 .catch((error) => {

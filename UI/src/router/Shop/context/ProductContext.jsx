@@ -22,7 +22,6 @@ export const ProductContexts = ({ children }) => {
   
   const handleaddtocard = async (item) => {
     try {
-      setLoading(true)
       const token = localStorage.getItem('token');
       if (token) {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/get-cart', {
@@ -82,8 +81,6 @@ export const ProductContexts = ({ children }) => {
       }
     } catch (error) {
       console.error('Error handling add to cart:', error);
-    }finally{
-      setLoading(false)
     }
   };
   const createMarkup = (htmlContent) => {

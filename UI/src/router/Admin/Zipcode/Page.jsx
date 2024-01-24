@@ -118,7 +118,6 @@ const Page = () => {
                             })
                               .then(response => response.json())
                               .then(data => {
-                                console.log('Success:', data);
                                 setZipcode(zipcode.filter(item => item._id !== user._id));
                               })
                               .catch((error) => {
