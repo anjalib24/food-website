@@ -18,8 +18,11 @@ import WithAuth from "@/components/WithAuth";
 const Page = () => {
   return (
     <>
+
+    <WithAuth>
     <Switch>
-         <Route exact path="/productdetail/:id">
+      <ProductContexts>
+      <Route exact path="/productdetail/:id">
           <Productdetailpage />
         </Route>
         <Route exact path="/paymentsucess">
@@ -28,10 +31,6 @@ const Page = () => {
         <Route exact path="/PaymentCancel">
           <PaymentCancel />
         </Route>
-    </Switch>
-    <WithAuth>
-    <Switch>
-      <ProductContexts>
       <Route exact path="/strip">
           <Strip/>
         </Route>
@@ -61,6 +60,7 @@ const Page = () => {
         <Route exact path="/yourprofile">
           <Yourprofile />
         </Route>
+        
         <Route exact path="/">
           <Home />
         </Route>
