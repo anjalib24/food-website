@@ -145,7 +145,6 @@ const location = useLocation()
                                   })
                                     .then(response => response.json())
                                     .then(data => {
-                                      console.log('Success:', data);
                                       setShipment(shipment.filter(item => item._id !== data._id));
                                       fetchReviews();
                                     })

@@ -38,7 +38,7 @@ export const Aboutus = (props) => {
                         </div>
                     </div>
                     <div className="col-md-6">
-                        <img alt="food_image" src={props.image ? "/api" +props?.image :AboutusDefaultimg} className=" align-items-end" />  
+                        <img alt="food_image" src={props.image ? import.meta.env.VITE_APP_BASE_API+props?.image :AboutusDefaultimg} className=" align-items-end" />  
                     </div>
                 </div>
             </section>

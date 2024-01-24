@@ -26,14 +26,13 @@ export const Allproduct = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(32);
   const [totalproduct, setTotalproduct] = useState()
-  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading,setLoading} = useProductState();
+  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
   useEffect(() => {
     const fetchDataFromApi = async () => {
-      console.log('Loading started'); // Log when loading starts
       try {
         setLoading(true);
         const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`);
@@ -41,14 +40,15 @@ export const Allproduct = () => {
         setTotalproduct(result?.data?.totalDocs);
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-        console.log('Loading finished'); // Log when loading finishes
       }
     };
     fetchDataFromApi();
   }, [currentPage, itemsPerPage]);
-  
+  useEffect(() => {
+    if (data !== null) {
+      setLoading(false);
+    }
+  }, [data]);
 
   const totalPages = Math.ceil(totalproduct / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -91,7 +91,6 @@ export const Allproduct = () => {
     }
   };
 
-console.log(loading);
   return (
     <>
       {showAlert && <Alert type="success" message={alertmsg} />}
@@ -286,8 +285,8 @@ console.log(loading);
                   <div className="col-md-12 text-center">
                     <div className="spinner-border" role="status">
                       <span className="sr-only">loading...</span>
-                    </div>             
-                     </div>
+                    </div>
+                  </div>
                 )}
                 {!loading && currentItems && currentItems?.length === 0 && (
                   <div className="col-md-12 text-center">
@@ -315,7 +314,7 @@ console.log(loading);
                   )
                 )?.map(item => (
 
-                  <div key={item.id} className="col-6 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
+                  <div key={item._id} className="col-6 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
                       <img src={import.meta.env.VITE_APP_BASE_API + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
                     </div>
@@ -398,18 +397,21 @@ console.log(loading);
 
               </div>
             </div>
-            <div className="col-md-12 d-flex justify-content-center">
-              <Pagination
-                className='flex'
-                count={totalPages}
-                variant="outlined"
-                color="primary"
-                page={currentPage}
-                onChange={(event, page) => {
-                  setCurrentPage(page);
-                }}
-              />
-            </div>
+            {totalPages > 31 && (
+              <div className="col-md-12 d-flex justify-content-center">
+                <Pagination
+                  className='flex'
+                  count={totalPages}
+                  variant="outlined"
+                  color="primary"
+                  page={currentPage}
+                  onChange={(event, page) => {
+                    setCurrentPage(page);
+                  }}
+                />
+              </div>
+            )}
+
           </div>
         </section>
       </div>

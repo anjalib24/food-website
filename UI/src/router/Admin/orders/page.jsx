@@ -48,7 +48,7 @@ const Page = () => {
     const oderdelevered = async (id) => {
         try {
             const response = await axios.put(import.meta.env.VITE_APP_BASE_API + `/api/v1/order/update-order-status/${id}`);
-            console.log(response.data);
+        
             // Fetch orders again after updating the order status
             fetchOrders();
         } catch (error) {

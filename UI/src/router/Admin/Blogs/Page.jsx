@@ -33,7 +33,6 @@ const Page = () => {
         })
         .then((data) => {
           setBlogs(data.data[0].blog);
-          console.log(data.data[0].blog);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -59,7 +58,6 @@ const Page = () => {
         return response.json();
       })
       .then(({ data }) => {
-        console.log(data);
         setBlogs(blogs.filter((blog) => blog._id !== id));
       })
       .catch((error) => {

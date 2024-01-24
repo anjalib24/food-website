@@ -20,7 +20,6 @@ const Page = () => {
        .then((response) => response.json())
        .then((data) => {
          const marks = data.data[0];
-         console.log(marks,"marrrr");
          setBenchmark1(marks.benchmark1);
          setBenchmark2(marks.benchmark2);
        })
