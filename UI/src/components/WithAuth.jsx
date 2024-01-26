@@ -8,10 +8,10 @@ const WithAuth = (props) => {
 
   useEffect(() => {
     const cookie_token = localStorage.getItem("token");
-    // const cookie_token = Cookies.get('cookie_token');
     if (cookie_token) {
       const decodedToken = jwtDecode(cookie_token);
       const userType = decodedToken.role;
+      console.log(userType,"typeeee");
       if (userType === "user") {
          history.push('/shop');
       }else{

@@ -4,7 +4,7 @@ const Noproductincart = () => {
   const history = useHistory();
 
   const handleShopNowClick = () => {
-    history.push('/shop'); // replace '/shop' with the path you want to redirect to
+    history.push('/shop'); 
   };
     return (
       <>

@@ -11,6 +11,8 @@ import {
  Typography,
  Box,
 } from "@mui/material";
+import Alert from "@/router/Shop/Alert";
+import { useAdminState } from "@/contexts/AdminContext";
 
 const Page = () => {
 
@@ -29,12 +31,16 @@ const [freezipcode, setFreezipcode] = useState({
 const [tax, setTax] = useState({
   csvFile: "",
 });
+const {setAlert,alert } = useAdminState();
 
 
 
  const handleSubmit = async (event) => {
   event.preventDefault();
-
+  if (!ShipingRatesState.csvFile) {
+    setAlert({errType:"danger", errMsg:"Please select a file", isError: true});
+    return;
+ }
   try {
     const formData = new FormData();
     formData.append('csvFile', ShipingRatesState.csvFile);
@@ -49,8 +55,10 @@ const [tax, setTax] = useState({
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    setAlert({errType:"success", errMsg:"File uploaded successfully", isError: true});
    } catch (error) {
     console.error(error);
+    setAlert({errType:"danger", errMsg:"Faild: Please uplode correct file", isError: true});
    }
    
 };
@@ -58,6 +66,10 @@ const [tax, setTax] = useState({
 
 const handleDimensions = async (event) => {
   event.preventDefault();
+  if (!dimensions.csvFile) {
+    setAlert({errType:"danger", errMsg:"Please select a file", isError: true});
+    return;
+ }
   try {
     const formData = new FormData();
     formData.append('csvFile', dimensions.csvFile);
@@ -72,8 +84,10 @@ const handleDimensions = async (event) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    setAlert({errType:"success", errMsg:"File uploaded successfully", isError: true});
    } catch (error) {
     console.error(error);
+    setAlert({errType:"danger", errMsg:"Faild: Please uplode correct file", isError: true});
    }
    
 };
@@ -81,6 +95,10 @@ const handleDimensions = async (event) => {
 
 const handleDimensionsWeightRange = async (event) => {
   event.preventDefault();
+  if (!dimensionsWeightRange.csvFile) {
+    setAlert({errType:"danger", errMsg:"Please select a file", isError: true});
+    return;
+ }
   try {
     const formData = new FormData();
     formData.append('csvFile', dimensionsWeightRange.csvFile);
@@ -95,13 +113,19 @@ const handleDimensionsWeightRange = async (event) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    setAlert({errType:"success", errMsg:"File uploaded successfully", isError: true});
    } catch (error) {
     console.error(error);
+    setAlert({errType:"danger", errMsg:"Faild: Please uplode correct file", isError: true});
    }
    
 };
 const handleZipcode = async (event) => {
   event.preventDefault();
+  if (!freezipcode.csvFile) {
+    setAlert({errType:"danger", errMsg:"Please select a file", isError: true});
+    return;
+ }
   try {
     const formData = new FormData();
     formData.append('csvFile', freezipcode.csvFile);
@@ -116,14 +140,20 @@ const handleZipcode = async (event) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    setAlert({errType:"success", errMsg:"File uploaded successfully", isError: true});
    } catch (error) {
     console.error(error);
+    setAlert({errType:"danger", errMsg:"Faild: Please uplode correct file", isError: true});
    }
    
 };
 
 const handletax = async (event) => {
   event.preventDefault();
+  if (!tax.csvFile) {
+    setAlert({errType:"danger", errMsg:"Please select a file", isError: true});
+    return;
+ }
   try {
     const formData = new FormData();
     formData.append('csvFile', tax.csvFile);
@@ -135,17 +165,21 @@ const handletax = async (event) => {
     );
    
     if (!response.ok) {
+      const data = await response.json();
+      setAlert({errType:"danger", errMsg:data?.error, isError: true});  
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
    } catch (error) {
     console.error(error);
+    setAlert({errType:"danger", errMsg:"Faild: Please uplode correct file", isError: true});
    }
    
 };
 
 return (
 <>
+{alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
 <Paper className="w-full p-4 space-y-1">
 <Typography variant="h5" gutterBottom marginBottom={"20px"}>
         Add File for shiping charge

@@ -8,6 +8,7 @@ import { HashLink as Link } from 'react-router-hash-link';
 import axios from 'axios';
 import { useProductState } from './context/ProductContext';
 import Alert from './Alert';
+import Loader from '@/components/Loader';
 
 const Header = ({ hideCart, hidebutton }) => {
   const navStyles = {
@@ -63,10 +64,12 @@ const Header = ({ hideCart, hidebutton }) => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/logout', {
+        await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/users/logout', {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          mode: 'cors'
         });
         localStorage.clear();
         showAlert("danger", "Logout sucessfully");
@@ -77,7 +80,7 @@ const Header = ({ hideCart, hidebutton }) => {
       } catch (error) {
         console.error('Error logging out:', error);
         showAlert("danger", "Logout failed. Please try again.");
-      }finally {
+      } finally {
         setLoading(false);
       }
     }
@@ -88,13 +91,14 @@ const Header = ({ hideCart, hidebutton }) => {
       bestsellerSection.scrollIntoView({ behavior: 'smooth' });
     }
   }
+  { loading && <Loader /> }
   return (
     <>
       {alert && <Alert type={alert.type} message={alert.message} />}
       <header>
         <div className="main-header">
           <div className="container">
-          <nav style={navStyles}>
+            <nav style={navStyles}>
               <Link to="/">
                 <img src={ethnicLogo} className="logo" alt="#" />
               </Link>

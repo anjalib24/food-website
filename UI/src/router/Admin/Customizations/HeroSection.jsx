@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Button, TextField, Box } from "@mui/material";
+import { useAdminState } from "@/contexts/AdminContext";
 
 const HeroSection = ({ data }) => {
   const [title, setTitle] = useState(data.title);
   const [subtitle, setSubtitle] = useState(data.subtitle);
   const [image, setImage] = useState(null);
+  const {setAlert } = useAdminState();
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -34,10 +36,11 @@ const HeroSection = ({ data }) => {
         return response.json();
       })
       .then((data) => {
-        console.log("Success:", data);
+        setAlert({errType:"success", errMsg:"successfully submit", isError: true});
       })
       .catch((error) => {
         console.error("Error:", error);
+        setAlert({errType:"danger", errMsg:"something went wrong", isError: true});
       });
   };
 

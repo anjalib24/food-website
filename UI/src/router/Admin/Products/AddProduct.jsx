@@ -34,15 +34,9 @@ const AddProduct = () => {
     weight: "",
     youtube_video_url:""
   });
-  const [alert, setAlert] = useState(null);
-  const { countries, categories } = useAdminState();
+  const { countries, categories , setAlert } = useAdminState();
   const [isLoading, setIsLoading] = useState(); 
-  const showAlert = (type, message) => {
-    setAlert({ type, message });
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
-  };
+
 
   const handleImageChange = (event) => {
     setProduct((product) => ({
@@ -86,26 +80,11 @@ const AddProduct = () => {
           body: formData,
         }
       );
-      setProduct({
-        title: "",
-        short_description: "",
-        description: "",
-        origin_country: "",
-        images: [],
-        price: "",
-        video: "",
-        zipFile: "",
-        expiry_date: "",
-        promotion_code: "",
-        rank: "",
-        best_seller: false,
-        categoryID: "",
-        weight: "",
-        youtube_video_url:""
-      })
+      setAlert({errType:"success", errMsg:"Product Create Sucessfully", isError: true});
+      setProduct("")
       if (!response.ok) {
         const data = await response.json();
-        showAlert("danger", data?.error);
+        setAlert({errType:"danger", errMsg:data?.error, isError: true});
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
@@ -122,7 +101,6 @@ const AddProduct = () => {
 
   return (
 <>
-{alert && <Alert type={alert.type} message={alert.message} />}
 
     <Paper className="w-full p-4 space-y-1">
       <Typography variant="h5" gutterBottom marginBottom={"20px"}>
@@ -336,14 +314,14 @@ const AddProduct = () => {
                 <MenuItem value={false}>No</MenuItem>
               </Select>
             </FormControl>
-          </Grid>
-
-       
+          </Grid>       
         </Grid>
         <Grid item xs={12} sm={6}>
+          <Box mt={5}>
             <Button type="submit" variant="contained">
               Submit
             </Button>
+            </Box>
           </Grid>
       </form>
     </Paper>

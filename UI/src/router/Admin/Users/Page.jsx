@@ -12,6 +12,8 @@ import axios from 'axios';
 import UserEdit from './UserEdit';
 import { useHistory } from 'react-router-dom';
 import Loader from '@/components/Loader';
+import Alert from '@/router/Shop/Alert';
+import { useAdminState } from '@/contexts/AdminContext';
 
 
 
@@ -19,9 +21,9 @@ const Page = () => {
   const match = useRouteMatch();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true); 
-
-
   const [users, setUsers] = useState([]);
+  const {  setAlert, alert } = useAdminState();
+
   useEffect(() => {
     setIsLoading(true);
 
@@ -47,6 +49,7 @@ const Page = () => {
 if (isLoading) return <Loader />;
 return (
     <>
+          {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
       <Switch>
       <Route path={match.path + "/useredit"}>
         <UserEdit /> 

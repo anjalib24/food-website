@@ -1,5 +1,5 @@
 import Layout from "@components/admin/Layout";
-import { AdminContext } from "@contexts/AdminContext";
+import { AdminContext, useAdminState } from "@contexts/AdminContext";
 // import { Route, Switch, useRouteMatch } from "react-router-dom";
 import {
   Route,
@@ -24,11 +24,14 @@ import ShipmentState from "./ShipmentState/Page"
 import Dimension from "./Dimension/Page"
 import DimensionWeight from "./Diemesion Weight/Page"
 import Tax from "./Tax/Page"
+import Alert from "../Shop/Alert";
 const Page = () => {
   let match = useRouteMatch();
   return (    
     <WithAuth>
       <AdminContext>
+      
+
         <Layout
           Page={
             <Switch>
