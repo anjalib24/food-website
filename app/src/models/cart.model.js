@@ -57,6 +57,7 @@ const CartSchema = new Schema(
       type: Number,
     },
     shipment_delivery_message: {
+      default: "",
       type: String,
     },
   },

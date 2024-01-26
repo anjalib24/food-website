@@ -15,6 +15,7 @@ import {
   getProductById,
   removeItemsFromCart,
   createProductReview,
+  getProductList,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
@@ -62,5 +63,7 @@ router.route("/remove-items-from-cart/:id").get(userAuth, removeItemsFromCart);
 router.route("/create-country").post(createCountry);
 
 router.route("/get-all-country").get(getAllCountry);
+
+router.route("/get-product-list").get(getProductList);
 
 export default router;

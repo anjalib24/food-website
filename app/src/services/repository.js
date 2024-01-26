@@ -36,49 +36,42 @@ export const emptyCartAfterOrder = async (userID) => {
 
 export const addShippingCharge = async (cartData) => {
   try {
-    if (cartData.items?.length > 0) {
+    if (cartData && cartData.items?.length > 0) {
       const fixedShippingPrice = await FixedShippingPrice.findOne();
       const userDetails = await User.findById(cartData.user_id);
-
       const freeZipCodeData = await FreeZipCode.find();
       const benchmarkData = await Benchmark.findOne();
 
       const matchingFreeZipCode = freeZipCodeData.find(
-        (freeZipCode) => freeZipCode.zipCode === userDetails.zipcode
+        (freeZipCode) => freeZipCode.zipCode === userDetails?.zipcode
       );
 
       if (
         matchingFreeZipCode &&
-        userDetails.zipcode === matchingFreeZipCode.zipCode &&
+        userDetails?.zipcode === matchingFreeZipCode.zipCode &&
         benchmarkData &&
         benchmarkData.benchmark2 < cartData.subTotal
       ) {
         if (cartData.shippingCharge > 0) {
           cartData.subTotal -= cartData.shippingCharge;
           cartData.shippingCharge = 0;
-
-          return cartData.save();
         }
         cartData.shipment_delivery_message = "1-2 days";
-        return cartData.save();
       } else if (
         matchingFreeZipCode &&
-        userDetails.zipcode === matchingFreeZipCode.zipCode &&
+        userDetails?.zipcode === matchingFreeZipCode.zipCode &&
         benchmarkData &&
         benchmarkData.benchmark2 > cartData.subTotal
       ) {
-        cartData.shippingCharge = fixedShippingPrice.fixed_shipping_price;
-        cartData.subTotal += fixedShippingPrice.fixed_shipping_price;
+        cartData.shippingCharge = fixedShippingPrice?.fixed_shipping_price || 0;
+        cartData.subTotal += fixedShippingPrice?.fixed_shipping_price || 0;
         cartData.shipment_delivery_message = "1-2 days";
-
-        return cartData.save();
       } else if (
         !matchingFreeZipCode &&
         benchmarkData &&
         benchmarkData.benchmark1 < cartData.subTotal
       ) {
         const getShipmentRateStateData = await ShipmentRateState.find();
-
         const isStateMatch =
           userDetails?.state &&
           getShipmentRateStateData.find(
@@ -88,20 +81,15 @@ export const addShippingCharge = async (cartData) => {
         if (cartData.shippingCharge > 0) {
           cartData.subTotal -= cartData.shippingCharge;
           cartData.shippingCharge = 0;
-
-          return cartData.save();
         }
         cartData.shipment_delivery_message =
-          isStateMatch?.shipment_delivery_message || "3-5days";
-
-        return cartData.save();
+          isStateMatch?.shipment_delivery_message || "3-5 days";
       } else if (
         !matchingFreeZipCode &&
         benchmarkData &&
         benchmarkData.benchmark1 > cartData.subTotal
       ) {
         const getShipmentRateStateData = await ShipmentRateState.find();
-
         const isStateMatch =
           userDetails?.state &&
           getShipmentRateStateData.find(
@@ -113,28 +101,28 @@ export const addShippingCharge = async (cartData) => {
           weight_range: { $gte: totalWeight },
         });
 
-        let getDimention = null;
+        let getDimension = null;
 
         if (packageDimension && packageDimension?.dimensions) {
-          getDimention = await Dimension.findOne({
+          getDimension = await Dimension.findOne({
             dimensions: packageDimension.dimensions,
           });
         }
 
-        if (isStateMatch && getDimention) {
+        if (isStateMatch && getDimension) {
           cartData.shippingCharge =
-            getDimention.shipment_dimension_price +
+            getDimension.shipment_dimension_price +
             isStateMatch.shipment_state_rate;
           cartData.subTotal +=
-            getDimention.shipment_dimension_price +
+            getDimension.shipment_dimension_price +
             isStateMatch.shipment_state_rate;
           cartData.shipment_delivery_message =
-            isStateMatch?.shipment_delivery_message || "3-5days";
-
-          return cartData.save();
+            isStateMatch?.shipment_delivery_message || "3-5 days";
         }
+      }
 
-        return cartData;
+      if (cartData.isModified()) {
+        await cartData.save();
       }
     }
     return cartData;

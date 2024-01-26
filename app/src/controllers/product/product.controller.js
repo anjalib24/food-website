@@ -87,19 +87,73 @@ const getProductById = asyncHandler(async (req, res) => {
   }
 });
 
+const getProductList = asyncHandler(async (req, res) => {
+  let { limit, page, title } = req.query;
+
+  const filter = {};
+
+  if (title) {
+    filter.title = { $regex: new RegExp(title), $options: "i" };
+  }
+
+  limit = parseInt(limit) || 20;
+  page = parseInt(page) || 1;
+
+  const options = {
+    limit,
+    page,
+    lean: true,
+    select:
+      "_id title short_description images price video_url rank best_seller weight",
+    populate: "origin_country",
+  };
+
+  const getProductsList = await Product.paginate(filter, options);
+  const { totalDocs } = getProductsList;
+
+  const getAllData = await Promise.all(
+    getProductsList.docs.map(async (product) => {
+      const productRewiev = await getProductListReviews(product?._id);
+
+      return { product, productRewiev };
+    })
+  );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { ...getAllData, totalDocs },
+        "Get all product list data successfully."
+      )
+    );
+});
+
+const getProductListReviews = async (productId) => {
+  try {
+    const productReviews = await ProductsReview.aggregate([
+      { $match: { product: productId } },
+      {
+        $group: {
+          _id: null,
+          productOverAllReviews: {
+            $avg: "$rating",
+          },
+          allReviewsCount: { $sum: 1 },
+        },
+      },
+    ]);
+    return productReviews;
+  } catch (error) {
+    throw new ApiError(500, error.message || error);
+  }
+};
+
 //get product data -----------
 const getProductData = asyncHandler(async (req, res) => {
   try {
-    let {
-      title,
-      short_description,
-      description,
-      origin_country,
-      expiry_date,
-      promotion_code,
-      rank,
-      best_seller,
-    } = req.query;
+    let { title, origin_country } = req.query;
 
     const price = req.body.price || 0;
     origin_country = origin_country && origin_country?.toLowerCase();
@@ -782,6 +836,7 @@ const emptyCart = asyncHandler(async (req, res) => {
   cart.subTotal = 0;
   cart.subTotalWeight = 0;
   cart.shippingCharge = 0;
+  cart.shipment_delivery_message = "";
   cart.tax = 0;
 
   let data = await cart.save();
@@ -895,19 +950,16 @@ const createProductReview = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Product ID is required!");
     }
 
-    const existingReview = await ProductsReview.findOne({
-      user: req.user._id,
-      product: product_id,
-    });
+    const existingReview = await Product.findById(product_id);
 
-    if (existingReview) {
+    if (!existingReview) {
       return res.status(400).json({
-        error: "User has already submitted a review for this product.",
+        error: "Prodcut not exist.",
       });
     }
 
     const newReview = new ProductsReview({
-      user: req.user._id,
+      user: req?.user?._id,
       product: product_id,
       rating,
       comment,
@@ -949,4 +1001,5 @@ export {
   getProductById,
   removeItemsFromCart,
   createProductReview,
+  getProductList,
 };
