@@ -92,7 +92,8 @@ export const addShippingCharge = async (cartData) => {
           return cartData.save();
         }
         cartData.shipment_delivery_message =
-          isStateMatch?.shipment_delivery_message;
+          isStateMatch?.shipment_delivery_message || "3-5days";
+
         return cartData.save();
       } else if (
         !matchingFreeZipCode &&
@@ -128,7 +129,7 @@ export const addShippingCharge = async (cartData) => {
             getDimention.shipment_dimension_price +
             isStateMatch.shipment_state_rate;
           cartData.shipment_delivery_message =
-            isStateMatch?.shipment_delivery_message;
+            isStateMatch?.shipment_delivery_message || "3-5days";
 
           return cartData.save();
         }

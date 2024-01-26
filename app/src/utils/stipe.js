@@ -56,6 +56,7 @@ const orderWithStripeCheckOutPayment = async (
       mode: "payment",
       success_url: "https://ethnicfoods.com/paymentsucess",
       cancel_url: "https://ethnicfoods.com/paymentcancle",
+
     });
 
     return stripeData;
