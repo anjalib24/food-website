@@ -12,10 +12,13 @@ import HeroSection from "./HeroSection";
 import AboutSection from "./AboutSection";
 import Loader from "@/components/Loader";
 import Logo from "./Logo";
+import { useAdminState } from "@/contexts/AdminContext";
+import Alert from "@/router/Shop/Alert";
 
 const Page = () => {
   const match = useRouteMatch();
   const [data, setData] = useState(null);
+  const {  alert } = useAdminState();
 
   useEffect(() => {
     fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views")
@@ -36,6 +39,9 @@ const Page = () => {
   if (!data) return <Loader />;
 
   return (
+    <>
+    {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
+
     <Switch>
       <Route path={match.path + "/new"}>{/* <AddProduct /> */}</Route>
 
@@ -96,6 +102,7 @@ const Page = () => {
         </Accordion>
       </Route>
     </Switch>
+    </>
   );
 };
 

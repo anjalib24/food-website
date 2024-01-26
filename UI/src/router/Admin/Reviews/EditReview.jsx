@@ -11,11 +11,11 @@ import {
   Paper,
   Typography,
   Grid,
-} from "@mui/material";
+} from "@mui/material";    
 
 const EditReview = () => {
   const { id } = useParams();
-  const { reviews, setReviews } = useAdminState();
+  const { reviews, setReviews ,setAlert} = useAdminState();
   const [review, setReview] = useState(null);
   const [preview, setPreview] = useState(null);
   const [editFields, setEditFields] = useState([]);
@@ -88,7 +88,6 @@ const EditReview = () => {
           body: formData,
         }
       );
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -103,10 +102,11 @@ const EditReview = () => {
           return review;
         });
       });
-
+      setAlert({errType:"success", errMsg:"Edit Successfully", isError: true});
       history.push("/admin/reviews");
     } catch (error) {
       console.error(error);
+      setAlert({errType:"danger", errMsg:"something went wrong", isError: true});
     }
   };
   const handleImageChange = (e) => {

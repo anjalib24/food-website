@@ -13,12 +13,15 @@ import Edittax from './Edittax';
 import Addtax from './Addtax';
 import Loader from '@/components/Loader';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import Alert from '@/router/Shop/Alert';
+import { useAdminState } from '@/contexts/AdminContext';
 
 const Page = () => {
   const match = useRouteMatch();
   const [taxes, setTaxes] = useState([]);
   const [isLoading, setIsLoading] = useState(true); 
   const location = useLocation();
+  const {  alert } = useAdminState();
 
   useEffect(() => {
     const fetchTaxes = () => {
@@ -46,6 +49,7 @@ const Page = () => {
 
   return (
     <>
+    {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
       <Switch>
         <Route path={match.path + "/add"}>
           <Addtax />

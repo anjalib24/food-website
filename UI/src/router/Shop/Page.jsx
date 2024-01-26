@@ -18,7 +18,6 @@ import WithAuth from "@/components/WithAuth";
 const Page = () => {
   return (
     <>
-
     <WithAuth>
     <Switch>
       <ProductContexts>

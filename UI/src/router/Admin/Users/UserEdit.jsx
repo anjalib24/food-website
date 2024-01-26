@@ -1,3 +1,4 @@
+import { useAdminState } from '@/contexts/AdminContext';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -8,6 +9,8 @@ const UserEdit = () => {
  const [isEditable, setIsEditable] = useState(false);
  const location = useLocation();
  const orderDetails = location.state?.detailData;
+ const { setAlert } = useAdminState();
+
 
  useEffect(() => {
    if (orderDetails) {
@@ -33,6 +36,7 @@ const UserEdit = () => {
            'Authorization': `Bearer ${token}`,
          },
        });
+       setAlert({ errType: "success", errMsg: "update Sucessfully", isError: true });
        history.push("/admin/users");
 
      } catch (error) {

@@ -26,8 +26,10 @@ export const ProductContexts = ({ children }) => {
       if (token) {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/get-cart', {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          mode: 'cors'
         });
         const cartItems = response?.data?.data?.items;
         const isItemInCart = cartItems?.some(cartItem => cartItem.productId === item._id);
@@ -45,8 +47,10 @@ export const ProductContexts = ({ children }) => {
             quantity: 1,
           }], {
             headers: {
-              'Authorization': `Bearer ${token}`
-            }
+              'Authorization': `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            mode: 'cors'
           });
           setCartCount(prevCount => prevCount + 1);
           setShowAlert(true);

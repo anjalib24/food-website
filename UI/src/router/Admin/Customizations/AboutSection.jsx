@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Button, TextField, Box } from "@mui/material";
 import Editor from "@/components/Editor";
+import { useAdminState } from "@/contexts/AdminContext";
 
 const AboutSection = ({ data }) => {
   const [about, setAbout] = useState(data.text);
   const [video, setVideo] = useState(null);
   const [image, setImage] = useState(null);
+  const {setAlert } = useAdminState();
 
   const handleMediaChange = (e, func) => {
     func(e.target.files[0]);
@@ -36,10 +38,11 @@ const AboutSection = ({ data }) => {
         return response.json();
       })
       .then((data) => {
-        console.log("Success:", data);
+        setAlert({errType:"success", errMsg:"successfully submit", isError: true});
       })
       .catch((error) => {
         console.error("Error:", error);
+        setAlert({errType:"danger", errMsg:"something went wrong", isError: true});
       });
   };
   return (

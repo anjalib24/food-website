@@ -13,6 +13,8 @@ const EditBlog = () => {
   const [preview, setPreview] = useState(null);
   const [editFields, setEditFields] = useState([]);
   const history = useHistory();
+  const {setAlert} = useAdminState();
+
 
   const addToEditFields = (field) => {
     if (!editFields.includes(field)) setEditFields([...editFields, field]);
@@ -81,7 +83,7 @@ const EditBlog = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const { data } = await response.json();
-
+      setAlert({errType:"success", errMsg:"Edit Sucessfully", isError: true});
       const editedBlog = data.blog.find((blog) => blog._id === id);
       setBlogs((blogs) => {
         const index = blogs.findIndex((blog) => blog._id === id);

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Grid, Paper, Box, Button } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
-
+import Alert from "../../Shop/Alert"
 import Loader from "@/components/Loader";
+import { useAdminState } from "@/contexts/AdminContext";
 
 const Page = () => {
   const match = useRouteMatch();
   const [bestSellers, setBestSellers] = useState(null);
+  const {setAlert , alert} = useAdminState();
 
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -16,26 +18,29 @@ const Page = () => {
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        const result = await fetch(
-          import.meta.env.VITE_APP_BASE_API +
-            "/api/v1/products/get-best-seller-product"
-        );
-
-        if (!result.ok) {
-          throw new Error(`HTTP error! status: ${result.status}`);
-        }
-
-        const { data } = await result.json();
-        setBestSellers(data);
-      } catch (e) {
-        console.error("Error:", e);
-      }
+       try {
+         const result = await fetch(
+           import.meta.env.VITE_APP_BASE_API +
+             "/api/v1/products/get-best-seller-product",
+           {
+             headers: {
+               "Content-Type": "application/json"
+             },
+             mode: 'cors'
+           }
+         );
+         if (!result.ok) {
+           throw new Error(`HTTP error! status: ${result.status}`);
+         }
+         const { data } = await result.json();
+         setBestSellers(data);
+       } catch (e) {
+         console.error("Error:", e);
+       }
     }
-
+   
     fetchData();
-  }, []);
-
+   }, []);
   function rmFromBestSeller(id) {
     fetch(
       `${
@@ -61,6 +66,7 @@ const Page = () => {
         setBestSellers((prevProducts) =>
           prevProducts.filter((product) => product._id !== id)
         );
+        setAlert({errType:"success", errMsg:"Remove Sucessfully", isError: true});
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -69,7 +75,9 @@ const Page = () => {
 
   if (!bestSellers) return <Loader />;
   return (
+    
     <>
+        {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
       <div className="w-full py-2 flex justify-between items-center flex-row mb-3">
         <div>
           <h1 className="text-3xl font-medium">Best seller products</h1>

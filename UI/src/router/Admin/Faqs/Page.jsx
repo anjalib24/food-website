@@ -18,10 +18,11 @@ import {
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import AddReview from "./AddFAQs";
+import Alert from "@/router/Shop/Alert";
 
 const Page = () => {
   const { faqs, setFaqs } = useAdminState();
-
+  const {setAlert,alert } = useAdminState();
   const match = useRouteMatch();
 
   useEffect(() => {
@@ -54,6 +55,7 @@ const Page = () => {
       }
     )
       .then((response) => {
+        setAlert({errType:"danger", errMsg:"Delete Sucessfully", isError: true});
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -70,6 +72,9 @@ const Page = () => {
   if (!faqs) return <Loader />;
 
   return (
+    <>
+    {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
+
     <Switch>
       <Route path={match.path + "/new"}>
         <AddReview />
@@ -122,6 +127,7 @@ const Page = () => {
         ))}
       </Route>
     </Switch>
+    </>
   );
 };
 

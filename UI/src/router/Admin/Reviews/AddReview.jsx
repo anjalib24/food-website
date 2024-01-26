@@ -1,3 +1,4 @@
+import { useAdminState } from "@/contexts/AdminContext";
 import {
   Button,
   TextField,
@@ -17,7 +18,7 @@ const AddReview = () => {
     reviews_image: null,
     age: "",
   });
-
+  const {setAlert } = useAdminState();
   const [preview, setPreview] = useState(null);
 
   const handleImageChange = (event) => {
@@ -59,8 +60,16 @@ const AddReview = () => {
           body: formData,
         }
       );
-
+      setReview({
+        name: "",
+        rating: 0,
+        reviews: "",
+        reviews_image: null,
+        age: "",
+      })
       if (!response.ok) {
+        const data = await response.json();
+        setAlert({errType:"danger", errMsg:data?.error, isError: true});    
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 

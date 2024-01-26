@@ -40,25 +40,22 @@ export const Home = () => {
   };
 
    const getcart = async () => {
-      const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/get-cart', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+    const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/get-cart', {
+      headers: {
+         'Authorization': `Bearer ${token}`
+      },
+      mode: 'cors'
+     });
       setCartCount(response?.data?.data?.items?.length)
     }
-  
-
 
   if (!token) {
     const cart = JSON.parse(localStorage.getItem('cart'));
     setCartCount(cart?.length || 0)
   }
   if (loader) return <Loader/>;
-
   return (
     <>
-
       <Header />
       <Shopnow herosection={show?.hero_section} />
       <BestSellers />

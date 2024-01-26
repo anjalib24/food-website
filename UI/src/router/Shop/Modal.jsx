@@ -18,14 +18,12 @@ const Modal = ({ showModal, setShowModal, data }) => {
 
   return (
     <div className={`modal fade ${showModal ? 'show' : ''}`} id="exploreModal" tabIndex="-1" role="dialog" aria-labelledby="exploreModalLabel" aria-hidden={!showModal}>
-
       <div className="modal-dialog modal-dialog-centered" role="document">
         <div className="modal-content">
           <div className="modal-header">
             <button type="button" className="close" data-dismiss="modal" onClick={() => setShowModal(false)} aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-
           </div>
           <div className="modal-body">
 

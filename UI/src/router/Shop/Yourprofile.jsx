@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import { Button } from 'react-bootstrap';
 import Header from './Header';
 import { Footer } from './Footer';
 import { useHistory } from 'react-router-dom';
@@ -56,8 +55,10 @@ const Yourprofile = () => {
     setIsLoading(true); // Start loading
     axios.get(import.meta.env.VITE_APP_BASE_API+"/api/v1/users/get-current", {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      mode: 'cors'
     })
       .then(response => {
         setUserData(response?.data?.data);
@@ -66,13 +67,15 @@ const Yourprofile = () => {
         console.error('Error fetching data: ', error);
       })
       .finally(() => {
-        setIsLoading(false); // Stop loading after user data is fetched
+        setIsLoading(false); 
       });
 
     axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/get-user-order-history', {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      mode: 'cors'
     })
       .then(response => {
         setOrderHistory(response?.data?.data);
@@ -81,7 +84,7 @@ const Yourprofile = () => {
         console.error('Error fetching order history: ', error);
       })
       .finally(() => {
-        setIsLoading(false); // Stop loading after order history is fetched
+        setIsLoading(false); 
       });
   }, []);
 
