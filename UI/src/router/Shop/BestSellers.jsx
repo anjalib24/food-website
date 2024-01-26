@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./style.css"
-import ProductCard from './ProductCard';
 import Slider from 'react-slick';
 import axios from 'axios';
 import png360 from "./images/360.png"
@@ -14,8 +13,6 @@ import { Stack } from 'react-bootstrap'
 import { Rating } from '@mui/material'
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-
-
 
 const BestSellers = () => {
   const [data, setData] = useState(null);
@@ -34,11 +31,13 @@ const BestSellers = () => {
         const response = await axios.get(
           import.meta.env.VITE_APP_BASE_API+"/api/v1/products/get-best-seller-product",
           {
-            headers: {
-              "Content-Type": "application/json"
-            }
+             headers: {
+               "Content-Type": "application/json"
+             },
+             mode: 'cors'
           }
-        );
+         );
+         
         const bestSellers = response.data.data
         setData(bestSellers);
       } catch (error) {
@@ -55,7 +54,7 @@ const BestSellers = () => {
     arrows: true,
     infinite: false,
     slidesToShow: 5,
-    slidesToScroll: 1,
+    slidesToScroll: 5,
     swipe: true,
     draggable: true,
     swipeToSlide: true,
@@ -119,7 +118,6 @@ const BestSellers = () => {
                   {data.map((item, key) => {
                     return (
                       <>
-
                         <div style={{
                           marginRight: '5px',
                           marginLeft: "5px"

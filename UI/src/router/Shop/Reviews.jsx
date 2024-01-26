@@ -6,14 +6,6 @@ import './style.css';
 import defaultpersonimg from "./images/defaultperson.png"
 
 
-
-const Loader = () => (
-  <div className="loader-container">
-    <div className="loader"></div>
-  </div>
-);
-
-
 const Reviews = (props) => {
   const slickRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -90,8 +82,6 @@ const Reviews = (props) => {
                   // maxWidth:"275px"
                 }}>
                   <div style={{margin:"auto", maxWidth:"275px"}}>
-
-                 
                   <div id="review_card">
                     <div id="card_top" >
                       <div id="profile" className="">

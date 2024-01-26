@@ -15,7 +15,6 @@ const UserOrderDetails = () => {
   const [productId,setroductId] = useState()
 
   let subtotalofproduct = orderDetails.productDetails.reduce((total, item) => total + item.price, 0);
-
   const handlereviewmodal = (item) => {
     setReviewModal(true);
     setroductId(item._id)

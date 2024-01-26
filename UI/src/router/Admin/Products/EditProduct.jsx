@@ -16,15 +16,15 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouteMatch } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import Alert from "../../Shop/Alert"
 
 const EditProduct = () => {
   const { id } = useParams();
-  const { setProducts, products, countries, categories } = useAdminState();
+  const { setProducts, products, countries, categories, setAlert } = useAdminState();
   const [product, setProduct] = useState(null);
   const [editedFields, setEditedFields] = useState([]);
-
   const history = useHistory();
-
+ 
   useEffect(() => {
     const prod = products.find((product) => product._id === id);
     if (prod) {
@@ -113,7 +113,7 @@ const EditProduct = () => {
           product.category = categories.find(
             (category) => category._id === product.categoryID
           );
-
+          setAlert({errType:"success", errMsg:"Edit Sucessfully", isError: true});
         setProducts((products) => {
           return products.map((prod) => {
             if (prod._id === data._id) {
@@ -122,7 +122,6 @@ const EditProduct = () => {
             return prod;
           });
         });
-
         history.push("/admin/products");
       });
   };
@@ -131,6 +130,7 @@ const EditProduct = () => {
 
   return (
     <>
+
       <Paper className="w-full p-4 space-y-1">
         <Typography variant="h5" gutterBottom marginBottom={"20px"}>
           Create New Products

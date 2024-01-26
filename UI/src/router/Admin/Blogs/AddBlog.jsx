@@ -1,4 +1,5 @@
 import Editor from "@/components/Editor";
+import { useAdminState } from "@/contexts/AdminContext";
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
@@ -8,7 +9,7 @@ const AddBlog = () => {
     content: "",
     published: true,
   });
-
+  const {setAlert} = useAdminState();
   const [preview, setPreview] = useState(null);
 
   const handleImageChange = (event) => {
@@ -39,11 +40,17 @@ const AddBlog = () => {
           body: formData,
         }
       );
-
+      setAlert({errType:"success", errMsg:"Add Sucessfully", isError: true});
       if (!response.ok) {
+        const data = await response.json();
+        setAlert({errType:"danger", errMsg:data?.error, isError: true});  
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+      setBlog({
+        blog_image: null,
+        content: "",
+        published: true,
+      });
       const data = await response.json();
     } catch (error) {
       console.error(error);

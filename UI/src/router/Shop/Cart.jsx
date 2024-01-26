@@ -47,8 +47,10 @@ const Cart = () => {
       if (token) {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/get-cart', {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          mode:"cors"
         });
         setCartCount(response?.data?.data?.items.length)
         setCartId(response?.data?.data?._id)
@@ -114,8 +116,10 @@ const Cart = () => {
           quantity: incordec,
         }], {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          mode :"cors"
         });
         await fetchDataFromApi();
       } catch (error) {
@@ -138,8 +142,10 @@ const Cart = () => {
         const productId = cartData.filteredData[index].product._id; // replace this line with your actual product id
         await axios.get(import.meta.env.VITE_APP_BASE_API + `/api/v1/products/remove-items-from-cart/${productId}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          mode:"cors"
         });
         showAlert("danger", "Product Delete Sucessfully");
         await fetchDataFromApi(); // Wait for fetchDataFromApi to finish
@@ -174,8 +180,10 @@ const Cart = () => {
       const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
       const response = await axios.post(import.meta.env.VITE_APP_BASE_API + `/api/v1/order/create-order/${cartId}`, {}, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        mode:"core"
       });
       const sessionID = response.data?.data?.sessionID;
       const result = await stripe.redirectToCheckout({

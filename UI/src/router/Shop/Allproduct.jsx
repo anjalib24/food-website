@@ -26,7 +26,7 @@ export const Allproduct = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(32);
   const [totalproduct, setTotalproduct] = useState()
-  const { handleaddtocard, showvideomodal, videodata, setVideoData, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
+  const { handleaddtocard, showvideomodal, videodata, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -44,6 +44,7 @@ export const Allproduct = () => {
     };
     fetchDataFromApi();
   }, [currentPage, itemsPerPage]);
+  
   useEffect(() => {
     if (data !== null) {
       setLoading(false);

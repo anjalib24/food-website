@@ -20,6 +20,21 @@ export const AdminContext = ({ children }) => {
   const [faqs, setFaqs] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [blogs, setBlogs] = useState([]);
+  const [alert, setAlert] = useState({isError: false, errMsg: '', errType: ''});
+
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
+
+  useEffect(()=>{
+    if(!alert.isError) return
+    setTimeout(() => {
+      setAlert({isError: false, errMsg: '', errType: ''})
+    }, 5000);
+  },[alert])
 
   const setMode = (e) => {
     setCurrentMode(e.target.value);
@@ -97,6 +112,8 @@ export const AdminContext = ({ children }) => {
         setReviews,
         blogs,
         setBlogs,
+        setAlert,
+        alert
       }}
     >
       {children}

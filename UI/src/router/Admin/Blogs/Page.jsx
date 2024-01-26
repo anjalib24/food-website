@@ -16,58 +16,71 @@ import Button from "@mui/material/Button";
 import DOMPurify from "dompurify";
 import AddBlog from "./AddBlog";
 import EditBlog from "./EditBlog";
+import Alert from "@/router/Shop/Alert";
 
 const Page = () => {
   const { blogs, setBlogs } = useAdminState();
-
+  const {setAlert,alert } = useAdminState();
   const match = useRouteMatch();
 
   useEffect(() => {
     const fetchReviews = () => {
-      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setBlogs(data.data[0].blog);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    };
+      fetch(import.meta.env.VITE_APP_BASE_API + "/api/v1/views/get-views", {
+         headers: {
+           "Content-Type": "application/json"
+         },
+         mode: 'cors'
+      })
+         .then((response) => {
+           if (!response.ok) {
+             throw new Error(`HTTP error! status: ${response.status}`);
+           }
+           return response.json();
+         })
+         .then((data) => {
+           setBlogs(data.data[0].blog);
+         })
+         .catch((error) => {
+           console.error("Error:", error);
+         });
+     };
 
     fetchReviews();
   }, []);
 
   const handleDelete = (id) => {
     fetch(
-      import.meta.env.VITE_APP_BASE_API +
-        "/api/v1/views/delete-blog-views/" +
-        id,
-      {
-        method: "DELETE",
-      }
+       import.meta.env.VITE_APP_BASE_API +
+         "/api/v1/views/delete-blog-views/" +
+         id,
+       {
+         method: "DELETE",
+         headers: {
+           "Content-Type": "application/json"
+         },
+         mode: 'cors'
+       }
     )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(({ data }) => {
-        setBlogs(blogs.filter((blog) => blog._id !== id));
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+       .then((response) => {
+         setAlert({errType:"danger", errMsg:"Delete Sucessfully", isError: true});
+         if (!response.ok) {
+           throw new Error(`HTTP error! status: ${response.status}`);
+         }
+         return response.json();
+       })
+       .then(({ data }) => {
+         setBlogs(blogs.filter((blog) => blog._id !== id));
+       })
+       .catch((error) => {
+         console.error("Error:", error);
+       });
+   };
 
   if (!blogs) return <Loader />;
 
   return (
+    <>
+    {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
     <Switch>
       <Route path={match.path + "/new"}>
         <AddBlog />
@@ -160,6 +173,7 @@ const Page = () => {
         </Grid>
       </Route>
     </Switch>
+    </>
   );
 };
 

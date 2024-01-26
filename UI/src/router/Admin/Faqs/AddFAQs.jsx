@@ -7,6 +7,7 @@ const AddFaqs = () => {
     question: "",
     answer: "",
   });
+  const {setAlert} = useAdminState();
 
   const handleChange = (event) => {
     // complete this handler
@@ -33,21 +34,22 @@ const AddFaqs = () => {
           body: JSON.stringify(faq),
         }
       );
-
       if (!response.ok) {
+        const data = await response.json();
+        setAlert({errType:"danger", errMsg:data?.error, isError: true});    
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const { data } = await response.json();
-
+      setAlert({errType:"success", errMsg:"add Sucessfully", isError: true});
       setFaqs((prev) => [...prev, data.faq.at(-1)]);
-
       setFaq({
         question: "",
         answer: "",
       });
     } catch (error) {
       console.error(error);
+      setAlert({errType:"danger", errMsg:"Something went wrong", isError: true});
     }
   };
 

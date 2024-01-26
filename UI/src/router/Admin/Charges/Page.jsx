@@ -1,3 +1,5 @@
+import { useAdminState } from "@/contexts/AdminContext";
+import Alert from "@/router/Shop/Alert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -13,6 +15,8 @@ const Page = () => {
   const [benchmark1, setBenchmark1] = useState("");
   const [benchmark2, setBenchmark2] = useState("");
   const [fixedShippingCharge, setFixedShippingCharge] = useState("");
+  const {setAlert,alert } = useAdminState();
+
 
 
   useEffect(() => {
@@ -47,6 +51,7 @@ const Page = () => {
       .then(({ data }) => {
         setBenchmark1(data.benchmark1);
         setBenchmark2(data.benchmark2);
+        setAlert({errType:"success", errMsg:"update Sucessfully", isError: true});
       })
       .catch((error) => {
         console.error("Error updating benchmarks:", error);
@@ -66,6 +71,7 @@ const Page = () => {
       .then((response) => response.json())
       .then(({ data }) => {
         setFixedShippingCharge(data.fixed_shipping_price);
+        setAlert({errType:"success", errMsg:"update Sucessfully", isError: true});
       })
       .catch((error) => {
         console.error("Error updating fixed shipping charge:", error);
@@ -73,6 +79,8 @@ const Page = () => {
   };
 
   return (
+    <>
+    {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
     <Box display="flex" flexDirection="column" rowGap={4}>
       <Paper style={{ width: "100%", padding: "16px" }}>
         <Typography variant="h5">Benchmark 1</Typography>
@@ -144,6 +152,7 @@ const Page = () => {
       </Paper>
 
     </Box>
+    </>
   );
 };
 

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Button, TextField, Box } from "@mui/material";
+import { useAdminState } from "@/contexts/AdminContext";
 
 const Logo = ({ data }) => {
   const [logo, setLogo] = useState(null);
-
+  const {setAlert } = useAdminState();
   const handleLogoChange = (e) => {
     setLogo(e.target.files[0]);
   };
@@ -11,9 +12,8 @@ const Logo = ({ data }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Check if logo is selected
     if (!logo) {
-      alert("Please select a logo");
+      setAlert({errType:"danger", errMsg:"Please Select a Logo", isError: true});
       return;
     }
 
@@ -35,9 +35,12 @@ const Logo = ({ data }) => {
       })
       .then((data) => {
         console.log("Success:", data);
+        setAlert({errType:"success", errMsg:"Logo updated successfully", isError: true});
+
       })
       .catch((error) => {
         console.error("Error:", error);
+        setAlert({errType:"danger", errMsg:"Something went Wrong", isError: true});
       });
     // Handle form submission here
   };

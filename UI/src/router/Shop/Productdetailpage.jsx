@@ -19,8 +19,10 @@ const Productdetailpage = () => {
   const [isLoading, setIsLoading] = useState(false); 
   const [selectedImage, setSelectedImage] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
-  const { handleaddtocard, showAlert, setShowAlert, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart } = useProductState();
+  const { handleaddtocard, showAlert, setShowAlert, alertmsg } = useProductState();
   const { id } = useParams();
+  const {createMarkup } = useProductState();
+
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -38,11 +40,16 @@ const Productdetailpage = () => {
     setIsLoading(true); 
     const fetchProduct = async () => {
       try {
-         const response = await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/get-single-product/${id}`);
-         setProduct(response.data.data);
-      } catch (error) {
-         console.error('Error fetching product:', error);
-      } finally {
+        const response = await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/get-single-product/${id}`, {
+           headers: {
+             "Content-Type": "application/json"
+           },
+           mode: 'cors'
+        });
+        setProduct(response.data.data);
+       } catch (error) {
+        console.error('Error fetching product:', error);
+       }finally {
          setIsLoading(false); 
       }
      };
@@ -108,7 +115,8 @@ const Productdetailpage = () => {
               <div>
                 <p>Price: <h3>{formatter.format(product?.price)}</h3> </p>
               </div>
-              <p>{product?.description}</p>
+              <p dangerouslySetInnerHTML={createMarkup(product?.description)}></p>
+            
               <Button style={{ backgroundColor: 'green' }}
                 onClick={() => handleaddtocard(product)}
               >Add to cart</Button>

@@ -2,7 +2,6 @@ import Loader from "@/components/Loader";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Link, Route, useRouteMatch, Switch } from "react-router-dom";
-
 import {
   Avatar,
   Box,
@@ -16,9 +15,11 @@ import Button from "@mui/material/Button";
 import AddReview from "./AddReview";
 import EditReview from "./EditReview";
 import { useAdminState } from "@/contexts/AdminContext";
+import Alert from "@/router/Shop/Alert";
 
 const Page = () => {
   const { reviews, setReviews } = useAdminState(null);
+  const {setAlert,alert } = useAdminState();
   const match = useRouteMatch();
 
   useEffect(() => {
@@ -42,7 +43,6 @@ const Page = () => {
   }, []);
 
   const handleDelete = (id) => {
-    // make a delete request at http://127.0.0.1:8000/api/v1/views/delete-reviews-views/:id
     fetch(
       `${
         import.meta.env.VITE_APP_BASE_API
@@ -59,15 +59,19 @@ const Page = () => {
       })
       .then((data) => {
         setReviews(reviews.filter((review) => review._id !== id));
+        setAlert({errType:"danger", errMsg:"Delete Sucessfully", isError: true});
       })
       .catch((error) => {
         console.error("Error:", error);
+        setAlert({errType:"danger", errMsg:"something went wrong", isError: true});
       });
   };
 
   if (!reviews) return <Loader />;
 
   return (
+    <>
+    {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
     <Switch>
       <Route path={match.path + "/new"}>
         <AddReview />
@@ -159,6 +163,7 @@ const Page = () => {
         </Grid>
       </Route>
     </Switch>
+    </>
   );
 };
 

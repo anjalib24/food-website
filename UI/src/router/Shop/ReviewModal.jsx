@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { FaStar } from "react-icons/fa";
 import axios from 'axios';
-import $ from 'jquery';
 import Alert from './Alert';
 
 
@@ -49,11 +48,12 @@ const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
             const response = await axios.post(`/api/api/v1/products/create-product-review/${productId}`, {
                 rating: rate,
                 comment: comment
-
             }, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                mode: 'cors'
             });
             showAlert('success', 'Review submitted successfully');
 

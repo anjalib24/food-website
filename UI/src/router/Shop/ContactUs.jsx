@@ -22,8 +22,13 @@ const ContactUs = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(  import.meta.env.VITE_APP_BASE_API+'/api/v1/contact-us', formValues);
-      setFormValues({
+      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/contact-us', formValues, {
+        headers: {
+           "Content-Type": "application/json"
+        },
+        mode: 'cors'
+       });    
+         setFormValues({
         name: '',
         email: '',
         subject: '',
