@@ -126,7 +126,7 @@ const getProductList = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { ...getAllData, totalDocs },
+        { getAllData, totalDocs },
         "Get all product list data successfully."
       )
     );
