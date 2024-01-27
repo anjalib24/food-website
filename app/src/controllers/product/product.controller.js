@@ -9,6 +9,7 @@ import {
   addItem,
   addShippingCharge,
   calculateProductReviews,
+  getProductListReviews,
 } from "../../services/repository.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
@@ -30,12 +31,13 @@ const getBestSeller = asyncHandler(async (req, res) => {
       best_seller: true,
     }).populate("origin_country");
 
-    const bestsellerData = [];
+    const bestsellerData = await Promise.all(
+      getBestsellerData.map(async (product) => {
+        const productRewiev = await getProductListReviews(product?._id);
 
-    for (const data of getBestsellerData) {
-      const reviewData = await calculateProductReviews(data?._id);
-      bestsellerData.push({ ...data.toObject(), ...reviewData });
-    }
+        return { product, productRewiev };
+      })
+    );
 
     return res
       .status(200)
@@ -129,26 +131,6 @@ const getProductList = asyncHandler(async (req, res) => {
       )
     );
 });
-
-const getProductListReviews = async (productId) => {
-  try {
-    const productReviews = await ProductsReview.aggregate([
-      { $match: { product: productId } },
-      {
-        $group: {
-          _id: null,
-          productOverAllReviews: {
-            $avg: "$rating",
-          },
-          allReviewsCount: { $sum: 1 },
-        },
-      },
-    ]);
-    return productReviews;
-  } catch (error) {
-    throw new ApiError(500, error.message || error);
-  }
-};
 
 //get product data -----------
 const getProductData = asyncHandler(async (req, res) => {
@@ -817,13 +799,19 @@ const getCart = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Unauthorized user!");
   }
 
-  let cart = await cartRepository(req?.user?._id);
+  const cart = await Cart.find({ user_id: req?.user?._id }).populate({
+    path: "items.productId",
+    model: "Product",
+    select:
+      "_id title short_description images price video_url rank best_seller weight",
+  });
+
   if (!cart) {
     return res.status(200).json(new ApiResponse(200, {}, "Cart not Found!"));
   }
   return res
     .status(200)
-    .json(new ApiResponse(200, cart, "Items added successful"));
+    .json(new ApiResponse(200, cart, "Get cart successful"));
 });
 
 const emptyCart = asyncHandler(async (req, res) => {

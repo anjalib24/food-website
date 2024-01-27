@@ -208,3 +208,23 @@ export const calculateProductReviews = async (productId) => {
     );
   }
 };
+
+export const getProductListReviews = async (productId) => {
+  try {
+    const productReviews = await ProductsReview.aggregate([
+      { $match: { product: productId } },
+      {
+        $group: {
+          _id: null,
+          productOverAllReviews: {
+            $avg: "$rating",
+          },
+          allReviewsCount: { $sum: 1 },
+        },
+      },
+    ]);
+    return productReviews;
+  } catch (error) {
+    throw new ApiError(500, error.message || error);
+  }
+};
