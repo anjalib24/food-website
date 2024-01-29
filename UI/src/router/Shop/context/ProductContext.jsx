@@ -43,7 +43,7 @@ export const ProductContexts = ({ children }) => {
         } else {
           setAlertMsg("Product added to the cart");
           const response = await axios.post(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/add-to-cart', [{
-            productId: item._id,
+            productId: item.product._id,
             quantity: 1,
           }], {
             headers: {
@@ -61,7 +61,7 @@ export const ProductContexts = ({ children }) => {
         }
       } else {
         const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
-        const isItemInCart = existingCart.some((cartItem) => cartItem._id === item._id);
+        const isItemInCart = existingCart.some((cartItem) => cartItem.product._id === item.product._id);
         if (!isItemInCart) {
           const newCart = [...existingCart, item];
           setCartCount(prevCount => prevCount + 1);
@@ -95,11 +95,11 @@ export const ProductContexts = ({ children }) => {
     setShow360Modal(true);
   };
   const handleSocialmedia = (item) => {
-    setProductId(item._id)
+    setProductId(item.product._id)
     setShowSocial(true);
   };
   const handleVideomodal = (item) => {
-    setVideoData(item);
+    setVideoData(item.product);
     setShowvideomodal(true);
   };
   return (

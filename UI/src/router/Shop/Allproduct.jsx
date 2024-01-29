@@ -16,48 +16,51 @@ import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
 import { Pagination } from '@mui/material'
 import Loader from '@/components/Loader'
+import { slice } from 'lodash'
 
-export const Allproduct = () => {
+
+export const Allproduct = ({ getProduct }) => {
   const history = useHistory();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
   const [data, setData] = useState(null);
   const [selectedOrigin, setSelectedOrigin] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(32);
-  const [totalproduct, setTotalproduct] = useState()
   const { handleaddtocard, showvideomodal, videodata, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
+
+  const currentItems = data;
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
         setLoading(true);
-        const result = await fetchData(`products/get-product?page=${currentPage}&limit=${itemsPerPage}`);
-        setData(result.data.docs);
-        setTotalproduct(result?.data?.totalDocs);
+        const result = await fetchData(`products/get-product-list?page=${currentPage}&limit=${itemsPerPage}`);
+        setData(prevData => {
+          return currentPage === 1 ? result?.data?.product : [...prevData, ...result.data.product];
+        });
+        setTotalItems(result?.data?.totalDocs);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+        setIsLoadingMore(false);
       }
     };
     fetchDataFromApi();
-  }, [currentPage, itemsPerPage]);
-  
+  }, [currentPage]);
+
   useEffect(() => {
     if (data !== null) {
       setLoading(false);
     }
   }, [data]);
 
-  const totalPages = Math.ceil(totalproduct / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  let endIndex = Math.min(startIndex + itemsPerPage);
-  if (endIndex > data?.length) {
-    endIndex = data.length;
-  }
-  const currentItems = data?.slice(0, 32);
 
   const handleOriginCheckboxChange = (value) => {
     setSelectedOrigin((prevSelected) => {
@@ -91,9 +94,39 @@ export const Allproduct = () => {
       return '+70$';
     }
   };
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const result = await fetchData(`products/get-product-list?title=${searchInput}`);
+      setData(result.data.product)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+
+  const loadMore = () => {
+    setIsLoadingMore(true);
+    setCurrentPage(prevPage => prevPage + 1);
+
+    // Scroll to the top of the container when loading more
+    const container = document.getElementById('yourContainerId'); // Replace 'yourContainerId' with the actual ID of the container
+    if (container) {
+      container.scrollTo({
+        top: 0,
+        behavior: 'smooth', // You can use 'auto' or 'smooth' for the scrolling behavior
+      });
+    }
+  };
+  const handleClearSearch = async () => {
+    setSearchInput('');
+    const result = await fetchData(`products/get-product-list?page=${currentPage}&limit=${itemsPerPage}`);
+    setData(result.data.product);
+   };
 
   return (
     <>
+    {loading &&<Loader/>}
       {showAlert && <Alert type="success" message={alertmsg} />}
       {showsocial && <Socialmedia productId={productId} />}
       {show360Modal && <Modal360 data={selectedItem} />}
@@ -182,22 +215,25 @@ export const Allproduct = () => {
       <div className='container'>
         <section id="search" className="mt-5">
           <div className="col-md-12 pr-0 pl-0 mb-5" >
-            <form id="out" className="navbar-form navbar-left" action="/action_page.php">
-              <div className="input-group border rounded-pill">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
-                {/* <div className="input-group-btn">
-                  <button className="btn btn border rounded-end " type="submit">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                  </button>
-                </div> */}
-              </div>
-            </form>
+          <form id="out" className="navbar-form navbar-left" onSubmit={handleFormSubmit}>
+ <div className="input-group border rounded-pill">
+    <input
+      type="text"
+      className="form-control"
+      placeholder="Search"
+      value={searchInput}
+      onChange={(e) => setSearchInput(e.target.value)}
+    />
+    <div className="input-group-btn">
+      <button className="btn btn border rounded-end " type="submit">
+        <i className="fa-solid fa-magnifying-glass"></i>
+      </button>
+      <button className="btn btn border rounded-end " type="button" onClick={handleClearSearch}>
+ <i className="fa-solid fa-times"></i>
+</button>
+    </div>
+ </div>
+</form>
           </div>
           <div className="row">
             <div id="checkboxfilter" className="col-md-2 align-items-centerss ">
@@ -284,135 +320,107 @@ export const Allproduct = () => {
               <div className="row">
                 {loading && (
                   <div className="col-md-12 text-center">
-                    <div className="spinner-border" role="status">
-                      <span className="sr-only">loading...</span>
-                    </div>
+
                   </div>
                 )}
-                {!loading && currentItems && currentItems?.length === 0 && (
+                {!loading && data && data?.length === 0 && (
                   <div className="col-md-12 text-center">
                     <p>No products available</p>
                   </div>
                 )}
                 {!loading &&
-                  (selectedOrigin.length === 0 && selectedPriceRange.length === 0
-                    ? data?.filter(item => item.title.toLowerCase().includes(searchInput.toLowerCase()))
-                    : data
-                      .filter(item =>
-                        (selectedOrigin.length === 0 || selectedOrigin.includes(item.country.name)) &&
-                        (selectedPriceRange.length === 0 || selectedPriceRange.includes(getPriceRange(item.price))) &&
-                        item.title.toLowerCase().includes(searchInput.toLowerCase())
-                      )
-                  )?.length === 0 ? (
-                  <div className="col-md-12 text-center">
-                    <p>No products match the search criteria</p>
-                  </div>
-                ) : (
-                  currentItems?.filter(item =>
-                    (selectedOrigin.length === 0 || selectedOrigin.includes(item.country.name)) &&
-                    (selectedPriceRange.length === 0 || selectedPriceRange.includes(getPriceRange(item.price))) &&
-                    item.title.toLowerCase().includes(searchInput.toLowerCase())
-                  )
-                )?.map(item => (
-
-                  <div key={item._id} className="col-6 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-                      <img src={import.meta.env.VITE_APP_BASE_API + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
-                    </div>
-                    <div className="product-info">
-                      <div>
-                        <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{item.title}</strong></h3>
-                      </div>
-                      <div>
-                        <p className="product-description" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {item.short_description}
-                        </p>
-                      </div>
-                      <div className='d-flex flex-row align-items-center'>
-                        <h5>Origin County:</h5>
-                        <img src={usflag} alt="#" className='my-auto' />
-                      </div>
-                    </div>
-                    <div className="product-actions">
-                      <div className='d-flex flex-row '>
-                        {item.zipFile && <div className="mr-3">
-                          <img
-                            src={png360}
-                            alt="png360"
-                            onClick={() => handleExploreClicks(item)}
-                            data-toggle="modal"
-                            data-target="#explore360Modal"
-                            style={{ cursor: 'pointer' }}
-                          />
-                        </div>}
-                        <div>
-                          <div className="mr-3">
-                            <img alt='vector' src={vectorimg}
-                              onClick={() => handleSocialmedia(item)}
-                              data-toggle="modal"
-                              data-target="#socialmedia"
-                              style={{ cursor: 'pointer' }}
-                            />
+                  data?.map(item => (
+                    <>
+                      <div key={item._id} className="col-6 col-sm-6 col-md-4 col-lg-3 mb-4 border border-success">
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                          <img src={import.meta.env.VITE_APP_BASE_API + item?.product?.images[0]} className="text-center m-2 img-fluid" alt="#" />
+                        </div>
+                        <div className="product-info">
+                          <div>
+                            <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{item.product?.title}</strong></h3>
+                          </div>
+                          <div>
+                            <p className="product-description" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {item.product?.short_description}
+                            </p>
+                          </div>
+                          <div className='d-flex flex-row align-items-center'>
+                            <h5>Origin County:</h5>
+                            <img src={usflag} alt="#" className='my-auto' />
                           </div>
                         </div>
-                        {item.video_url && <div>
-                          <div className="mr-3">
-                            <img alt='vector' src={videoimg}
-                              onClick={() => handleVideomodal(item)}
-                              data-toggle="modal"
-                              data-target="#videomodal"
-                              style={{ cursor: 'pointer', width: "22px", height: "20p" }}
-                            />
+                        <div className="product-actions">
+                          <div className='d-flex flex-row '>
+                            {item.product?.zipFile && <div className="mr-3">
+                              <img
+                                src={png360}
+                                alt="png360"
+                                onClick={() => handleExploreClicks(item)}
+                                data-toggle="modal"
+                                data-target="#explore360Modal"
+                                style={{ cursor: 'pointer' }}
+                              />
+                            </div>}
+                            <div>
+                              <div className="mr-3">
+                                <img alt='vector' src={vectorimg}
+                                  onClick={() => handleSocialmedia(item)}
+                                  data-toggle="modal"
+                                  data-target="#socialmedia"
+                                  style={{ cursor: 'pointer' }}
+                                />
+                              </div>
+                            </div>
+                            {item.product?.video_url && <div>
+                              <div className="mr-3">
+                                <img alt='vector' src={videoimg}
+                                  onClick={() => handleVideomodal(item)}
+                                  data-toggle="modal"
+                                  data-target="#videomodal"
+                                  style={{ cursor: 'pointer', width: "22px", height: "20p" }}
+                                />
+                              </div>
+                            </div>}
                           </div>
-                        </div>}
+                        </div>
+                        <div>
+                          <h3 className="text-center">{formatter.format(item.product?.price)}</h3>
+                        </div>
+                        <div className="d-grid gap-3 mt-1">
+                          <button
+                            className="btn btn-success btn-block"
+                            onClick={() => handleaddtocard(item)}
+                            data-target="#myModal2"
+                            data-toggle="modal"
+                          >
+                            Add to cart
+                          </button>
+                          <button
+                            className="btn btn-white btn-block border border-success mb-1"
+                            onClick={() => window.open(`/productdetail/${item?.product?._id}`, "_blank")}
+                            data-toggle="modal"
+                            data-target="#exploreModal"
+                          >
+                            Explore
+                          </button>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Stack spacing={1}>
+                              <Rating name="half-rating-read" defaultValue={item.rating} precision={0.5} readOnly />
+                            </Stack>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <h3 className="text-center">{formatter.format(item.price)}</h3>
-                    </div>
-                    <div className="d-grid gap-3 mt-1">
-                      <button
-                        className="btn btn-success btn-block"
-                        onClick={() => handleaddtocard(item)}
-                        data-target="#myModal2"
-                        data-toggle="modal"
-                      >
-                        Add to cart
-                      </button>
-                      <button
-                        className="btn btn-white btn-block border border-success mb-1"
-                        onClick={() => history.push(`/productdetail/${item._id}`)}
-                        data-toggle="modal"
-                        data-target="#exploreModal"
-                      >
-                        Explore
-                      </button>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Stack spacing={1}>
-                          <Rating name="half-rating-read" defaultValue={item.rating} precision={0.5} readOnly />
-                        </Stack>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
+                    </>
+                  ))}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {data && data.length < totalItems && (
+                  <button onClick={loadMore} type="button" className="btn btn-danger">
+                    {isLoadingMore ? 'Loading...' : 'Load More +'}
+                  </button>
+                )}
               </div>
             </div>
-            {totalPages > 31 && (
-              <div className="col-md-12 d-flex justify-content-center">
-                <Pagination
-                  className='flex'
-                  count={totalPages}
-                  variant="outlined"
-                  color="primary"
-                  page={currentPage}
-                  onChange={(event, page) => {
-                    setCurrentPage(page);
-                  }}
-                />
-              </div>
-            )}
-
           </div>
         </section>
       </div>

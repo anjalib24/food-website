@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./Productdetailpage.css"
 import { useLocation } from "react-router-dom";
 import Header from './Header';
@@ -13,20 +13,49 @@ import { Rating } from '@mui/material';
 import defaultpersonimg from "./images/defaultperson.png"
 import Loader from '@/components/Loader';
 import axios from 'axios';
+import { StarContainer } from './ReviewModal';
+import { Radio } from 'react-loader-spinner';
+import { FaStar } from 'react-icons/fa';
+import styled from 'styled-components';
+import ReCAPTCHA from "react-google-recaptcha";
 
+// export const Container = styled.div`
+//    display: flex;
+//    justify-content: center;
+//    align-items: center;
+//    min-height: 60vh;
+//    font-size: 60px;
+// `;
+export const Radios = styled.input`
+   display: none;
+`;
+export const Ratingss = styled.div`
+   cursor: pointer;
+`;
+export const StarContainers = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+`;
 const Productdetailpage = () => {
   const [product, setProduct] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
-  const { handleaddtocard, showAlert, setShowAlert, alertmsg } = useProductState();
+  const { handleaddtocard, showAlert, setShowAlert, setAlertMsg, alertmsg } = useProductState();
   const { id } = useParams();
-  const {createMarkup } = useProductState();
+  const { createMarkup } = useProductState();
+  const playerRef = useRef(null);
+  const [rate, setRate] = useState(0);
+  const [comment, setComment] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState("");
+
 
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
+  const token = localStorage.getItem("token");
 
   const youtubeLink = "https://www.youtube.com/watch?v=sSKhdZ32YpY"
   useEffect(() => {
@@ -35,30 +64,77 @@ const Productdetailpage = () => {
       setIsVideo(false);
     }
   }, [product]);
+  console.log(product, "productDetailpage");
 
   useEffect(() => {
-    setIsLoading(true); 
+    setIsLoading(true);
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(import.meta.env.VITE_APP_BASE_API+`/api/v1/products/get-single-product/${id}`, {
-           headers: {
-             "Content-Type": "application/json"
-           },
-           mode: 'cors'
+        const response = await axios.get(import.meta.env.VITE_APP_BASE_API + `/api/v1/products/get-single-product/${id}`, {
+          headers: {
+            "Content-Type": "application/json"
+          },
+          mode: 'cors'
         });
         setProduct(response.data.data);
-       } catch (error) {
+      } catch (error) {
         console.error('Error fetching product:', error);
-       }finally {
-         setIsLoading(false); 
+      } finally {
+        setIsLoading(false);
       }
-     };
+    };
     fetchProduct();
   }, [id]);
 
+  const onRecaptchaChange = (token) => {
+    setRecaptchaToken(token);
+  };
+  const submitReview = async () => {
+    if (!recaptchaToken) {
+      setAlertMsg("Please complete the reCAPTCHA challenge.");
+      setShowAlert(true);
+      setTimeout(() => {
+        setAlertMsg("");
+        setShowAlert(false);
+      }, 3000);
+      return; 
+    }
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`/api/api/v1/products/create-product-review/${product._id}`, {
+        rating: rate,
+        comment: comment,
+        recaptchaToken: recaptchaToken, // Include this in your backend verification
+
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        mode: 'cors'
+      });
+      setRate(0);
+      setComment('');
+      setRecaptchaToken("");
+      setAlertMsg('Review Add successfully');
+      setShowAlert(true);
+      setTimeout(() => {
+        setAlertMsg("");
+        setShowAlert(false);
+      }, 3000);
+    } catch (error) {
+      setAlertMsg(' you already  Add review');
+      setShowAlert(true);
+      setTimeout(() => {
+        setAlertMsg("");
+        setShowAlert(false);
+      }, 3000);
+      console.error(error);
+    }
+  };
   return (
     <>
-     {isLoading && <Loader />}
+      {isLoading && <Loader />}
       <Header />
       {showAlert && <Alert type="success" message={alertmsg} />}
       <Container className='mt-5'>
@@ -68,7 +144,7 @@ const Productdetailpage = () => {
               {product?.images?.map((image, index) => (
                 <img
                   key={index}
-                  src={"/api" + image}
+                  src={import.meta.env.VITE_APP_BASE_API + image}
                   alt=""
                   onMouseOver={() => {
                     setSelectedImage(image);
@@ -78,13 +154,13 @@ const Productdetailpage = () => {
               ))}
               {product?.video_url && (
                 <video width="100" height="100"
-                style={{ height:"100px"}}
+                  style={{ height: "100px" }}
                   onMouseOver={() => {
                     setSelectedImage(product.video_url);
                     setIsVideo(true);
                   }}
                 >
-                  <source src={import.meta.env.VITE_APP_BASE_API+product.video_url} type="video/mp4" />
+                  <source src={import.meta.env.VITE_APP_BASE_API + product.video_url} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               )}
@@ -94,11 +170,11 @@ const Productdetailpage = () => {
             <div className="large-image">
               {isVideo ? (
                 <video width="500" height="500" controls autoPlay>
-                  <source src={import.meta.env.VITE_APP_BASE_API+selectedImage} type="video/mp4" />
+                  <source src={import.meta.env.VITE_APP_BASE_API + selectedImage} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               ) : (
-                <img src={import.meta.env.VITE_APP_BASE_API+selectedImage} alt="" />
+                <img src={import.meta.env.VITE_APP_BASE_API + selectedImage} alt="" />
               )}
             </div>
           </Col>
@@ -108,7 +184,7 @@ const Productdetailpage = () => {
               <div className="product-reviews" >
                 <h5>Rating</h5>
                 <Stack spacing={1}>
-                  <Rating name="half-rating-read" defaultValue={product?.rating} precision={0.5} readOnly />
+                  <Rating name="half-rating-read" defaultValue={product?.productOverAllReviews} precision={0.5} readOnly />
                 </Stack>
                 <p>This product is great!</p>
               </div>
@@ -116,46 +192,111 @@ const Productdetailpage = () => {
                 <p>Price: <h3>{formatter.format(product?.price)}</h3> </p>
               </div>
               <p dangerouslySetInnerHTML={createMarkup(product?.description)}></p>
-            
+
               <Button style={{ backgroundColor: 'green' }}
                 onClick={() => handleaddtocard(product)}
               >Add to cart</Button>
               <div>
-                <div style={{marginTop:"10px"}}>
+                {
+                  product?.youtube_video_url &&
+                  <div className="youtube-preview">
+                    <ReactPlayer
+                      ref={playerRef}
+                      url={product?.youtube_video_url}
+                      controls={true}
+                      width="480px"
+                      height="270px"
+                    />
+                  </div>
+                }
+                {
+                  product?.reviews?.length > 0 &&
+                  <>
+                    <div style={{ marginTop: "10px" }}>
+                      <h5>
+                        Reviews
+                      </h5>
+
+                    </div>
+                    <div style={{ marginTop: "30px" }}>
+
+                      {
+                        product.reviews.map((item) => (
+                          <>
+                            <div className="row" style={{ display: "flex", flexDirection: "column", margin: "auto", marginTop: "10px" }}  >
+                              <div className="col-md-4 " style={{ display: "flex", gap: "10px" }}>
+                                <div>
+                                  <img alt="Sample Image" style={{ maxHeight: "35px", width: "auto" }} src={defaultpersonimg} />
+
+                                </div>
+                                <div>
+                                  {item.username}
+                                </div>
+                              </div>
+                              <div className="col-md-12 " style={{ marginLeft: "30px" }}>
+                                {item.comment}
+                              </div>
+                              <div className="col-md-2" style={{ marginLeft: "30px" }}>
+                                <Stack spacing={1}>
+                                  <Rating name="half-rating-read" defaultValue={item?.rating} precision={0.5} readOnly />
+                                </Stack>
+                              </div>
+                            </div>
+                          </>
+                        ))
+                      }
+                    </div>
+                  </>
+                }
+
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "5px" }}>
                   <h5>
-                    Reviews
+                    Add  Reviews
                   </h5>
+                  <>
+                    <StarContainers>
+                      {[...Array(5)].map((item, index) => {
+                        const givenRating = index + 1;
+                        return (
+                          <>
+                            <label>
+                              <Radios
+                                type="radio"
+                                value={givenRating}
+                                onClick={() => {
+                                  setRate(givenRating);
+                                }}
+                              />
+                              <Ratingss>
+                                <FaStar
+                                  style={{ fontSize: "x-large" }}
+                                  color={
+                                    givenRating < rate || givenRating === rate
+                                      ? "000"
+                                      : "rgb(192,192,192)"
+                                  }
+                                />
+                              </Ratingss>
+                            </label>
+                          </>
+                        );
+                      })}
+                    </StarContainers>
+                    <textarea
+                      placeholder="Leave a comment..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      style={{ width: '100%', marginTop: '10px', marginBottom: '10px', border: "ActiveBorder" }}
+                    />
+                    <div style={{ alignItems: "center" }}>
+                      <ReCAPTCHA
+                        sitekey="6Ld1nHsnAAAAAAR16FyQLgLBpV1i4ypNcpiplGUW" // Replace this with your actual site key
+                        onChange={onRecaptchaChange}
+                      />
+                    </div>
 
-                </div>
-                <div style={{marginTop:"30px"}}>
-
-                {product?.reviews?.length > 0 ? (
-            product.reviews.map((item) => (
-<>
-                          <div className="row" style={{ display: "flex", flexDirection: "column", margin:"auto"  , marginTop:"10px"}}  >
-                            <div className="col-md-4 " style={{ display: "flex" , gap:"10px" }}>
-                              <div>
-                                <img alt="Sample Image" style={{ maxHeight: "35px", width: "auto" }} src={defaultpersonimg} />
-
-                              </div>
-                              <div>
-                                {item.username}
-                              </div>
-                            </div>
-                            <div className="col-md-12 " style={{marginLeft:"30px"}}>
-                              {item.comment}
-                            </div>
-                            <div className="col-md-2" style={{marginLeft:"30px"}}>
-                              <Stack spacing={1}>
-                                <Rating name="half-rating-read" defaultValue={item?.rating} precision={0.5} readOnly />
-                              </Stack>
-                            </div>
-                            </div>
-                         </>
-              ))
-          ) : (
-            <p>There are no reviews available for this product.</p>
-          )}
+                    <button type="button" onClick={submitReview} className="btn btn-outline-success close" aria-label="Close" data-dismiss="modal" style={{ marginTop: "5px" }}>Submit</button>
+                  </>
                 </div>
               </div>
             </div>

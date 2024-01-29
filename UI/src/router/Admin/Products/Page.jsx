@@ -13,7 +13,6 @@ const Page = () => {
   const { products, setProducts, setAlert, alert } = useAdminState();
   const [isLoading, setIsLoading] = useState(true);
   const match = useRouteMatch();
-
   useEffect(() => {
     setIsLoading(true);
     fetch(
@@ -98,7 +97,7 @@ const Page = () => {
       });
   }
   if (isLoading) return <Loader />;
-
+console.log(products,"updateproduct");
   return (
     <>
       {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
@@ -137,16 +136,26 @@ const Page = () => {
                       "!bg-indigo-50 !ring-2 ring-indigo-200"
                       } `}
                   >
-                    <img
-                      src={`${import.meta.env.VITE_APP_BASE_API}${product.images[0]
-                        }`}
-                      className="w-full aspect-square object-cover rounded-md"
-                    />
+                    {
+                      typeof product.images[0] === "string" ?
+                        <img
+                          src={`${import.meta.env.VITE_APP_BASE_API}${product.images[0]
+                            }`}
+                          className="w-full aspect-square object-cover rounded-md"
+                        /> : <img
+                          key={index}
+                          src={
+                            URL.createObjectURL(product.images[0])
+                          }
+                          alt={`Selected ${index}`}
+                          className="w-full aspect-square object-cover rounded-md"
 
+                        />
+                    }
                     <h2 className="font-bold">{product.title}</h2>
                     <p>
                       <strong>Origin Country: </strong>
-                      {product.country.name}
+                      {product.country?.name}
                     </p>
                     <p>
                       <strong>Price: </strong>
@@ -154,7 +163,7 @@ const Page = () => {
                     </p>
                     <p>
                       <strong>Category: </strong>
-                      {product.category.name}
+                      {product.category?.name}
                     </p>
                     <Box
                       display="flex"
@@ -184,8 +193,8 @@ const Page = () => {
                     <Button
                       variant="contained"
                       className={`w-full text-white p-2 ${product.best_seller
-                          ? "!bg-red-400 hover:!bg-red-500"
-                          : "!bg-indigo-400 hover:!bg-indigo-500"
+                        ? "!bg-red-400 hover:!bg-red-500"
+                        : "!bg-indigo-400 hover:!bg-indigo-500"
                         } rounded-md font-medium`}
                       onClick={() =>
                         toggleBestSeller(product._id, product.best_seller)

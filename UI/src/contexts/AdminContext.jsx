@@ -21,6 +21,7 @@ export const AdminContext = ({ children }) => {
   const [reviews, setReviews] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [alert, setAlert] = useState({isError: false, errMsg: '', errType: ''});
+  // const [zipcode, setZipcode] = useState([]);
 
   const showAlert = (type, message) => {
     setAlert({ type, message });
@@ -62,23 +63,19 @@ export const AdminContext = ({ children }) => {
         const responseCountries = await fetch(
           import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-all-country"
         );
-
         if (!responseCategories.ok || !responseCountries.ok) {
           throw new Error(
             `HTTP error! status: ${responseCategories.status}, ${responseCountries.status}`
           );
         }
-
         const dataCategories = await responseCategories.json();
         const dataCountries = await responseCountries.json();
-
         setCategories(dataCategories.data);
         setCountries(dataCountries.data);
       } catch (error) {
         console.error(error);
       }
     };
-
     fetchCategoriesAndCountries();
   }, []);
 
@@ -86,6 +83,7 @@ export const AdminContext = ({ children }) => {
     // eslint-disable-next-line react/jsx-no-constructed-context-values
     <StateContext.Provider
       value={{
+       
         currentColor,
         currentMode,
         activeMenu,
@@ -113,10 +111,11 @@ export const AdminContext = ({ children }) => {
         blogs,
         setBlogs,
         setAlert,
-        alert
+        alert,
+      
       }}
     >
-      {children}
+    {children ? children : null}
     </StateContext.Provider>
   );
 };

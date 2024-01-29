@@ -49,7 +49,7 @@ const Login = () => {
         const cart = JSON.parse(localStorage.getItem('cart'));
         if (cart && cart.length > 0) {
           const data = cart.map(item => ({
-            productId: item._id,
+            productId: item.product._id,
             quantity: item.quantity || 1,
           }));
           const token = localStorage.getItem('token');
