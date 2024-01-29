@@ -16,6 +16,7 @@ import {
   removeItemsFromCart,
   createProductReview,
   getProductList,
+  productSearch,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
@@ -65,5 +66,7 @@ router.route("/create-country").post(createCountry);
 router.route("/get-all-country").get(getAllCountry);
 
 router.route("/get-product-list").get(getProductList);
+
+router.route("/search").get(productSearch);
 
 export default router;
