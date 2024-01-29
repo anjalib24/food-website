@@ -160,7 +160,7 @@ const getProductList = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { getAllData, totalDocs },
+        {product:[...getAllData], totalDocs:totalDocs },
         "Get all product list data successfully."
       )
     );
@@ -585,13 +585,20 @@ const createCategory = asyncHandler(async (req, res) => {
 
 //get all product category part-
 const getAllCategory = asyncHandler(async (req, res) => {
-  const getAllCategory = await Category.find();
-
-  return res
+  console.log("Vivek")
+  try {
+    const getAllCategory = await Category.find();
+    return res
     .status(201)
     .json(
       new ApiResponse(200, getAllCategory, "Get all category successfully")
     );
+  } catch (error) {
+    console.log(error,"errorrr");
+  }
+  
+
+
 });
 
 //create country part -
