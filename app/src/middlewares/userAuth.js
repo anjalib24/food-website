@@ -21,7 +21,7 @@ const userAuth = async (req, res, next) => {
 
     if (existedUser.role == "admin") {
       req.user = existedUser;
-      next();
+     return next();
     }
 
     if (existedUser.role !== "user") {
@@ -29,7 +29,7 @@ const userAuth = async (req, res, next) => {
     }
 
     req.user = existedUser;
-    next();
+   return next();
   } catch (error) {
     res.status(error.statusCode || 500).json(error.toJSON());
   }
