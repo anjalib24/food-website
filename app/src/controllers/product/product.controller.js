@@ -89,6 +89,40 @@ const getProductById = asyncHandler(async (req, res) => {
   }
 });
 
+const productSearch = asyncHandler(async (req, res) => {
+  let { limit, page, title, name } = req.query;
+  const filter = {};
+
+  if (title) {
+    filter.title = { $regex: new RegExp(title), $options: "i" };
+  }
+
+  limit = parseInt(limit) || 20;
+  page = parseInt(page) || 1;
+
+  const skip = (page - 1) * limit;
+
+  const getData = await Product.find(filter)
+    .populate("origin_country")
+    .skip(skip)
+    .limit(limit)
+    .exec();
+
+  const filteredData = getData.filter((product) =>
+    product.origin_country.name.match(new RegExp(name, "i"))
+  );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        filteredData,
+        "Get all product list data successfully."
+      )
+    );
+});
+
 const getProductList = asyncHandler(async (req, res) => {
   let { limit, page, title } = req.query;
 
@@ -990,4 +1024,5 @@ export {
   removeItemsFromCart,
   createProductReview,
   getProductList,
+  productSearch,
 };
