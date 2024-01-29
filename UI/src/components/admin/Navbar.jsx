@@ -39,11 +39,8 @@ const Navbar = () => {
 
     useEffect(() => {
         const handleResize = () => setScreenSize(window.innerWidth);
-
         window.addEventListener("resize", handleResize);
-
         handleResize();
-
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
@@ -103,14 +100,14 @@ const Navbar = () => {
                         <p>
                             <span className="text-gray-400 text-14">Hi,</span>{" "}
                             <span className="text-gray-400 font-bold ml-1 text-14">
-                                Michael
+                                {userData?.username}
                             </span>
                         </p>
                         <MdKeyboardArrowDown className="text-gray-400 text-14" />
                     </div>
                 </TooltipComponent>
 
-                {isClicked.userProfile && <UserProfile />}
+                {isClicked.userProfile && <UserProfile userData={userData}/>}
             </div>
         </div>
     );

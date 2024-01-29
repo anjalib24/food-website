@@ -20,7 +20,7 @@ const Header = ({ hideCart, hidebutton }) => {
     left: 0,
     right: 0,
     zIndex: 100,
-    height: '80px',
+    height: 'auto'
   };
 
   const navigate = useHistory();
@@ -102,7 +102,7 @@ const Header = ({ hideCart, hidebutton }) => {
               <Link to="/">
                 <img src={ethnicLogo} className="logo" alt="#" />
               </Link>
-              <ul>
+              <ul style={{ 'margin': 0 }}>
                 <li><Link to="/">Home</Link></li>
                 <li onClick={() => scrollToBestseller()}><Link to="/shop">Shop</Link></li>
                 <li><Link to="/#About">About Us</Link></li>
@@ -140,13 +140,13 @@ const Header = ({ hideCart, hidebutton }) => {
               <div className="hambagarmenu" style={{ fontSize: "30px" }}>
                 <i className="fa-solid fa-bars dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a className="dropdown-item" ><Link to="/">Home</Link></a>
-                  <a className="dropdown-item" href="#"><Link to="/shop">Shop</Link></a>
-                  <a className="dropdown-item" ><Link to="/#About">About Us</Link></a>
-                  <a className="dropdown-item" href="#"><Link to="/#review">Review</Link></a>
-                  <a className="dropdown-item" href="#"><Link to="/#Blog">Blog</Link></a>
-                  <a className="dropdown-item" href="#"><Link to="/#FAQ">FAQ</Link></a>
-                  <a className="dropdown-item" onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}>Contact</a>
+                  <a className="dropdown-item"><Link to="/" style={{ color: 'green' }}>Home</Link></a>
+                  <a className="dropdown-item"><Link to="/shop" style={{ color: 'green' }}>Shop</Link></a>
+                  <a className="dropdown-item"><Link to="/#About" style={{ color: 'green' }}>About Us</Link></a>
+                  <a className="dropdown-item"><Link to="/#review" style={{ color: 'green' }}>Review</Link></a>
+                  <a className="dropdown-item"><Link to="/#Blog" style={{ color: 'green' }}>Blog</Link></a>
+                  <a className="dropdown-item"><Link to="/#FAQ" style={{ color: 'green' }}>FAQ</Link></a>
+                  <a className="dropdown-item" onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}><span style={{ color: 'green' }}>Contact</span></a>
                 </div>
               </div>
             </nav>

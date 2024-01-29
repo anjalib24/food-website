@@ -34,8 +34,9 @@ const AddProduct = () => {
     weight: "",
     youtube_video_url:""
   });
-  const { countries, categories , setAlert } = useAdminState();
+  const { countries, categories , setAlert ,setProducts} = useAdminState();
   const [isLoading, setIsLoading] = useState(); 
+
 
 
   const handleImageChange = (event) => {
@@ -87,11 +88,16 @@ const AddProduct = () => {
         setAlert({errType:"danger", errMsg:data?.error, isError: true});
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      if (response.ok) {
+        const newProduct = await response.json();
+        setProducts((prevProducts) => [...prevProducts, newProduct.data]);
+       }
+
     } catch (error) {
       console.error(error);
     }finally{
         setIsLoading(false); 
-          }
+    }
   };
 
   function temp(argv) {

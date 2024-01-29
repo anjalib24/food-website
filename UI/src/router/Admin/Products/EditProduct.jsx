@@ -127,7 +127,7 @@ const EditProduct = () => {
   };
 
   if (!product) return <Loader />;
-
+console.log(product,"productttt");
   return (
     <>
 

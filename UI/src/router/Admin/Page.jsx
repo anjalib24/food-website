@@ -30,8 +30,6 @@ const Page = () => {
   return (    
     <WithAuth>
       <AdminContext>
-      
-
         <Layout
           Page={
             <Switch>

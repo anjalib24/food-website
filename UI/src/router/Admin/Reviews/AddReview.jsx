@@ -67,6 +67,7 @@ const AddReview = () => {
         reviews_image: null,
         age: "",
       })
+      
       if (!response.ok) {
         const data = await response.json();
         setAlert({errType:"danger", errMsg:data?.error, isError: true});    

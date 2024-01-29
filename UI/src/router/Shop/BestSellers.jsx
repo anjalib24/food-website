@@ -37,7 +37,7 @@ const BestSellers = () => {
              mode: 'cors'
           }
          );
-         
+         console.log(response.data.data,"bestsellerresponse");
         const bestSellers = response.data.data
         setData(bestSellers);
       } catch (error) {
@@ -82,6 +82,7 @@ const BestSellers = () => {
       },
     ],
   };
+
   return (
     <>
       <div className="container" id='bestsellers'>
@@ -126,12 +127,12 @@ const BestSellers = () => {
                             <div className="d-flex mx-auto h-100">
                               <div>
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-                                  <img src={import.meta.env.VITE_APP_BASE_API + item.images[0]} className="text-center m-2 img-fluid" alt="#" />
+                                  <img src={import.meta.env.VITE_APP_BASE_API + item?.product?.images[0]} className="text-center m-2 img-fluid" alt="#" />
                                 </div>              <div className="card-content mx-2">
-                                  <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{item?.title}</strong></h3>
+                                  <h3 className="product-title" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}><strong>{item?.product?.title}</strong></h3>
                                   <div>
                                     <p className="product-description" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                      {item?.short_description}
+                                      {item?.product?.short_description}
                                     </p>
                                   </div>
                                   <div className='d-flex flex-row align-items-center'>
@@ -140,7 +141,7 @@ const BestSellers = () => {
                                   </div>
                                   <div className="product-actions">
                                     <div className='d-flex flex-row '>
-                                      {item.zipFile_url && <div className="mr-3">
+                                      {item.product?.zipFile_url && <div className="mr-3">
                                         <img
                                           src={png360}
                                           alt="png360"
@@ -160,7 +161,7 @@ const BestSellers = () => {
                                           />
                                         </div>
                                       </div>
-                                      {item.video_url && <div>
+                                      {item.product?.video_url && <div>
                                         <div className="mr-3">
                                           <img alt='vector' src={videoimg}
                                             onClick={() => handleVideomodal(item)}
@@ -173,7 +174,7 @@ const BestSellers = () => {
                                     </div>
                                   </div>
                                   <div>
-                                    <h3 className="text-center">{formatter.format(item.price)}</h3>
+                                    <h3 className="text-center">{formatter.format(item?.product?.price)}</h3>
                                   </div>
                                   <div className="d-grid gap-3 mt-1">
                                     <button
@@ -185,17 +186,17 @@ const BestSellers = () => {
                                       Add to cart
                                     </button>
                                     <button
-                                      className="btn btn-white btn-block border border-success mb-1"
-                                      onClick={() => history.push(`/productdetail/${item._id}`)}
-                                      data-toggle="modal"
-                                      data-target="#exploreModal"
-                                    >
-                                      Explore
-                                    </button>
+ className="btn btn-white btn-block border border-success mb-1"
+ onClick={() => window.open(`/productdetail/${item?.product?._id}`, "_blank")}
+ data-toggle="modal"
+ data-target="#exploreModal"
+>
+ Explore
+</button>
                                   </div>
                                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Stack spacing={1}>
-                                      <Rating name="half-rating-read" defaultValue={item.rating} precision={0.5} readOnly />
+                                      <Rating name="half-rating-read" defaultValue={item?.productRewiev?.rating} precision={0.5} readOnly />
                                     </Stack>
                                   </div>
                                 </div>

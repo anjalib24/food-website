@@ -42,6 +42,7 @@ const Page = () => {
     fetchData();
    }, []);
   function rmFromBestSeller(id) {
+    console.log(id,"iddd");
     fetch(
       `${
         import.meta.env.VITE_APP_BASE_API
@@ -64,7 +65,7 @@ const Page = () => {
       })
       .then((updatedProduct) => {
         setBestSellers((prevProducts) =>
-          prevProducts.filter((product) => product._id !== id)
+          prevProducts.filter((product) => product.product._id !== id)
         );
         setAlert({errType:"success", errMsg:"Remove Sucessfully", isError: true});
       })
@@ -83,7 +84,7 @@ const Page = () => {
           <h1 className="text-3xl font-medium">Best seller products</h1>
         </div>
         <div>
-          <p className="text-xl">{bestSellers.length} Products</p>
+          <p className="text-xl">{bestSellers?.length} Products</p>
         </div>
       </div>
       <Grid container spacing={2}>
@@ -92,31 +93,31 @@ const Page = () => {
             <Box height="100%" display="flex">
               <Paper
                 className={`w-full p-4 space-y-1 ${
-                  product.best_seller && "!bg-indigo-50 !ring-2 ring-indigo-200"
+                  product.product?.best_seller && "!bg-indigo-50 !ring-2 ring-indigo-200"
                 } `}
               >
                 <img
                   src={`${import.meta.env.VITE_APP_BASE_API}${
-                    product.images[0]
+                    product.product?.images[0]
                   }`}
                   className="w-full aspect-square object-cover rounded-md"
                 />
 
-                <h2 className="font-bold">{product.title}</h2>
+                <h2 className="font-bold">{product.product?.title}</h2>
 
                 <p>
                   <strong>Price: </strong>
-                  {formatter.format(product.price)}
+                  {formatter.format(product.product?.price)}
                 </p>
                 <p>
                   <strong>Category: </strong>
-                  {product.category.name}
+                  {product.product?.category.name}
                 </p>
 
                 <Button
                   variant="contained"
                   className="w-full text-white p-2 !bg-red-500 hover:!bg-red-600 rounded-md font-medium"
-                  onClick={() => rmFromBestSeller(product._id)}
+                  onClick={() => rmFromBestSeller(product.product?._id)}
                 >
                   Remove best seller
                 </Button>

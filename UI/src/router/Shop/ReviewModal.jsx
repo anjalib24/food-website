@@ -76,7 +76,6 @@ const ReviewModal = ({ reviewmodal, setReviewModal, productId }) => {
     return (
         <>
         {alert && <Alert type={alert.type} message={alert.message} />}
-
         <div className={`modal fade ${reviewmodal ? 'show' : ''}`} id="reviewmodalmodal" tabIndex="-1" role="dialog" aria-labelledby="explorereviewmodal" aria-hidden={!reviewmodal} data-backdrop="static" data-keyboard="false">
             <div className="modal-dialog modal-dialog-centered" role="document">
                 <div className="modal-content">

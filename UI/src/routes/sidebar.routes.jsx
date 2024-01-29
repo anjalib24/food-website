@@ -51,11 +51,6 @@ export const links = [
         icon: <FiShoppingBag />,
       },
       {
-        name: "UplodeShipingbyFile",
-        to: "/admin/Shipinghandle",
-        icon: <FiShoppingBag />,
-      },
-      {
         name: "Freezipcode",
         to: "/admin/zipcode",
         icon: <FiShoppingBag />,
