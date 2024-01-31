@@ -77,7 +77,7 @@ const getProductById = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          productWithReview,
+          { product: [{ product: productWithReview }] },
           "Single product data retrieved successfully."
         )
       );
@@ -91,34 +91,61 @@ const getProductById = asyncHandler(async (req, res) => {
 
 const productSearch = asyncHandler(async (req, res) => {
   let { limit, page, title, name } = req.query;
+
+  const { price } = req.body;
+
   const filter = {};
 
   if (title) {
-    filter.title = { $regex: new RegExp(title), $options: "i" };
+    filter.title = { $regex: new RegExp(title, "i") };
+  }
+
+  if (price) {
+    const priceSlit = price.split("-");
+
+    const minPrice = parseInt(priceSlit[0]);
+    const maxPrice = parseInt(priceSlit[1]);
+
+    filter.price = { $gte: minPrice, $lte: maxPrice };
   }
 
   limit = parseInt(limit) || 20;
   page = parseInt(page) || 1;
 
-  const skip = (page - 1) * limit;
+  const loadMore = limit * page;
 
-  const getData = await Product.find(filter)
-    .populate("origin_country")
-    .skip(skip)
-    .limit(limit)
-    .exec();
-
-  const filteredData = getData.filter((product) =>
-    product.origin_country.name.match(new RegExp(name, "i"))
-  );
+  const getData = await Product.aggregate([
+    {
+      $match: filter,
+    },
+    {
+      $lookup: {
+        from: "countries",
+        localField: "origin_country",
+        foreignField: "_id",
+        as: "origin_country",
+      },
+    },
+    {
+      $unwind: "$origin_country",
+    },
+    {
+      $match: {
+        "origin_country.name": { $regex: new RegExp(name, "i") },
+      },
+    },
+    {
+      $limit: loadMore,
+    },
+  ]);
 
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        filteredData,
-        "Get all product list data successfully."
+        { product: [{ product: getData }] },
+        "Get product list data successfully."
       )
     );
 });
@@ -160,7 +187,7 @@ const getProductList = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        {product:[...getAllData], totalDocs:totalDocs },
+        { product: [...getAllData], totalDocs: totalDocs },
         "Get all product list data successfully."
       )
     );
@@ -585,20 +612,16 @@ const createCategory = asyncHandler(async (req, res) => {
 
 //get all product category part-
 const getAllCategory = asyncHandler(async (req, res) => {
-  console.log("Vivek")
   try {
     const getAllCategory = await Category.find();
     return res
-    .status(201)
-    .json(
-      new ApiResponse(200, getAllCategory, "Get all category successfully")
-    );
+      .status(201)
+      .json(
+        new ApiResponse(200, getAllCategory, "Get all category successfully")
+      );
   } catch (error) {
-    console.log(error,"errorrr");
+    console.log(error, "errorrr");
   }
-  
-
-
 });
 
 //create country part -
