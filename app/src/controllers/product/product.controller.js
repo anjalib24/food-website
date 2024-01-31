@@ -29,7 +29,12 @@ const getBestSeller = asyncHandler(async (req, res) => {
   try {
     const getBestsellerData = await Product.find({
       best_seller: true,
-    }).populate("origin_country");
+    })
+      .populate("origin_country", "_id name")
+      .populate("category", "_id name")
+      .select(
+        "_id title short_description images price video_url rank best_seller weight"
+      );
 
     const bestsellerData = await Promise.all(
       getBestsellerData.map(async (product) => {
@@ -90,9 +95,9 @@ const getProductById = asyncHandler(async (req, res) => {
 });
 
 const productSearch = asyncHandler(async (req, res) => {
-  let { limit, page, title, name } = req.query;
+  let { limit, page, title } = req.query;
 
-  const { price } = req.body;
+  const { price, name } = req.body;
 
   const filter = {};
 
@@ -101,11 +106,13 @@ const productSearch = asyncHandler(async (req, res) => {
   }
 
   if (price) {
-    const priceSlit = price.split("-");
+    const priceSplit = price.map((i) => i.split("-")).flat();
 
-    const minPrice = parseInt(priceSlit[0]);
-    const maxPrice = parseInt(priceSlit[1]);
+    const priceNumbers = priceSplit.map(Number);
 
+    const minPrice = Math.min(...priceNumbers);
+    const maxPrice = Math.max(...priceNumbers);
+    console.log("minPrice", minPrice, "maxPrice", maxPrice);
     filter.price = { $gte: minPrice, $lte: maxPrice };
   }
 
@@ -131,7 +138,23 @@ const productSearch = asyncHandler(async (req, res) => {
     },
     {
       $match: {
-        "origin_country.name": { $regex: new RegExp(name, "i") },
+        "origin_country.name": {
+          $in: name,
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        short_description: 1,
+        images: 1,
+        price: 1,
+        video_url: 1,
+        rank: 1,
+        best_seller: 1,
+        weight: 1,
+        country_name: "$origin_country.name",
       },
     },
     {
@@ -144,7 +167,7 @@ const productSearch = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { product: [{ product: getData }] },
+        { product: [{ product: getData }], totalDocs: getData?.length },
         "Get product list data successfully."
       )
     );
