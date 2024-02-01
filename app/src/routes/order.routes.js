@@ -12,6 +12,8 @@ import { userAuth } from "../middlewares/userAuth.js";
 router.route("/").get(getAllOrder);
 router.route("/create-order/:id").post(userAuth, orderProductPaymentWithStripe);
 router.route("/update-order-status/:id").put(updateOrderStatus);
-router.route("/stripe-webhook").post(stripeWebHookHandler);
+router
+  .route("/stripe-webhook")
+  .post(express.raw({ type: "application/json" }), stripeWebHookHandler);
 
 export default router;

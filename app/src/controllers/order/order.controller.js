@@ -9,6 +9,7 @@ import Stripe from "stripe";
 import { OrderHistory } from "../../models/orderHistory.model.js";
 import { emptyCartAfterOrder } from "../../services/repository.js";
 import { Product } from "../../models/product.model.js";
+import { sendOrderConfirmationEmail } from "../../utils/mail.js";
 
 const getProductIds = async (products) => {
   const productPromises = products.map(async (product) => product.productId);
@@ -93,34 +94,25 @@ const orderSuccess = asyncHandler(async (req, res) => {
 });
 
 const stripeWebHookHandler = asyncHandler(async (req, response) => {
-  console.log("---------1----------");
-
-  const payload = JSON.stringify(req.body, null, 2);
+  const payload = req.body;
   const sig = req.headers["stripe-signature"];
-  console.log("---------2----------");
-  console.log("---------3----------", process.env.STRIPE_SECRET_KEY);
 
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STIPE_ENDPOINT_SECRET) {
     console.error("Stripe environment variables are not set.");
     response.status(500).send("Internal Server Error");
     return;
   }
-  console.log("---------5----------", process.env.STRIPE_SECRET_KEY);
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   let event;
 
   try {
-    console.log("---------payload----------", payload);
-    console.log("---------sig----------", sig);
-
     event = stripe.webhooks.constructEvent(
       payload,
       sig,
       process.env.STIPE_ENDPOINT_SECRET
     );
-    console.log("---------event----------", event);
   } catch (err) {
     console.error("Webhook signature verification failed.", err);
     response.status(400).send(`Webhook Error: ${err.message}`);
@@ -130,10 +122,13 @@ const stripeWebHookHandler = asyncHandler(async (req, response) => {
   let orderData = null;
   switch (event.type) {
     case "checkout.session.completed":
-      console.log("-------event object----", event.data.object);
-      orderData = await handleCheckoutSessionCompleted(event.data.object);
-      if (!orderData) {
-        console.log("------------something went wrong while order confirm");
+      orderData = await handleCheckoutSessionCompleted(event?.data?.object?.id);
+      if (orderData) {
+        await sendOrderConfirmationEmail(
+          orderData?.email,
+          orderData?.username,
+          orderData?._id
+        );
       }
       break;
     default:
@@ -143,32 +138,22 @@ const stripeWebHookHandler = asyncHandler(async (req, response) => {
   return response.send();
 });
 
-const handleCheckoutSessionCompleted = async (session) => {
-  const orderId = session.metadata.orderId;
-  console.log("------------>", orderId);
-  if (orderId) {
-    try {
-      const orderUpdateData = await Order.findByIdAndUpdate(
-        { pyamentOrderId: orderId },
-        {
-          status: "fulfilled",
-        }
-      );
+const handleCheckoutSessionCompleted = async (orderId) => {
+  if (!orderId) {
+    return;
+  }
 
-      console.log(`Order ${orderId} has been fulfilled.`);
-      if (!orderUpdateData) {
-        throw new ApiError(
-          409,
-          "Something went wrong while updating order data"
-        );
-      }
+  try {
+    const orderUpdateData = await Order.findOneAndUpdate(
+      { pyamentOrderId: orderId },
+      { status: "fulfilled" },
+      { new: true }
+    );
 
-      return orderUpdateData;
-    } catch (error) {
-      console.error(`Error updating order ${orderId}:`, error);
-    }
-  } else {
-    console.error("Invalid orderId in checkout session:", session.id);
+    return orderUpdateData;
+  } catch (error) {
+    console.error(`Error updating order ${orderId}:`, error);
+    return;
   }
 };
 

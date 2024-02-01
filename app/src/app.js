@@ -5,9 +5,7 @@ import morgan from "morgan";
 import path from "path";
 import compression from "compression";
 import helmet from "helmet";
-// import { createProxyMiddleware } from "http-proxy-middleware";
-// import { getShippoData } from "./utils/shippo.js";
-// getShippoData();
+
 const app = express();
 
 // if (process.env.NODE_ENV === "production") {
@@ -30,7 +28,13 @@ app.use(cors());
 // app.use(helmet());
 // app.use(compression());
 app.use(morgan("dev"));
-app.use(express.json());
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/v1/order/stripe-webhook") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
@@ -62,25 +66,7 @@ app.use("/api/v1/dimensions", dimensionsRouter);
 app.use("/api/v1/tax", taxRouter);
 app.use("/api/v1/contact-us", contactUsRouter);
 
-/* app.use(
-  "/api",
-  createProxyMiddleware({
-    target: "http://localhost:8000",
-    changeOrigin: true,
-    pathRewrite: {
-      "^/api": "",
-    },
-  })
-); */
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/* console.log(__dirname);
-
-app.get("/admin/*", (req, res) =>
-  res.sendFile(path.join(__dirname, "admin_ui.html"))
-);
-app.get("/*", (req, res) => res.sendFile(path.join(__dirname, "shop_ui.html")));
- */
 export { app };
