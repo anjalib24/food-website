@@ -96,8 +96,7 @@ const getProductById = asyncHandler(async (req, res) => {
 
 const productSearch = asyncHandler(async (req, res) => {
   let { limit, page, title } = req.query;
-
-  const { price, name } = req.body;
+  const { price, country: name } = req.body;
 
   const filter = {};
 
@@ -105,14 +104,11 @@ const productSearch = asyncHandler(async (req, res) => {
     filter.title = { $regex: new RegExp(title, "i") };
   }
 
-  if (price) {
+  if (price && price.length > 0) {
     const priceSplit = price.map((i) => i.split("-")).flat();
-
     const priceNumbers = priceSplit.map(Number);
-
     const minPrice = Math.min(...priceNumbers);
     const maxPrice = Math.max(...priceNumbers);
-    console.log("minPrice", minPrice, "maxPrice", maxPrice);
     filter.price = { $gte: minPrice, $lte: maxPrice };
   }
 
@@ -121,7 +117,7 @@ const productSearch = asyncHandler(async (req, res) => {
 
   const loadMore = limit * page;
 
-  const getData = await Product.aggregate([
+  const pipeline = [
     {
       $match: filter,
     },
@@ -137,13 +133,6 @@ const productSearch = asyncHandler(async (req, res) => {
       $unwind: "$origin_country",
     },
     {
-      $match: {
-        "origin_country.name": {
-          $in: name,
-        },
-      },
-    },
-    {
       $project: {
         _id: 1,
         title: 1,
@@ -157,10 +146,23 @@ const productSearch = asyncHandler(async (req, res) => {
         country_name: "$origin_country.name",
       },
     },
-    {
-      $limit: loadMore,
-    },
-  ]);
+  ];
+
+  if (name && name.length > 0) {
+    pipeline.push({
+      $match: {
+        country_name: {
+          $in: name,
+        },
+      },
+    });
+  }
+
+  pipeline.push({
+    $limit: loadMore,
+  });
+
+  const getData = await Product.aggregate(pipeline);
 
   return res
     .status(200)

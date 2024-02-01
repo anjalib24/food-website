@@ -67,6 +67,6 @@ router.route("/get-all-country").get(getAllCountry);
 
 router.route("/get-product-list").get(getProductList);
 
-router.route("/search").get(productSearch);
+router.route("/search").post(productSearch);
 
 export default router;
