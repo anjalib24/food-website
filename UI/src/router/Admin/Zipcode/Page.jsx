@@ -20,6 +20,7 @@ const Page = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true); 
   const [zipcode, setZipcode] = useState([]);
+  const location = useLocation()
 
   useEffect(() => {
     const fetchReviews = () => {
@@ -42,7 +43,7 @@ const Page = () => {
     };
 
     fetchReviews();
-  }, []);
+  }, [location]);
 
   if (isLoading) return <Loader />;
   return (

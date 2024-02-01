@@ -47,7 +47,7 @@ export const Home = () => {
       mode: 'cors'
      });
      console.log(response.data,"home pr get cart");
-      setCartCount(response?.data?.data[0].items?.length)
+      setCartCount(response?.data?.data[0]?.items?.length)
     }
 
   if (!token) {

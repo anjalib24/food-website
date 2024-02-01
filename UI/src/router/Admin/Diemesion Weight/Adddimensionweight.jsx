@@ -74,6 +74,8 @@ const Adddimensionweight = () => {
                                     value={formData.Length}
                                     fullWidth
                                     onChange={handleChange}
+                                    type="number"
+
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -83,6 +85,8 @@ const Adddimensionweight = () => {
                                     value={formData.Width}
                                     fullWidth
                                     onChange={handleChange}
+                                    type="number"
+
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -92,6 +96,8 @@ const Adddimensionweight = () => {
                                     value={formData.Height}
                                     fullWidth
                                     onChange={handleChange}
+                                    type="number"
+
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>

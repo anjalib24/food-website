@@ -14,13 +14,13 @@ import ContactUs from "./ContactUs";
 import PaymentCancel from "./PaymentCancel";
 import UserOrderDetails from "./UserOrderDetails";
 import WithAuth from "@/components/WithAuth";
+import Blogs from "./Blogs";
 
 const Page = () => {
   return (
     <>
     <Switch>
     <ProductContexts>
-
     <Route exact path="/productdetail/:id">
           <Productdetailpage />
         </Route>
@@ -31,12 +31,13 @@ const Page = () => {
           <PaymentCancel />
         </Route>
         </ProductContexts>
-
     </Switch>
     <WithAuth>
     <Switch>
       <ProductContexts>
-    
+      <Route exact path="/blogs">
+          <Blogs />
+        </Route>
       <Route exact path="/strip">
           <Strip/>
         </Route>

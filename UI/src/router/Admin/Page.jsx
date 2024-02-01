@@ -24,6 +24,7 @@ import ShipmentState from "./ShipmentState/Page"
 import Dimension from "./Dimension/Page"
 import DimensionWeight from "./Diemesion Weight/Page"
 import Tax from "./Tax/Page"
+import Adminprofile from "./AdminProfile/Page"
 import Alert from "../Shop/Alert";
 const Page = () => {
   let match = useRouteMatch();
@@ -33,6 +34,9 @@ const Page = () => {
         <Layout
           Page={
             <Switch>
+               <Route path={`${match.path}/profile`}>
+                <Adminprofile/>
+              </Route>
                 <Route path={`${match.path}/tax`}>
                 <Tax/>
               </Route>

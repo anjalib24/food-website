@@ -18,12 +18,14 @@ export const ProductContexts = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [cartCount, setCartCount] = useState(0)
   const [allproductLoader,setallproductLoader] = useState()
+  const [productload,setProductLoad] = useState()
 
   
   const handleaddtocard = async (item) => {
     try {
       const token = localStorage.getItem('token');
       if (token) {
+        setProductLoad(true)
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/get-cart', {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -31,8 +33,8 @@ export const ProductContexts = ({ children }) => {
           },
           mode: 'cors'
         });
-        const cartItems = response?.data?.data?.items;
-        const isItemInCart = cartItems?.some(cartItem => cartItem.productId === item._id);
+        const cartItems = response?.data?.data[0]?.items;
+        const isItemInCart = cartItems?.some(cartItem => cartItem?.productId._id === item.product._id);
         if (isItemInCart) {
           setAlertMsg('Item is already in the cart');
           setShowAlert(true);
@@ -40,6 +42,7 @@ export const ProductContexts = ({ children }) => {
             setAlertMsg("");
             setShowAlert(false);
           }, 3000);
+          setProductLoad(false)
         } else {
           setAlertMsg("Product added to the cart");
           const response = await axios.post(import.meta.env.VITE_APP_BASE_API +'/api/v1/products/add-to-cart', [{
@@ -58,10 +61,12 @@ export const ProductContexts = ({ children }) => {
             setAlertMsg("");
             setShowAlert(false);
           }, 3000);
+          setProductLoad(false)
+
         }
       } else {
         const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
-        const isItemInCart = existingCart.some((cartItem) => cartItem.product._id === item.product._id);
+        const isItemInCart = existingCart.some((cartItem) => cartItem?.product?._id === item?.product?._id);
         if (!isItemInCart) {
           const newCart = [...existingCart, item];
           setCartCount(prevCount => prevCount + 1);
@@ -105,7 +110,7 @@ export const ProductContexts = ({ children }) => {
   return (
     <ProductContext.Provider
       value={{
-        setallproductLoader,allproductLoader, setCartCount,
+        setallproductLoader,allproductLoader, setCartCount,productload,setProductLoad,
         cartCount, setLoading, loading, handleaddtocard, showAlert, setShowAlert, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, createMarkup, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setShow360Modal, show360Modal, setProductId, productId, setShowSocial, showsocial, setVideoData, videodata, showvideomodal, setShowvideomodal
       }}>
       {children}

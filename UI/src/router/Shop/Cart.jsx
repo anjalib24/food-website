@@ -75,9 +75,9 @@ const [shipmentmsg,setShipmentmsg] = useState()
     countCartItems();
   }, []);
   if (token) {
-    totalPrice = cartData.reduce((total, item) => total + (item?.productId.price * item?.quantity), 0)
+    totalPrice = cartData.reduce((total, item) => total + (item?.productId?.price * item?.quantity), 0)
   } else {
-    totalPrice = localData.reduce((total, item) => total + (item?.product.price * item?.quantity), 0)
+    totalPrice = localData.reduce((total, item) => total + (item?.product?.price * item?.quantity), 0)
   }
 
   const countCartItems = () => {
@@ -331,6 +331,9 @@ const [shipmentmsg,setShipmentmsg] = useState()
                   }
                 </div>
               </div>
+              <div>
+                
+              </div>
               {(cartData?.length > 0 || localData.length > 0) && (
                 <div className="card mb-4">
                   <div className="card-body text-right">
@@ -340,6 +343,9 @@ const [shipmentmsg,setShipmentmsg] = useState()
                   </div>
                 </div>
               )}
+            </div>
+            <div>
+              
             </div>
             {cartData?.length === 0 && localData?.length === 0 ? (
               <></>

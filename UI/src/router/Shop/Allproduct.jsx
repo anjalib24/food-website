@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import "./style.css"
 import png360 from "./images/360.png"
 import usflag from "./images/USA_Flag_icon.png"
+import indiaflg from "./images/india-flag-icon.png"
+import franceflg from "./images/france.png"
+import ukrainflg from "./images/ukrain.png"
 import vectorimg from "./images/Vector.png"
 import { fetchData } from './services/Api'
 import Modal360 from './Modal360';
@@ -17,7 +20,7 @@ import Stack from '@mui/material/Stack';
 import { Pagination } from '@mui/material'
 import Loader from '@/components/Loader'
 import { slice } from 'lodash'
-
+import axios from 'axios'
 
 export const Allproduct = ({ getProduct }) => {
   const history = useHistory();
@@ -29,17 +32,23 @@ export const Allproduct = ({ getProduct }) => {
   const [selectedOrigin, setSelectedOrigin] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const { handleaddtocard, showvideomodal, videodata, showAlert, setShowAlert, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
+  const [country, setCountry] = useState()
+  const { handleaddtocard, showvideomodal, videodata, showAlert, setShowAlert, productload, setProductLoad, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
+  useEffect(() => {
+    if (selectedOrigin.length > 0 || selectedPriceRange.length > 0) {
+      handleFormSubmit();
+    } else {
+      handleClearSearch();
+    }
+  }, [selectedOrigin, selectedPriceRange]);
 
-  const currentItems = data;
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
-        setLoading(true);
         const result = await fetchData(`products/get-product-list?page=${currentPage}&limit=${itemsPerPage}`);
         setData(prevData => {
           return currentPage === 1 ? result?.data?.product : [...prevData, ...result.data.product];
@@ -48,7 +57,6 @@ export const Allproduct = ({ getProduct }) => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false);
         setIsLoadingMore(false);
       }
     };
@@ -70,6 +78,8 @@ export const Allproduct = ({ getProduct }) => {
         return [...prevSelected, value];
       }
     });
+
+
   };
 
   const handlePriceCheckboxChange = (value) => {
@@ -83,38 +93,65 @@ export const Allproduct = ({ getProduct }) => {
     });
 
   };
-  const getPriceRange = (price) => {
-    if (price >= 1 && price <= 20) {
-      return '1-20';
-    } else if (price > 20 && price <= 50) {
-      return '20-50$';
-    } else if (price > 50 && price <= 70) {
-      return '50-70$';
-    } else {
-      return '+70$';
-    }
-  };
+  // const getPriceRange = (price) => {
+  //   if (price >= 1 && price <= 20) {
+  //     return '1-20';
+  //   } else if (price > 20 && price <= 50) {
+  //     return '20-50';
+  //   } else if (price > 50 && price <= 70) {
+  //     return '50-70';
+  //   } else {
+  //     return '+70';
+  //   }
+  // };
   const handleFormSubmit = async (event) => {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
+
+
+    const options = {
+      method: 'POST',
+      url: import.meta.env.VITE_APP_BASE_API + "/api/v1/products/search",
+       params: {
+        'title': searchInput,
+        "page": currentPage,
+        "limit": itemsPerPage,
+      },
+      headers: {
+        'content-type': 'application/json',
+      },
+      data: {
+        country: selectedOrigin,
+        price: selectedPriceRange
+      },
+    };
+
     try {
-      const result = await fetchData(`products/get-product-list?title=${searchInput}`);
-      setData(result.data.product)
+      const response = await axios.request(options);
+      console.log(response?.data.data.product, "searchData");
+      // Assuming response.data has a structure similar to { product: [...] }
+      setData(prevData => {
+        return currentPage === 1 ? response?.data?.data.product: [...prevData, ...response?.data?.data.product];
+      });
+      setData(response?.data?.data.product);
+      console.log(response?.data, "totaldocsofsearchhhh");
+      setTotalItems(response?.data?.data.totalDocs);
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };
+  }
 
 
   const loadMore = () => {
     setIsLoadingMore(true);
     setCurrentPage(prevPage => prevPage + 1);
-
-    // Scroll to the top of the container when loading more
-    const container = document.getElementById('yourContainerId'); // Replace 'yourContainerId' with the actual ID of the container
+    const container = document.getElementById('yourContainerId');
     if (container) {
       container.scrollTo({
         top: 0,
-        behavior: 'smooth', // You can use 'auto' or 'smooth' for the scrolling behavior
+        behavior: 'smooth',
       });
     }
   };
@@ -122,11 +159,13 @@ export const Allproduct = ({ getProduct }) => {
     setSearchInput('');
     const result = await fetchData(`products/get-product-list?page=${currentPage}&limit=${itemsPerPage}`);
     setData(result.data.product);
-   };
+    setTotalItems(result?.data?.totalDocs);
 
+  };
+  console.log(totalItems, "totalitemsss");
   return (
     <>
-    {loading &&<Loader/>}
+      {productload && <Loader />}
       {showAlert && <Alert type="success" message={alertmsg} />}
       {showsocial && <Socialmedia productId={productId} />}
       {show360Modal && <Modal360 data={selectedItem} />}
@@ -150,7 +189,6 @@ export const Allproduct = ({ getProduct }) => {
             onChange={() => handleOriginCheckboxChange('usa')}
           />
             <label className="form-check-label" htmlFor="exampleCheck1">USA</label>
-
           </a>
           <a className="dropdown-item" href="#"> <input type="checkbox"
             className="form-check-input"
@@ -184,8 +222,8 @@ export const Allproduct = ({ getProduct }) => {
               type="checkbox"
               className="form-check-input"
               id="range1Checkbox"
-              checked={selectedPriceRange.includes('20-50$')}
-              onChange={() => handlePriceCheckboxChange('20-50$')}
+              checked={selectedPriceRange.includes('20-50')}
+              onChange={() => handlePriceCheckboxChange('20-50')}
             />
             <label className="form-check-label" htmlFor="exampleCheck1">20-50$</label>
           </a>
@@ -194,8 +232,8 @@ export const Allproduct = ({ getProduct }) => {
               type="checkbox"
               className="form-check-input"
               id="range1Checkbox"
-              checked={selectedPriceRange.includes('50-70$')}
-              onChange={() => handlePriceCheckboxChange('50-70$')}
+              checked={selectedPriceRange.includes('50-70')}
+              onChange={() => handlePriceCheckboxChange('50-70')}
             />
             <label className="form-check-label" htmlFor="exampleCheck1">50-70$</label>
           </a>
@@ -205,7 +243,7 @@ export const Allproduct = ({ getProduct }) => {
               className="form-check-input"
               id="range1Checkbox"
               checked={selectedPriceRange.includes('+70$')}
-              onChange={() => handlePriceCheckboxChange('+70$')}
+              onChange={() => handlePriceCheckboxChange('70-10000')}
             />
             <label className="form-check-label" htmlFor="exampleCheck1">+70$</label>
           </a>
@@ -215,25 +253,31 @@ export const Allproduct = ({ getProduct }) => {
       <div className='container'>
         <section id="search" className="mt-5">
           <div className="col-md-12 pr-0 pl-0 mb-5" >
-          <form id="out" className="navbar-form navbar-left" onSubmit={handleFormSubmit}>
- <div className="input-group border rounded-pill">
-    <input
-      type="text"
-      className="form-control"
-      placeholder="Search"
-      value={searchInput}
-      onChange={(e) => setSearchInput(e.target.value)}
-    />
-    <div className="input-group-btn">
-      <button className="btn btn border rounded-end " type="submit">
-        <i className="fa-solid fa-magnifying-glass"></i>
-      </button>
-      <button className="btn btn border rounded-end " type="button" onClick={handleClearSearch}>
- <i className="fa-solid fa-times"></i>
-</button>
-    </div>
- </div>
-</form>
+            <form id="out" className="navbar-form navbar-left" onSubmit={(event) => handleFormSubmit(event)}>
+              <div className="input-group border rounded-pill">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+                <div className="input-group-btn">
+                  {searchInput && (
+                    <>
+                      <button className="btn btn border rounded-end " type="submit">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                      </button>
+                      <button className="btn btn border rounded-end " type="button" onClick={handleClearSearch}>
+                        <i className="fa-solid fa-times"></i>
+                      </button>
+                    </>
+                  )
+                  }
+
+                </div>
+              </div>
+            </form>
           </div>
           <div className="row">
             <div id="checkboxfilter" className="col-md-2 align-items-centerss ">
@@ -290,8 +334,8 @@ export const Allproduct = ({ getProduct }) => {
                   type="checkbox"
                   className="form-check-input"
                   id="range1Checkbox"
-                  checked={selectedPriceRange.includes('20-50$')}
-                  onChange={() => handlePriceCheckboxChange('20-50$')}
+                  checked={selectedPriceRange.includes('20-50')}
+                  onChange={() => handlePriceCheckboxChange('20-50')}
                 />
                 <label className="form-check-label" htmlFor="exampleCheck1">20-50$</label>
               </div>
@@ -300,8 +344,8 @@ export const Allproduct = ({ getProduct }) => {
                   type="checkbox"
                   className="form-check-input"
                   id="range1Checkbox"
-                  checked={selectedPriceRange.includes('50-70$')}
-                  onChange={() => handlePriceCheckboxChange('50-70$')}
+                  checked={selectedPriceRange.includes('50-70')}
+                  onChange={() => handlePriceCheckboxChange('50-70')}
                 />
                 <label className="form-check-label" htmlFor="exampleCheck1">50-70$</label>
               </div>
@@ -311,7 +355,7 @@ export const Allproduct = ({ getProduct }) => {
                   className="form-check-input"
                   id="range1Checkbox"
                   checked={selectedPriceRange.includes('+70$')}
-                  onChange={() => handlePriceCheckboxChange('+70$')}
+                  onChange={() => handlePriceCheckboxChange('70-10000')}
                 />
                 <label className="form-check-label" htmlFor="exampleCheck1">+70$</label>
               </div>
@@ -319,8 +363,11 @@ export const Allproduct = ({ getProduct }) => {
             <div className="col-md-10" >
               <div className="row">
                 {loading && (
-                  <div className="col-md-12 text-center">
-
+                  <div className='container'>
+                    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
+                      <div className="spinner-border" role="status">
+                      </div>
+                    </div>
                   </div>
                 )}
                 {!loading && data && data?.length === 0 && (
@@ -345,8 +392,18 @@ export const Allproduct = ({ getProduct }) => {
                             </p>
                           </div>
                           <div className='d-flex flex-row align-items-center'>
-                            <h5>Origin County:</h5>
-                            <img src={usflag} alt="#" className='my-auto' />
+                            <h5>Origin Country:</h5>
+                            <img
+                              style={{ width: "18px", height: "12px" }}
+                              src={
+                                ((item?.product?.origin_country?.name || item?.product?.country_name) === 'india') ? indiaflg :
+                                  ((item?.product?.origin_country?.name || item?.product?.country_name) === 'france') ? franceflg :
+                                    ((item?.product?.origin_country?.name || item?.product?.country_name) === 'ukraine') ? ukrainflg :
+                                      usflag
+                              }
+                              alt="Flag"
+                              className='my-auto'
+                            />
                           </div>
                         </div>
                         <div className="product-actions">
@@ -427,12 +484,5 @@ export const Allproduct = ({ getProduct }) => {
     </>
   )
 }
-
-
-
-
-
-
-
 
 

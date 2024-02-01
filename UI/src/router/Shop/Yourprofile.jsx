@@ -234,7 +234,7 @@ const Yourprofile = () => {
                         <>
                           <div className="row product" onClick={() => handleClick(item)}>
                             <div className="col-md-2">
-                              <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={import.meta.env.VITE_APP_BASE_API + `${item?.productDetails[0]?.images[0]}`} />
+                              <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={import.meta.env.VITE_APP_BASE_API +`${item?.productDetails[0]?.images[0]}`} />
                             </div>
                             <div className="col-md-6 product-detail" style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                               <div>
