@@ -164,12 +164,20 @@ const productSearch = asyncHandler(async (req, res) => {
 
   const getData = await Product.aggregate(pipeline);
 
+  const getAllData = await Promise.all(
+    getData.map(async (product) => {
+      const productRewiev = await getProductListReviews(product?._id);
+
+      return { product, productRewiev };
+    })
+  );
+
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { product: [{ product: getData }], totalDocs: getData?.length },
+        { product: [...getAllData], totalDocs: getData?.length },
         "Get product list data successfully."
       )
     );

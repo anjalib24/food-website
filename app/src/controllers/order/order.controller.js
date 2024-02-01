@@ -59,7 +59,7 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       username: existedUser.username,
       email: existedUser.email,
       products: productIds,
-      pyamentOrderId: null,
+      pyamentOrderId: stripeOrderData.id,
       status: "pending",
       tax: cartData.tax,
       shippingCharge: cartData.shippingCharge,
@@ -92,56 +92,68 @@ const orderSuccess = asyncHandler(async (req, res) => {
   res.sendStatus(200).json("Payment successfull!");
 });
 
-const stripeWebHookHandler = asyncHandler(async (req, res) => {
-  const payload = req.body;
-  const sig = req.headers["stripe-signature"];
+const stripeWebHookHandler = asyncHandler(async (req, response) => {
+  console.log("---------1----------");
 
-  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_ENDPOINT_SECRET) {
-    throw new ApiError(500, "Stripe environment variables are not set.");
+  const payload = JSON.stringify(req.body, null, 2);
+  const sig = req.headers["stripe-signature"];
+  console.log("---------2----------");
+  console.log("---------3----------", process.env.STRIPE_SECRET_KEY);
+
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STIPE_ENDPOINT_SECRET) {
+    console.error("Stripe environment variables are not set.");
+    response.status(500).send("Internal Server Error");
+    return;
   }
+  console.log("---------5----------", process.env.STRIPE_SECRET_KEY);
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   let event;
 
   try {
+    console.log("---------payload----------", payload);
+    console.log("---------sig----------", sig);
+
     event = stripe.webhooks.constructEvent(
       payload,
       sig,
-      process.env.STRIPE_ENDPOINT_SECRET
+      process.env.STIPE_ENDPOINT_SECRET
     );
+    console.log("---------event----------", event);
   } catch (err) {
     console.error("Webhook signature verification failed.", err);
-    throw new ApiError(400, "Webhook signature verification failed.");
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
   }
 
   let orderData = null;
   switch (event.type) {
     case "checkout.session.completed":
+      console.log("-------event object----", event.data.object);
       orderData = await handleCheckoutSessionCompleted(event.data.object);
       if (!orderData) {
-        return res
-          .status(201)
-          .json(new ApiResponse(200, null, "Order not fulfilled."));
+        console.log("------------something went wrong while order confirm");
       }
       break;
     default:
       console.log(`Unhandled event type: ${event.type}`);
   }
 
-  return res
-    .status(201)
-    .json(new ApiResponse(200, orderData, "Order fulfilled successfully."));
+  return response.send();
 });
 
 const handleCheckoutSessionCompleted = async (session) => {
   const orderId = session.metadata.orderId;
-
+  console.log("------------>", orderId);
   if (orderId) {
     try {
-      const orderUpdateData = await Order.findByIdAndUpdate(orderId, {
-        status: "fulfilled",
-      });
+      const orderUpdateData = await Order.findByIdAndUpdate(
+        { pyamentOrderId: orderId },
+        {
+          status: "fulfilled",
+        }
+      );
 
       console.log(`Order ${orderId} has been fulfilled.`);
       if (!orderUpdateData) {

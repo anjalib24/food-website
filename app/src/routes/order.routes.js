@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import {
   orderProductPaymentWithStripe,
   orderSuccess,
@@ -12,6 +12,6 @@ import { userAuth } from "../middlewares/userAuth.js";
 router.route("/").get(getAllOrder);
 router.route("/create-order/:id").post(userAuth, orderProductPaymentWithStripe);
 router.route("/update-order-status/:id").put(updateOrderStatus);
-// router.route("/stripe-webhook").post(stripeWebHookHandler);
+router.route("/stripe-webhook").post(stripeWebHookHandler);
 
 export default router;
