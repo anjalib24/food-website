@@ -152,7 +152,7 @@ nav .dropdown-menu {
     width: 100% !important;
     transform: translate(0) !important;
     left: -100% !important;
-    top: 73px !important;
+    top: 87px !important;
     overflow: auto;
     transition: all 0.3s ease-in;
     display: block;
@@ -273,19 +273,34 @@ footer.bg-success.text-white.pt-5.pb-4.pe-3 {
     background: #0F4E15 !important;
 }
 
+.socialmediosinmobileview{
+    display: none !important;
+}
+
+
 
 @media (max-width: 780px) {
     .main-header ul {
         display: none;
     }
     
+    .blog-img{
+        width: 100% !important;
+        height: auto !important;
+    }
+
     section.banner {
         height: 460px;
         background-size: 100%;
         background-position: bottom;
         background-repeat: no-repeat;
     }
-    
+    .socialmedios{
+        display: none !important;
+    }
+    .socialmediosinmobileview{
+        display: block !important;
+    }
     .logo{
         width: auto;
         height: 40px;

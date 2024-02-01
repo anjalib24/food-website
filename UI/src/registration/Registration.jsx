@@ -9,6 +9,7 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { Footer } from "@/router/Shop/Footer";
 import Header from "@/router/Shop/Header";
 import Loader from "@/components/Loader";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const registrationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -35,6 +36,7 @@ const initialValues = {
 
 const Registration = () => {
   const [loading, setLoading] = useState(false);
+  const history = useHistory();
 
   const {
     values,
@@ -70,6 +72,7 @@ const Registration = () => {
         if (response.status === 201) {
           showAlert("success", "Registration successful!");
           action.resetForm();
+          // history.push("/login")
         } else {
           showAlert("danger", "Registration failed. Please try again.");
         }

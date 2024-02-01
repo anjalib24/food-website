@@ -9,6 +9,8 @@ import axios from 'axios';
 import { useProductState } from './context/ProductContext';
 import Alert from './Alert';
 import Loader from '@/components/Loader';
+import { FaYoutube, FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaPinterest, FaSnapchat } from 'react-icons/fa';
+
 
 const Header = ({ hideCart, hidebutton }) => {
   const navStyles = {
@@ -28,7 +30,15 @@ const Header = ({ hideCart, hidebutton }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { cartCount } = useProductState()
   const [alert, setAlert] = useState(null);
-
+  const socialMediaLinks = {
+    youtube: 'https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw',
+    facebook: 'https://www.facebook.com/yourpage',
+    instagram: 'https://www.instagram.com/yourusername',
+    linkedin: 'https://www.linkedin.com/company/yourcompany',
+    tiktok: 'https://www.tiktok.com/@yourusername',
+    pinterest: 'https://www.pinterest.com/yourusername',
+    snapchat: 'https://www.snapchat.com/add/yourusername',
+  };
   const showAlert = (type, message) => {
     setAlert({ type, message });
     setTimeout(() => {
@@ -97,61 +107,118 @@ const Header = ({ hideCart, hidebutton }) => {
       {alert && <Alert type={alert.type} message={alert.message} />}
       <header>
         <div className="main-header">
-          <div className="container">
-            <nav style={navStyles}>
-              <Link to="/">
-                <img src={ethnicLogo} className="logo" alt="#" />
-              </Link>
-              <ul style={{ 'margin': 0 }}>
-                <li><Link to="/">Home</Link></li>
-                <li onClick={() => scrollToBestseller()}><Link to="/shop">Shop</Link></li>
-                <li><Link to="/#About">About Us</Link></li>
-                <li><Link to="/#review">Review</Link></li>
-                <li><Link to="/#Blog">Blog</Link></li>
-                <li><Link to="/#FAQ">FAQ</Link></li>
-                <li onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}>Contact</li>
-              </ul>
-              <div className="d-flex justify-content-center align-items-center" style={{ flexDirection: 'row', gap: '5px' }}>
-                {!hideCart && (
-                  <div className="icons" onClick={handleBasketClick}>
-                    <i className="fa badge fa-lg"
-                      value={cartCount}>
-                      &#xf290;
-                    </i>
-                  </div>
-                )}
-                {!isLoggedIn && !hidebutton && (
-                  <div>
-                    <Button style={{ background: "green" }} onClick={() => navigate.push("/login")}>Login</Button>
-                  </div>
-                )}
-                {isLoggedIn && (
-                  <Dropdown>
-                    <Dropdown.Toggle as="div" style={{ borderRadius: '40%', width: '40px', height: '40px' }}>
-                      <img src={defaultpersonimg} alt="User Profile" className="profile-image" style={{ width: '80%', height: '80%' }} />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu show={false}>
-                      <Dropdown.Item as={Link} to="/yourprofile">Your Profile</Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                )}
-              </div>
-              <div className="hambagarmenu" style={{ fontSize: "30px" }}>
-                <i className="fa-solid fa-bars dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a className="dropdown-item"><Link to="/" style={{ color: 'green' }}>Home</Link></a>
-                  <a className="dropdown-item"><Link to="/shop" style={{ color: 'green' }}>Shop</Link></a>
-                  <a className="dropdown-item"><Link to="/#About" style={{ color: 'green' }}>About Us</Link></a>
-                  <a className="dropdown-item"><Link to="/#review" style={{ color: 'green' }}>Review</Link></a>
-                  <a className="dropdown-item"><Link to="/#Blog" style={{ color: 'green' }}>Blog</Link></a>
-                  <a className="dropdown-item"><Link to="/#FAQ" style={{ color: 'green' }}>FAQ</Link></a>
-                  <a className="dropdown-item" onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}><span style={{ color: 'green' }}>Contact</span></a>
+          <div style={{display:"flex", flexDirection:"row",alignItems:"center"}}>
+            <div className="container">
+              <nav style={navStyles}>
+                <Link to="/">
+                  <img src={ethnicLogo} className="logo" alt="#" />
+                </Link>
+                <ul style={{ 'margin': 0 }}>
+                  <li><Link to="/">Home</Link></li>
+                  <li onClick={() => scrollToBestseller()}><Link to="/shop">Shop</Link></li>
+                  <li><Link to="/#About">About Us</Link></li>
+                  <li><Link to="/#review">Review</Link></li>
+                  <li><Link to="/#Blog">Blog</Link></li>
+                  <li><Link to="/#FAQ">FAQ</Link></li>
+                  <li onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}>Contact</li>
+                </ul>
+                <div className="d-flex justify-content-center align-items-center" style={{ flexDirection: 'row', gap: '5px' }}>
+                  {!hideCart && (
+                    <div className="icons" onClick={handleBasketClick}>
+                      <i className="fa badge fa-lg"
+                        value={cartCount}>
+                        &#xf290;
+                      </i>
+                    </div>
+                  )}
+                  {!isLoggedIn && !hidebutton && (
+                    <div>
+                      <Button style={{ background: "green" }} onClick={() => navigate.push("/login")}>Login</Button>
+                    </div>
+                  )}
+                  {isLoggedIn && (
+                    <Dropdown>
+                      <Dropdown.Toggle as="div" style={{ borderRadius: '40%', width: '40px', height: '40px' }}>
+                        <img src={defaultpersonimg} alt="User Profile" className="profile-image" style={{ width: '80%', height: '80%' }} />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu show={false}>
+                        <Dropdown.Item as={Link} to="/yourprofile">Your Profile</Dropdown.Item>
+                        <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  )}
+
                 </div>
+                <div className="hambagarmenu" style={{ fontSize: "30px" }}>
+                  <i className="fa-solid fa-bars dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a className="dropdown-item"><Link to="/" style={{ color: 'green' }}>Home</Link></a>
+                    <a className="dropdown-item"><Link to="/shop" style={{ color: 'green' }}>Shop</Link></a>
+                    <a className="dropdown-item"><Link to="/#About" style={{ color: 'green' }}>About Us</Link></a>
+                    <a className="dropdown-item"><Link to="/#review" style={{ color: 'green' }}>Review</Link></a>
+                    <a className="dropdown-item"><Link to="/#Blog" style={{ color: 'green' }}>Blog</Link></a>
+                    <a className="dropdown-item"><Link to="/#FAQ" style={{ color: 'green' }}>FAQ</Link></a>
+                    <a className="dropdown-item" onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}><span style={{ color: 'green' }}>Contact</span></a>
+                  </div>
+                </div>
+              </nav>
+            </div>
+            <div>
+              <div className='socialmedios' style={{ display: "flex", gap: "9px", flexDirection: "row" }}>
+                <a href={socialMediaLinks.youtube} target="_blank" rel="noopener noreferrer">
+                  <FaYoutube size={20} style={{ color: "green" }} />
+                </a>
+                <a href={socialMediaLinks.facebook} target="_blank" rel="noopener noreferrer">
+                  <FaFacebookF size={20} style={{ color: "green" }} />
+                </a>
+                <a href={socialMediaLinks.instagram} target="_blank" rel="noopener noreferrer">
+                  <FaInstagram size={20} style={{ color: "green" }} />
+                </a>
+                <a href={socialMediaLinks.linkedin} target="_blank" rel="noopener noreferrer">
+                  <FaLinkedinIn size={20} style={{ color: "green" }} />
+                </a>
+                <a href={socialMediaLinks.tiktok} target="_blank" rel="noopener noreferrer">
+                  <FaTiktok size={20} style={{ color: "green" }} />
+                </a>
+                <a href={socialMediaLinks.pinterest} target="_blank" rel="noopener noreferrer">
+                  <FaPinterest size={20} style={{ color: "green" }} />
+                </a>
+                <a href={socialMediaLinks.snapchat} target="_blank" rel="noopener noreferrer">
+                  <FaSnapchat size={20} style={{ color: "green" }} />
+                </a>
               </div>
-            </nav>
+            </div>
           </div>
+
+
         </div>
+        <div className='socialmediosinmobileview'>
+          <div className='' style={{ display: "flex", gap: "9px", flexDirection: "row", justifyContent: "flex-end", marginTop: "4px", marginRight: "10px" }}>
+            <a href={socialMediaLinks.youtube} target="_blank" rel="noopener noreferrer">
+              <FaYoutube size={20} style={{ color: "green" }} />
+            </a>
+            <a href={socialMediaLinks.facebook} target="_blank" rel="noopener noreferrer">
+              <FaFacebookF size={20} style={{ color: "green" }} />
+            </a>
+            <a href={socialMediaLinks.instagram} target="_blank" rel="noopener noreferrer">
+              <FaInstagram size={20} style={{ color: "green" }} />
+            </a>
+            <a href={socialMediaLinks.linkedin} target="_blank" rel="noopener noreferrer">
+              <FaLinkedinIn size={20} style={{ color: "green" }} />
+            </a>
+            <a href={socialMediaLinks.tiktok} target="_blank" rel="noopener noreferrer">
+              <FaTiktok size={20} style={{ color: "green" }} />
+            </a>
+            <a href={socialMediaLinks.pinterest} target="_blank" rel="noopener noreferrer">
+              <FaPinterest size={20} style={{ color: "green" }} />
+            </a>
+            <a href={socialMediaLinks.snapchat} target="_blank" rel="noopener noreferrer">
+              <FaSnapchat size={20} style={{ color: "green" }} />
+            </a>
+          </div>
+
+        </div>
+
       </header>
     </>
   );

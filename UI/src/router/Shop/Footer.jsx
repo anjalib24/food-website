@@ -14,7 +14,7 @@ export const Footer = () => {
                 <div className="container text-left text-md-left">
                     <div className="row text-left text-md-left">
                         <div className="col-md-9">
-                            <h3>Contect</h3>
+                            <h3>Contact</h3>
                             <p className="">+1 617 817 2625</p>
                             <p className="">contact@ethnicfoods.com</p>
                             <p className="">5919 Trussville Crossings Pkwy, Birmingham</p>

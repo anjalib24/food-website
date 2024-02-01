@@ -42,7 +42,7 @@ const Productdetailpage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
-  const { handleaddtocard, showAlert, setShowAlert, setAlertMsg, alertmsg } = useProductState();
+  const { handleaddtocard, showAlert, setShowAlert, setAlertMsg, alertmsg , productload,setProductLoad,} = useProductState();
   const { id } = useParams();
   const { createMarkup } = useProductState();
   const playerRef = useRef(null);
@@ -67,7 +67,7 @@ const Productdetailpage = () => {
   console.log(product, "productDetailpage");
 
   useEffect(() => {
-    setIsLoading(true);
+    setProductLoad(true);
     const fetchProduct = async () => {
       try {
         const response = await axios.get(import.meta.env.VITE_APP_BASE_API + `/api/v1/products/get-single-product/${id}`, {
@@ -76,11 +76,12 @@ const Productdetailpage = () => {
           },
           mode: 'cors'
         });
+        console.log(response.data.data, "responsee");
         setProduct(response.data.data);
       } catch (error) {
         console.error('Error fetching product:', error);
       } finally {
-        setIsLoading(false);
+        setProductLoad(false);
       }
     };
     fetchProduct();
@@ -97,7 +98,7 @@ const Productdetailpage = () => {
         setAlertMsg("");
         setShowAlert(false);
       }, 3000);
-      return; 
+      return;
     }
     try {
       const token = localStorage.getItem("token");
@@ -134,14 +135,14 @@ const Productdetailpage = () => {
   };
   return (
     <>
-      {isLoading && <Loader />}
+      {productload && <Loader />}
       <Header />
       {showAlert && <Alert type="success" message={alertmsg} />}
       <Container className='mt-5'>
         <Row>
           <Col xs={12} md={2} style={{ marginTop: "20px" }}>
             <div className="image-list d-flex align-items-center">
-              {product?.images?.map((image, index) => (
+              {product?.product?.images?.map((image, index) => (
                 <img
                   key={index}
                   src={import.meta.env.VITE_APP_BASE_API + image}
@@ -180,21 +181,21 @@ const Productdetailpage = () => {
           </Col>
           <Col xs={12} md={5} style={{ marginTop: "20px" }}>
             <div className="product-details">
-              <h2>{product?.title}</h2>
+              <h2>{product?.product[0]?.product?.title}</h2>
               <div className="product-reviews" >
                 <h5>Rating</h5>
                 <Stack spacing={1}>
-                  <Rating name="half-rating-read" defaultValue={product?.productOverAllReviews} precision={0.5} readOnly />
+                  <Rating name="half-rating-read" defaultValue={product?.product[0]?.product?.productOverAllReviews} precision={0.5} readOnly />
                 </Stack>
                 <p>This product is great!</p>
               </div>
               <div>
-                <p>Price: <h3>{formatter.format(product?.price)}</h3> </p>
+                <p>Price: <h3>{formatter.format(product?.product[0]?.product?.price)}</h3> </p>
               </div>
-              <p dangerouslySetInnerHTML={createMarkup(product?.description)}></p>
+              <p dangerouslySetInnerHTML={createMarkup(product?.product[0]?.product?.description)}></p>
 
               <Button style={{ backgroundColor: 'green' }}
-                onClick={() => handleaddtocard(product)}
+                onClick={() => handleaddtocard(product?.product[0])}
               >Add to cart</Button>
               <div>
                 {
@@ -294,8 +295,14 @@ const Productdetailpage = () => {
                         onChange={onRecaptchaChange}
                       />
                     </div>
-
-                    <button type="button" onClick={submitReview} className="btn btn-outline-success close" aria-label="Close" data-dismiss="modal" style={{ marginTop: "5px" }}>Submit</button>
+                    <button
+                      type="button"
+                      onClick={submitReview}
+                      style={{ marginTop: "5px", width: "100px" }} // Adjust the width as needed
+                      className="btn btn-primary"
+                    >
+                      Submit
+                    </button>
                   </>
                 </div>
               </div>

@@ -8,9 +8,9 @@ const WithAuth = (props) => {
 console.log('history', history)
 
   const unprotectedRoutes = [
-    '/paymentsucess',
+    'paymentsucess',
     'PaymentCancel',
-    '/productdetail${id}'
+    'productdetail'
   ]
 console.log(history,"hiodtoryy");
 useEffect(() => {
@@ -30,11 +30,13 @@ useEffect(() => {
       return;
     }
   }
-
+const check = history.location.pathname.split("/")[1]
+console.log(check,"checkkk");
   // Check if the current route is in the unprotectedRoutes array
-  if (unprotectedRoutes.includes(history.location.pathname)) {
+  if (unprotectedRoutes.includes(check)) {
     // No redirection for unprotected routes
-    return;
+    history.push(history.location.pathname)
+    return 
   }
 
   // Redirect to the main shop page for other cases

@@ -29,15 +29,15 @@ const BestSellers = () => {
       setLoading(true)
       try {
         const response = await axios.get(
-          import.meta.env.VITE_APP_BASE_API+"/api/v1/products/get-best-seller-product",
+          import.meta.env.VITE_APP_BASE_API + "/api/v1/products/get-best-seller-product",
           {
-             headers: {
-               "Content-Type": "application/json"
-             },
-             mode: 'cors'
+            headers: {
+              "Content-Type": "application/json"
+            },
+            mode: 'cors'
           }
-         );
-         console.log(response.data.data,"bestsellerresponse");
+        );
+        console.log(response.data.data, "bestsellerresponse");
         const bestSellers = response.data.data
         setData(bestSellers);
       } catch (error) {
@@ -63,20 +63,28 @@ const BestSellers = () => {
         breakpoint: 1024,
         settings: {
           slidesToShow: 3,
+          slidesToScroll: 1,
+
         },
       },
       {
         breakpoint: 600,
+        slidesToScroll: 1,
         settings: {
           slidesToShow: 2,
+          slidesToScroll: 1,
+
           arrows: false,
         },
       },
       {
         breakpoint: 480,
+        slidesToScroll: 1,
         settings: {
           slidesToShow: 1,
           dots: true,
+          slidesToScroll: 1,
+
           arrows: false
         },
       },
@@ -93,25 +101,10 @@ const BestSellers = () => {
           <div className="row" style={{ minHeight: '50vh' }}>
             {loading ? (
               <div className='container'>
-                <Slider {...settings} className='d-flex'>
-                  {[...Array(settings.slidesToShow)].map((_, index) => (
-                    <div key={index} style={{ marginRight: '5px', marginLeft: "5px" }}>
-                      <div className="mb-4 border border-success card-container" style={{ maxWidth: '225px', margin: "auto" }}>
-                        <div className="d-flex mx-auto h-100">
-                          <div>
-                            <Skeleton height={200} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={38} width={`100%`} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={38} width={`100%`} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={38} width={`100%`} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={38} width={`100%`} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={38} width={`100%`} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={38} width={`100%`} style={{ marginBottom: '10px' }} />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </Slider>
+                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
+                  <div className="spinner-border" role="status">
+                  </div>
+                </div>
               </div>
             ) : data && data.length ? (
               <div className='container'>
@@ -186,13 +179,13 @@ const BestSellers = () => {
                                       Add to cart
                                     </button>
                                     <button
- className="btn btn-white btn-block border border-success mb-1"
- onClick={() => window.open(`/productdetail/${item?.product?._id}`, "_blank")}
- data-toggle="modal"
- data-target="#exploreModal"
->
- Explore
-</button>
+                                      className="btn btn-white btn-block border border-success mb-1"
+                                      onClick={() => window.open(`/productdetail/${item?.product?._id}`, "_blank")}
+                                      data-toggle="modal"
+                                      data-target="#exploreModal"
+                                    >
+                                      Explore
+                                    </button>
                                   </div>
                                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Stack spacing={1}>

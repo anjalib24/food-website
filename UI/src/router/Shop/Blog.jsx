@@ -3,6 +3,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useProductState } from './context/ProductContext';
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Loader = () => (
 
@@ -12,6 +13,8 @@ const Loader = () => (
 );
 
 export const Blog = (props) => {
+  const history = useHistory();
+
   const slickRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const {createMarkup } = useProductState();
@@ -84,7 +87,7 @@ export const Blog = (props) => {
                      {props?.blog?.length > 0 ? (
                         <Slider ref={slickRef} {...settings} afterChange={handleAfterChange}>
                         {props?.blog?.map((blogItem, index) => (
-                          <div key={index} className="single-box">
+                          <div key={index} className="single-box"  onClick={() => history.push("/blogs", { selectedBlog: blogItem })}>
                             <div className="img-area">
                               <img src={import.meta.env.VITE_APP_BASE_API+blogItem.image} alt={`Blog ${index + 1}`}  style={{height: '220px'}}/>
                             </div>
