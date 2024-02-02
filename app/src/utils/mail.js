@@ -3,8 +3,7 @@ import nodemailer from "nodemailer";
 const sendUserRegistrationConfirmationEmail = async (recipientEmail, name) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.gmail.com",
+      host: process.env.HOST_EMAIL,
       port: 587,
       secure: false,
       auth: {
@@ -64,4 +63,39 @@ const sendOrderConfirmationEmail = async (recipientEmail, name, orderId) => {
   }
 };
 
-export { sendUserRegistrationConfirmationEmail, sendOrderConfirmationEmail };
+const sendContactUsEmail = async (recipientEmail, name) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.HOST_EMAIL,
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SEND_EMAIL,
+        pass: process.env.SEND_EMAIL_PASSWORD,
+      },
+    });
+
+    const htmlContent = `
+      <p>Dear ${name},</p>
+      <p>Your query has been submitted successfully. Our team will get back to you as soon as possible.</p>
+      <p>Thank you for choosing Ethnic Ecommerce!</p>
+      <p>Best regards,</p>
+      <p>Ethnic Ecommerce Team</p>
+    `;
+
+    const info = await transporter.sendMail({
+      from: `Ethnic Ecommerce <${process.env.SEND_EMAIL}>`,
+      to: recipientEmail,
+      subject: "Query Submission Successful - Ethnic Ecommerce",
+      html: htmlContent,
+    });
+  } catch (error) {
+    throw new ApiError(500, `Constact us email Error ${error.Error}`);
+  }
+};
+
+export {
+  sendUserRegistrationConfirmationEmail,
+  sendOrderConfirmationEmail,
+  sendContactUsEmail,
+};

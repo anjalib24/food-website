@@ -21,6 +21,7 @@ import {
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
 import { userAuth } from "../middlewares/userAuth.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const router = Router();
 
@@ -29,23 +30,33 @@ router.route("/get-best-seller-product").get(getBestSeller);
 router.route("/get-product").get(getProductData);
 router.route("/get-single-product/:id").get(getProductById);
 
-router.route("/create-product").post(
+router.route("/create-product").post(async (req, res, next) => {
   upload.fields([
     { name: "images", maxCount: 5 },
     { name: "video", maxCount: 1 },
     { name: "zipFile", maxCount: 1 },
-  ]),
-  createProductData
-);
+  ])(req, res, (err) => {
+    if (err) {
+      return res.status(201).json(new ApiResponse(500, null, err.message));
+    } else {
+      next();
+    }
+  });
+}, createProductData);
 
-router.route("/update-product/:id").put(
+router.route("/update-product/:id").put(async (req, res, next) => {
   upload.fields([
     { name: "images", maxCount: 5 },
     { name: "video", maxCount: 1 },
     { name: "zipFile", maxCount: 1 },
-  ]),
-  updateProductData
-);
+  ])(req, res, (err) => {
+    if (err) {
+      return res.status(201).json(new ApiResponse(500, null, err.message));
+    } else {
+      next();
+    }
+  });
+}, updateProductData);
 
 router.route("/delete-product/:id").delete(deleteProductData);
 

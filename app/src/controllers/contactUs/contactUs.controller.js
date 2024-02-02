@@ -2,6 +2,7 @@ import ContactUs from "../../models/contactUs.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
+import { sendContactUsEmail } from "../../utils/mail.js";
 
 // Create a new contact
 export const createContactUs = asyncHandler(async (req, res) => {
@@ -21,6 +22,14 @@ export const createContactUs = asyncHandler(async (req, res) => {
 
     const savedContact = await newContact.save();
 
+    if (!savedContact) {
+      throw new ApiError(
+        400,
+        "Something went wrong while creating contact us."
+      );
+    }
+
+    await sendContactUsEmail(email, name);
     res
       .status(201)
       .json(
