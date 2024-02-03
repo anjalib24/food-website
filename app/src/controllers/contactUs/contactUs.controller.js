@@ -52,3 +52,14 @@ export const getContactsUs = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Internal Server Error");
   }
 });
+
+export const deleteContactsUs = asyncHandler(async (req, res) => {
+  try {
+    const contacts = await ContactUs.findByIdAndDelete(req.params?.id);
+
+    res.status(200).json(new ApiResponse(200, { success: true, contacts }));
+  } catch (error) {
+    console.error("Error Deleting contacts:", error);
+    throw new ApiError(500, "Internal Server Error");
+  }
+});

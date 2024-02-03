@@ -51,7 +51,7 @@ import shipmentRateStateRouter from "./routes/shipmentRateState.routes.js";
 import dimensionsRouter from "./routes/dimensions.routes.js";
 import taxRouter from "./routes/tax.routes.js";
 import contactUsRouter from "./routes/contactUs.routes.js";
-import { fileURLToPath } from "url";
+import socialMedialinkRouter from "./routes/socialMediaLink.routes.js";
 
 //routes declaration
 app.use("/api/v1/users", userRouter);
@@ -65,8 +65,6 @@ app.use("/api/v1/shipment-rate-state", shipmentRateStateRouter);
 app.use("/api/v1/dimensions", dimensionsRouter);
 app.use("/api/v1/tax", taxRouter);
 app.use("/api/v1/contact-us", contactUsRouter);
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+app.use("/api/v1/social-media-link", socialMedialinkRouter);
 
 export { app };
