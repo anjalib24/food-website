@@ -10,7 +10,6 @@ const Blogs = () => {
     const selectedBlog = location.state?.selectedBlog;
     const { createMarkup } = useProductState();
 
-    console.log(selectedBlog, "select bloogg");
     return (
         <>
             <Header />

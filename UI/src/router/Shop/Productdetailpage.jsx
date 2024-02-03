@@ -42,7 +42,7 @@ const Productdetailpage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
-  const { handleaddtocard, showAlert, setShowAlert, setAlertMsg, alertmsg , productload,setProductLoad,} = useProductState();
+  const { handleaddtocard, showAlert, setShowAlert, setAlertMsg, alertmsg, productload, setProductLoad, } = useProductState();
   const { id } = useParams();
   const { createMarkup } = useProductState();
   const playerRef = useRef(null);
@@ -58,13 +58,7 @@ const Productdetailpage = () => {
   const token = localStorage.getItem("token");
 
   const youtubeLink = "https://www.youtube.com/watch?v=sSKhdZ32YpY"
-  useEffect(() => {
-    if (product?.images?.length > 0) {
-      setSelectedImage(product.images[0]);
-      setIsVideo(false);
-    }
-  }, [product]);
-  console.log(product, "productDetailpage");
+
 
   useEffect(() => {
     setProductLoad(true);
@@ -76,7 +70,6 @@ const Productdetailpage = () => {
           },
           mode: 'cors'
         });
-        console.log(response.data.data, "responsee");
         setProduct(response.data.data);
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -86,7 +79,12 @@ const Productdetailpage = () => {
     };
     fetchProduct();
   }, [id]);
-
+  useEffect(() => {
+    if (product?.product[0]?.product?.images.length > 0) {
+      setSelectedImage(product?.product[0]?.product?.images[0])
+      setIsVideo(false);
+    }
+  }, [product]);
   const onRecaptchaChange = (token) => {
     setRecaptchaToken(token);
   };
@@ -100,9 +98,10 @@ const Productdetailpage = () => {
       }, 3000);
       return;
     }
+
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(`/api/api/v1/products/create-product-review/${product._id}`, {
+      const response = await axios.post(`/api/api/v1/products/create-product-review/${product?.product[0]?.product?._id}`, {
         rating: rate,
         comment: comment,
         recaptchaToken: recaptchaToken, // Include this in your backend verification
@@ -142,7 +141,7 @@ const Productdetailpage = () => {
         <Row>
           <Col xs={12} md={2} style={{ marginTop: "20px" }}>
             <div className="image-list d-flex align-items-center">
-              {product?.product?.images?.map((image, index) => (
+              {product?.product[0]?.product?.images.map((image, index) => (
                 <img
                   key={index}
                   src={import.meta.env.VITE_APP_BASE_API + image}
@@ -153,11 +152,12 @@ const Productdetailpage = () => {
                   }}
                 />
               ))}
-              {product?.video_url && (
+              {product?.product[0]?.product?.video_url && (
                 <video width="100" height="100"
                   style={{ height: "100px" }}
+                  src={import.meta.env.VITE_APP_BASE_API + product?.product[0]?.product?.video_url}
                   onMouseOver={() => {
-                    setSelectedImage(product.video_url);
+                    setSelectedImage(product?.product[0]?.product?.video_url);
                     setIsVideo(true);
                   }}
                 >

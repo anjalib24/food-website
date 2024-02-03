@@ -18,15 +18,15 @@ import Loader from '@/components/Loader'
 export const Home = () => {
   const [show, setShow] = useState()
   const token = localStorage.getItem('token');
-  const [loader,setLoader] = useState()
+  const [loader, setLoader] = useState()
   const { setCartCount } = useProductState()
   useEffect(() => {
     fetchDataFromApi();
-    if(token){
+    if (token) {
       getcart();
     }
   }, []);
-  
+
   const fetchDataFromApi = async () => {
     setLoader(true)
     try {
@@ -34,27 +34,26 @@ export const Home = () => {
       setShow(result.data[0]);
     } catch (error) {
       console.error('Error fetching data:', error);
-    }finally{
+    } finally {
       setLoader(false)
     }
   };
 
-   const getcart = async () => {
+  const getcart = async () => {
     const response = await axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/get-cart', {
       headers: {
-         'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`
       },
       mode: 'cors'
-     });
-     console.log(response.data,"home pr get cart");
-      setCartCount(response?.data?.data[0]?.items?.length)
-    }
+    });
+    setCartCount(response?.data?.data[0]?.items?.length)
+  }
 
   if (!token) {
     const cart = JSON.parse(localStorage.getItem('cart'));
     setCartCount(cart?.length || 0)
   }
-  if (loader) return <Loader/>;
+  if (loader) return <Loader />;
   return (
     <>
       <Header />

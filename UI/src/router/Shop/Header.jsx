@@ -13,6 +13,7 @@ import { FaYoutube, FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaPinteres
 
 
 const Header = ({ hideCart, hidebutton }) => {
+  const [socialMedia,setSocialMedia] = useState()
   const navStyles = {
     display: 'flex',
     alignItems: 'center',
@@ -30,15 +31,30 @@ const Header = ({ hideCart, hidebutton }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { cartCount } = useProductState()
   const [alert, setAlert] = useState(null);
+
+
   const socialMediaLinks = {
-    youtube: 'https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw',
-    facebook: 'https://www.facebook.com/yourpage',
-    instagram: 'https://www.instagram.com/yourusername',
-    linkedin: 'https://www.linkedin.com/company/yourcompany',
-    tiktok: 'https://www.tiktok.com/@yourusername',
-    pinterest: 'https://www.pinterest.com/yourusername',
-    snapchat: 'https://www.snapchat.com/add/yourusername',
+    youtube: socialMedia?.youtube?.link,
+    facebook: socialMedia?.facebook?.link    ,
+    instagram: socialMedia?.instagram.link,
+    linkedin: socialMedia?.linkedin.link,
+    tiktok: socialMedia?.tiktok.link,
+    pinterest: socialMedia?.pinterest?.link,
+    snapchat: socialMedia?.snapchat?.link,
   };
+
+
+  useEffect(() => {
+    fetch(import.meta.env.VITE_APP_BASE_API + '/api/v1/social-media-link')
+       .then((response) => response.json())
+       .then((data) => {
+         const { facebook, twitter, instagram, linkedin, youtube, pinterest, snapchat, tiktok } = data.data;
+         setSocialMedia({ facebook, twitter, instagram, linkedin, youtube, pinterest, snapchat, tiktok });
+       })
+       .catch((error) => {
+         console.error('Error fetching social media links:', error);
+       });
+   }, []);
   const showAlert = (type, message) => {
     setAlert({ type, message });
     setTimeout(() => {
@@ -82,8 +98,8 @@ const Header = ({ hideCart, hidebutton }) => {
           mode: 'cors'
         });
         localStorage.clear();
-        showAlert("danger", "Logout sucessfully");
         setIsLoggedIn(false);
+        showAlert("danger", "Logout sucessfully");
         setTimeout(() => {
           navigate.push("/");
         }, 1000);
@@ -101,6 +117,7 @@ const Header = ({ hideCart, hidebutton }) => {
       bestsellerSection.scrollIntoView({ behavior: 'smooth' });
     }
   }
+
   { loading && <Loader /> }
   return (
     <>

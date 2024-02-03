@@ -123,10 +123,7 @@ const [shipmentmsg,setShipmentmsg] = useState()
     if (token) {
       setIsLoading(true);
       try {
-        console.log("workingggg",index);
         const productId = cartData[index].productId._id;
-         // replace this line with your actual product id
-        console.log(productId,"productId");
          await axios.get(import.meta.env.VITE_APP_BASE_API + `/api/v1/products/remove-items-from-cart/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -189,7 +186,6 @@ const [shipmentmsg,setShipmentmsg] = useState()
   //   setCartCount(localData.length)
   // }
 
-  console.log(cartData,"finalllcartdata");
   return (
     <>
       {isLoading && <Loader />}
@@ -273,7 +269,6 @@ const [shipmentmsg,setShipmentmsg] = useState()
                     ) : (localData.map((item, index) => {
                       return (
                         <>
-                        {console.log(item,"itenmm")}
                           {<div className="_1AtVbE col-12-12" key={index}>
                             <div className="zab8Yh _10k93p">
                               <div className="_2nQDXZ">
