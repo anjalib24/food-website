@@ -20,6 +20,13 @@ const createViews = asyncHandler(async (req, res) => {
     faq_answer,
   } = req.body;
 
+  const isExist = await ViewsCustomise.findOne();
+  if (isExist) {
+    return res.json(
+      new ApiResponse(200, null, "You can not create  more then one document")
+    );
+  }
+
   if (!hero_section_title) {
     throw new ApiError(400, "Hero section title is required!");
   }

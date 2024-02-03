@@ -11,6 +11,7 @@ const ProductZipFileSchema = new mongoose.Schema({
   },
 });
 
-const ProductZipFile = mongoose.model("ProductZipFile", ProductZipFileSchema);
-
-export default ProductZipFile;
+export const ProductZipFile = mongoose.model(
+  "ProductZipFile",
+  ProductZipFileSchema
+);

@@ -3,6 +3,12 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 
 const createCredential = async (req, res) => {
   try {
+    const isExist = await Credential.findOne();
+    if (isExist) {
+      return res.json(
+        new ApiResponse(200, null, "You can not create  more then one document")
+      );
+    }
     const newCredential = new Credential(req.body);
     const savedCredential = await newCredential.save();
 
@@ -21,7 +27,6 @@ const createCredential = async (req, res) => {
 const updateCredential = async (req, res) => {
   try {
     const { stripePublishableKey } = req.body;
-    console.log("stripePublishableKey->", stripePublishableKey);
 
     if (!stripePublishableKey) {
       return res.json(

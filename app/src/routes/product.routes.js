@@ -17,6 +17,7 @@ import {
   createProductReview,
   getProductList,
   productSearch,
+  getProductZipFile,
 } from "../controllers/product/product.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 import { adminAuth } from "../middlewares/adminAuth.js";
@@ -79,5 +80,6 @@ router.route("/get-all-country").get(getAllCountry);
 router.route("/get-product-list").get(getProductList);
 
 router.route("/search").post(productSearch);
+router.route("/get-product-zifile/:id").get(getProductZipFile);
 
 export default router;

@@ -3,6 +3,12 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 // Create method
 const createSocialMediaLink = async (req, res) => {
   try {
+    const isExist = await SocialMediaLink.findOne();
+    if (isExist) {
+      return res.json(
+        new ApiResponse(200, null, "You can not create  more then one document")
+      );
+    }
     const newSocialMediaLink = new SocialMediaLink(req.body);
     const savedLink = await newSocialMediaLink.save();
     return res.json(

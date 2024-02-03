@@ -22,7 +22,8 @@ import Tax from "../../models/tax.model.js";
 import ShipmentRateState from "../../models/shipmentRateState.model.js";
 import ProductsReview from "../../models/productsReviews.model.js";
 import { rimraf } from "rimraf";
-
+import { ProductZipFile } from "../../models/ProductZipFiles.model.js";
+import mongoose from "mongoose";
 //------------get best seller------------
 
 const getBestSeller = asyncHandler(async (req, res) => {
@@ -414,7 +415,6 @@ const createProductData = asyncHandler(async (req, res) => {
     ...productData,
     images: imageArray,
     best_seller,
-    zipFile: extractedZipFilesData,
     video_url: video,
     length,
     height,
@@ -431,6 +431,18 @@ const createProductData = asyncHandler(async (req, res) => {
 
   if (!newProduct) {
     throw new ApiError(500, "Something went wrong while creating product data");
+  }
+
+  const productZipFileData = await ProductZipFile.create({
+    product: newProduct?._id,
+    zipFile: extractedZipFilesData,
+  });
+
+  if (!productZipFileData) {
+    throw new ApiError(
+      500,
+      "Something went wrong while creating product zipfile data"
+    );
   }
 
   return res
@@ -474,11 +486,15 @@ const deleteProductData = asyncHandler(async (req, res) => {
       });
     }
 
-    if (deleteProduct?.zipFile?.zipfileDirUrl) {
+    const deleteProductZipFile = await ProductZipFile.findOneAndDelete({
+      product: deleteProduct?._id,
+    });
+
+    if (deleteProductZipFile?.zipFile?.zipfileDirUrl) {
       const dirPath = path.join(
         __dirname,
         "/public",
-        deleteProduct?.zipFile?.zipfileDirUrl
+        deleteProductZipFile?.zipFile?.zipfileDirUrl
       );
 
       try {
@@ -608,6 +624,70 @@ const updateProductData = asyncHandler(async (req, res) => {
 
     if (!updateProduct) {
       throw new ApiError(500, "Something went wrong while updating product");
+    }
+
+    const productZipFileData = await ProductZipFile.findOneAndUpdate(
+      { product: updateProduct?._id },
+      {
+        zipFile: extractedZipFilesData,
+      }
+    );
+
+    if (!productZipFileData) {
+      throw new ApiError(
+        500,
+        "Something went wrong while creating product zipfile data"
+      );
+    }
+
+    const __dirname = path.resolve();
+
+    if (video && updateProduct?.video_url) {
+      const dirPath = path.join(__dirname, "/public", updateProduct?.video_url);
+      fs.unlink(dirPath, (err) => {
+        if (err) {
+          console.error("Error deleting video file:", err.message);
+        } else {
+          console.log("File deleted video successfully.");
+        }
+      });
+    }
+
+    if (
+      imageArray &&
+      imageArray.length &&
+      updateProduct?.images &&
+      updateProduct.images.length > 0
+    ) {
+      updateProduct.images.forEach((imageUrl) => {
+        const dirPath = path.join(__dirname, "/public", imageUrl);
+        fs.unlink(dirPath, (err) => {
+          if (err) {
+            console.error("Error deleting images file:", err.message);
+          } else {
+            console.log("File deleted images successfully.");
+          }
+        });
+      });
+    }
+
+    if (
+      !(Object.keys(extractedZipFilesData).length === 0) &&
+      productZipFileData?.zipFile?.zipfileDirUrl
+    ) {
+      const dirPath = path.join(
+        __dirname,
+        "/public",
+        productZipFileData?.zipFile?.zipfileDirUrl
+      );
+
+      try {
+        rimraf(dirPath);
+
+        console.log("Directory deleted successfully.");
+      } catch (error) {
+        console.error("Error deleting directory:", error.message);
+      }
     }
 
     return res
@@ -1070,6 +1150,22 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
+const getProductZipFile = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const getProductZipFile = await ProductZipFile.findOne({ product: id });
+
+  if (!getProductZipFile) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Product zipFile not Found!"));
+  }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, getProductZipFile, "Get product zipFile successful")
+    );
+});
+
 export {
   createProductData,
   createCategory,
@@ -1088,4 +1184,5 @@ export {
   createProductReview,
   getProductList,
   productSearch,
+  getProductZipFile,
 };
