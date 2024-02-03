@@ -97,7 +97,6 @@ const Page = () => {
       });
   }
   if (isLoading) return <Loader />;
-console.log(products,"updateproduct");
   return (
     <>
       {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
@@ -152,7 +151,7 @@ console.log(products,"updateproduct");
 
                         />
                     }
-                    <h2 className="font-bold">{product.title}</h2>
+                    <h2 className="font-bold "style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '20px', marginTop: '13px' }}>{product.title}</h2>
                     <p>
                       <strong>Origin Country: </strong>
                       {product.country?.name}

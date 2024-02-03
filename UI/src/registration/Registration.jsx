@@ -276,6 +276,7 @@ const Registration = () => {
                               Zipcode
                             </label>
                             <input
+                            type="number"
                               id="zipcode"
                               name="zipcode"
                               className="form-control"

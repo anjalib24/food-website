@@ -57,7 +57,22 @@ const Page = () => {
         <Route path={match.path + "/:id"}>
           <Edittax />
         </Route>        <Route path={match.path}>
-          {/* ... other components ... */}
+        <div className="w-full py-2 flex justify-between items-center flex-row mb-3">
+            <div>
+              <h1 className="text-3xl font-medium">Dimension</h1>
+            </div>
+            <div>
+              <Link to={match.path + "/add"}>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  className="whitespace-nowrap w-max text-white !p-3 !bg-indigo-500 hover:!bg-indigo-600 !rounded-md"
+                >
+                  Add
+                </Button>
+              </Link>
+            </div>
+          </div>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>

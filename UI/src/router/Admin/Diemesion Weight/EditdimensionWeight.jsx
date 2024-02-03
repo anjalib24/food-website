@@ -85,6 +85,7 @@ const EditdimensionWeight = () => {
               <TextField
                 name={key}
                 label={key}
+                type="number"
                 value={zipcodeData[key]}
                 onChange={handleChange}
                 fullWidth

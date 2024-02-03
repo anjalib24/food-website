@@ -37,7 +37,6 @@ const BestSellers = () => {
             mode: 'cors'
           }
         );
-        console.log(response.data.data, "bestsellerresponse");
         const bestSellers = response.data.data
         setData(bestSellers);
       } catch (error) {

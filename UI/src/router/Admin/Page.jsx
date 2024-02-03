@@ -25,6 +25,9 @@ import Dimension from "./Dimension/Page"
 import DimensionWeight from "./Diemesion Weight/Page"
 import Tax from "./Tax/Page"
 import Adminprofile from "./AdminProfile/Page"
+import Query from "./Query/Page"
+import Socialmedia from "./Socialmedia/Page"
+import Credential from "./Cedential/Page"
 import Alert from "../Shop/Alert";
 const Page = () => {
   let match = useRouteMatch();
@@ -34,6 +37,15 @@ const Page = () => {
         <Layout
           Page={
             <Switch>
+                   <Route path={`${match.path}/credentials`}>
+                <Credential/>
+              </Route>
+               <Route path={`${match.path}/query`}>
+                <Query/>
+              </Route>
+              <Route path={`${match.path}/socialmedia`}>
+                <Socialmedia/>
+              </Route>
                <Route path={`${match.path}/profile`}>
                 <Adminprofile/>
               </Route>

@@ -77,6 +77,7 @@ const Editdimension = () => {
             <Grid item xs={12} key={key}>
               <TextField
                 name={key}
+                type="number"
                 label={key}
                 value={zipcodeData[key]}
                 onChange={handleChange}

@@ -80,6 +80,21 @@ export const links = [
         to: "/admin/tax",
         icon: <FiShoppingBag />,
       },
+      {
+        name: "Social Media",
+        to: "/admin/socialmedia",
+        icon: <FiShoppingBag />,
+      },
+      {
+        name: "Credentials",
+        to: "/admin/credentials",
+        icon: <FiShoppingBag />,
+      },
+      {
+        name: "Query",
+        to: "/admin/query",
+        icon: <FiShoppingBag />,
+      },
     ],
   },
 ];

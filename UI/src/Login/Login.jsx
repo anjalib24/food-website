@@ -21,6 +21,7 @@ const loginSchema = Yup.object().shape({
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const [showPassword, setShowPassword] = useState(false);
   const [alert, setAlert] = useState(null);
 
   const showAlert = (type, message) => {
@@ -36,7 +37,7 @@ const Login = () => {
     onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
       try {
-        const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/login', {
+        const response = await axios.post(import.meta.env.VITE_APP_BASE_API + '/api/v1/users/login', {
           userData: {
             email: values.email,
             password: values.password,
@@ -53,13 +54,13 @@ const Login = () => {
             quantity: item.quantity || 1,
           }));
           const token = localStorage.getItem('token');
-          const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/products/add-to-cart', 
+          const response = await axios.post(import.meta.env.VITE_APP_BASE_API + '/api/v1/products/add-to-cart',
             data
-          , {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+            , {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
           localStorage.removeItem('cart');
         } else {
           console.log('No items in cart.');
@@ -68,7 +69,7 @@ const Login = () => {
           showAlert("success", "Login sucessfully");
           setTimeout(() => {
             history.push('/shop');
-           }, 1000);
+          }, 1000);
         } else if (userType === 'admin') {
           history.push('/admin');
         } else {
@@ -87,9 +88,9 @@ const Login = () => {
 
   return (
     <>
-        {loading && <Loader />}
+      {loading && <Loader />}
       <div>
-      {alert && <Alert type={alert.type} message={alert.message} />}
+        {alert && <Alert type={alert.type} message={alert.message} />}
         <Header hidebutton={true} />
         <section className="p-5 w-100" style={{ backgroundColor: "#eee", borderRadius: ".5rem .5rem 0 0" }}>
           <div className="row">
@@ -132,7 +133,7 @@ const Login = () => {
                               value={values.password}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              type="password"
+                              type={showPassword ? "text" : "password"}
                             />
                             {errors.password && touched.password ? (
                               <small className="text-danger mt-1">
@@ -140,6 +141,18 @@ const Login = () => {
                               </small>
                             ) : null}
                           </div>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="showPasswordCheckbox"
+                            checked={showPassword}
+                            onChange={() => setShowPassword(!showPassword)}
+                          />
+                          <label className="form-check-label" htmlFor="showPasswordCheckbox">
+                            Show password
+                          </label>
                         </div>
                         <div className="row mt-3">
                           <div className="col text-right actionButtons">
