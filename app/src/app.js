@@ -52,6 +52,7 @@ import dimensionsRouter from "./routes/dimensions.routes.js";
 import taxRouter from "./routes/tax.routes.js";
 import contactUsRouter from "./routes/contactUs.routes.js";
 import socialMedialinkRouter from "./routes/socialMediaLink.routes.js";
+import credentialRouter from "./routes/credentials.routes.js";
 
 //routes declaration
 app.use("/api/v1/users", userRouter);
@@ -66,5 +67,6 @@ app.use("/api/v1/dimensions", dimensionsRouter);
 app.use("/api/v1/tax", taxRouter);
 app.use("/api/v1/contact-us", contactUsRouter);
 app.use("/api/v1/social-media-link", socialMedialinkRouter);
+app.use("/api/v1/credentials", credentialRouter);
 
 export { app };

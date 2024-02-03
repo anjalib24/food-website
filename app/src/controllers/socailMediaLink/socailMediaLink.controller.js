@@ -21,7 +21,7 @@ const createSocialMediaLink = async (req, res) => {
 // Get method
 const getSocialMediaLinks = async (req, res) => {
   try {
-    const socialMediaLinks = await SocialMediaLink.find();
+    const socialMediaLinks = await SocialMediaLink.findOne();
     return res.json(new ApiResponse(201, socialMediaLinks, "Success"));
   } catch (error) {
     res.json(new ApiResponse(500, null, "false"));
