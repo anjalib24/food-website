@@ -68,7 +68,7 @@ const updateCredential = async (req, res) => {
 // Get all credentials
 const getAllCredentials = async (req, res) => {
   try {
-    const credentials = await Credential.find();
+    const credentials = await Credential.findOne();
     return res.json(
       new ApiResponse(200, credentials, "Credentials retrieved successfully.")
     );
