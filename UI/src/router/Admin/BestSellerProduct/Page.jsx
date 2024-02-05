@@ -42,7 +42,6 @@ const Page = () => {
     fetchData();
    }, []);
   function rmFromBestSeller(id) {
-    console.log(id,"iddd");
     fetch(
       `${
         import.meta.env.VITE_APP_BASE_API

@@ -70,12 +70,12 @@ const Page = () => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ width: '100px' }} align="right">Dimension</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">length</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">width</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">height</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">weight_range</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">Actions</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >Dimension</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >length</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >width</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >height</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >weight_range</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -84,14 +84,14 @@ const Page = () => {
                     key={data.userId}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell style={{ width: '20%' }} component="th" scope="row" align="right">
+                    <TableCell className='max-w-20 w-20 truncate text-left' component="th" scope="row" >
                       {data.dimensions}
                     </TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{data?.length}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{data?.width}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{data?.height}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{data?.weight_range}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{data?.length}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{data?.width}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{data?.height}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{data?.weight_range}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>
                       <div style={{ display: 'flex', gap: '10px' }}>
                         <Link to={`${match.path}/${data._id}`}>
                           <Button

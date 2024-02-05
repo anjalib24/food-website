@@ -61,12 +61,12 @@ return (
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="right">User Name</TableCell>
-                  <TableCell align="right">User Email</TableCell>
-                  <TableCell align="right">Country</TableCell>
-                  <TableCell align="right">State</TableCell>
-                  <TableCell align="right">City</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left'>User Name</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left'>User Email</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left'>Country</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left'>State</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left'>City</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left'>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -75,14 +75,14 @@ return (
                     key={user.userId}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell component="th" scope="row" align="right">
+                    <TableCell component="th" scope="row" className='max-w-20 w-20 truncate text-left'>
                       {user.username}
                     </TableCell>
-                    <TableCell align="right">{user.email}</TableCell>
-                    <TableCell align="right">{user.country}</TableCell>
-                    <TableCell align="right">{user.state}</TableCell>
-                    <TableCell align="right">{user.city}</TableCell>
-                    <TableCell align="right">
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{user.email}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{user.country}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{user.state}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>{user.city}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left'>
                                                 <Button onClick={() => navigateToOrderDetails(user)}>Edit</Button>
                                             </TableCell>     
 

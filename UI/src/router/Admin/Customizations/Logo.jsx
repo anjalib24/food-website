@@ -34,7 +34,7 @@ const Logo = ({ data }) => {
         return response.json();
       })
       .then((data) => {
-        console.log("Success:", data);
+  
         setAlert({errType:"success", errMsg:"Logo updated successfully", isError: true});
 
       })

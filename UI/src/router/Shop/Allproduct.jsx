@@ -39,27 +39,18 @@ export const Allproduct = ({ getProduct }) => {
     currency: "USD",
   });
   useEffect(() => {
-    if (selectedOrigin.length > 0 || selectedPriceRange.length > 0) {
+    if (searchInput.length > 0) {
+      handleFormSubmit();
+
+    } else if (selectedOrigin.length > 0 || selectedPriceRange.length > 0) {
       handleFormSubmit();
     } else {
-      handleClearSearch();
+      fetchDataFromApi();
     }
-  }, [selectedOrigin, selectedPriceRange]);
+  }, [selectedOrigin, selectedPriceRange, searchInput]);
 
   useEffect(() => {
-    const fetchDataFromApi = async () => {
-      try {
-        const result = await fetchData(`products/get-product-list?page=${currentPage}&limit=${itemsPerPage}`);
-        setData(prevData => {
-          return currentPage === 1 ? result?.data?.product : [...prevData, ...result.data.product];
-        });
-        setTotalItems(result?.data?.totalDocs);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoadingMore(false);
-      }
-    };
+
     fetchDataFromApi();
   }, [currentPage]);
 
@@ -69,7 +60,21 @@ export const Allproduct = ({ getProduct }) => {
     }
   }, [data]);
 
+  const fetchDataFromApi = async () => {
 
+    try {
+      const result = await fetchData(`products/get-product-list?page=${currentPage}&limit=${itemsPerPage}`);
+      setData(prevData => {
+        return currentPage === 1 ? result?.data?.product : [...prevData, ...result.data.product];
+      });
+      setTotalItems(result?.data?.totalDocs);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoadingMore(false);
+
+    }
+  };
   const handleOriginCheckboxChange = (value) => {
     setSelectedOrigin((prevSelected) => {
       if (prevSelected.includes(value)) {
@@ -83,7 +88,6 @@ export const Allproduct = ({ getProduct }) => {
   };
 
   const handlePriceCheckboxChange = (value) => {
-
     setSelectedPriceRange((prevSelected) => {
       if (prevSelected.includes(value)) {
         return prevSelected.filter((item) => item !== value);
@@ -104,16 +108,16 @@ export const Allproduct = ({ getProduct }) => {
   //     return '+70';
   //   }
   // };
+
   const handleFormSubmit = async (event) => {
     if (event) {
       event.preventDefault();
     }
 
-
     const options = {
       method: 'POST',
       url: import.meta.env.VITE_APP_BASE_API + "/api/v1/products/search",
-       params: {
+      params: {
         'title': searchInput,
         "page": currentPage,
         "limit": itemsPerPage,
@@ -128,18 +132,18 @@ export const Allproduct = ({ getProduct }) => {
     };
 
     try {
+      setLoading(true);
       const response = await axios.request(options);
-      console.log(response?.data.data.product, "searchData");
-      // Assuming response.data has a structure similar to { product: [...] }
       setData(prevData => {
-        return currentPage === 1 ? response?.data?.data.product: [...prevData, ...response?.data?.data.product];
+        return currentPage === 1 ? response?.data?.data.product : [...prevData, ...response?.data?.data.product];
       });
       setData(response?.data?.data.product);
-      console.log(response?.data, "totaldocsofsearchhhh");
       setTotalItems(response?.data?.data.totalDocs);
-
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+
     }
   }
 
@@ -157,12 +161,11 @@ export const Allproduct = ({ getProduct }) => {
   };
   const handleClearSearch = async () => {
     setSearchInput('');
+    setCurrentPage(1);
     const result = await fetchData(`products/get-product-list?page=${currentPage}&limit=${itemsPerPage}`);
     setData(result.data.product);
     setTotalItems(result?.data?.totalDocs);
-
   };
-  console.log(totalItems, "totalitemsss");
   return (
     <>
       {productload && <Loader />}
@@ -274,7 +277,6 @@ export const Allproduct = ({ getProduct }) => {
                     </>
                   )
                   }
-
                 </div>
               </div>
             </form>

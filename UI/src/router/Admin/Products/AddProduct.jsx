@@ -36,6 +36,7 @@ const AddProduct = () => {
   });
   const { countries, categories , setAlert ,setProducts} = useAdminState();
   const [isLoading, setIsLoading] = useState(); 
+  const token = localStorage.getItem("token");
 
 
 

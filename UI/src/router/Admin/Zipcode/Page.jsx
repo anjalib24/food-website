@@ -76,12 +76,12 @@ const Page = () => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ width: '100px' }} align="right">Zip Code</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">county</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">stateName</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">stateCode</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">shipment_delivery_message</TableCell>
-                  <TableCell style={{ width: '100px' }} align="right">Actions</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >Zip Code</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >county</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >stateName</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >stateCode</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >shipment_delivery_message</TableCell>
+                  <TableCell className='max-w-20 w-20 truncate text-left' >Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -90,14 +90,14 @@ const Page = () => {
                     key={user.userId}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell style={{ width: '20%' }} component="th" scope="row" align="right">
+                    <TableCell className='max-w-20 w-20 truncate text-left' component="th" scope="row" >
                       {user.zipCode}
                     </TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{user?.county}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{user?.stateName}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{user?.stateCode}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">{user?.shipment_delivery_message}</TableCell>
-                    <TableCell style={{ width: '20%' }} align="right">
+                    <TableCell className='max-w-20 w-20 truncate text-left' >{user?.county}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left' >{user?.stateName}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left' >{user?.stateCode}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left' >{user?.shipment_delivery_message}</TableCell>
+                    <TableCell className='max-w-20 w-20 truncate text-left' >
                       <div style={{ display: 'flex', gap: '10px' }}>
                         <Link to={`${match.path}/${user._id}`}>
                           <Button

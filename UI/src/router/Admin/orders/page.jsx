@@ -69,12 +69,12 @@ const Page = () => {
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="right">User Name</TableCell>
-                                    <TableCell align="right">User Email</TableCell>
-                                    <TableCell align="right">orderDate</TableCell>
-                                    <TableCell align="right">Items</TableCell>
-                                    <TableCell align="right">Total</TableCell>
-                                    <TableCell align="right">Actions</TableCell>
+                                    <TableCell className='max-w-20 w-20 truncate text-left'>User Name</TableCell>
+                                    <TableCell className='max-w-20 w-20 truncate text-left'>User Email</TableCell>
+                                    <TableCell className='max-w-20 w-20 truncate text-left'>orderDate</TableCell>
+                                    <TableCell className='max-w-20 w-20 truncate text-left'>Items</TableCell>
+                                    <TableCell className='max-w-20 w-20 truncate text-left'>Total</TableCell>
+                                    <TableCell className='max-w-20 w-20 truncate text-left'>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -83,20 +83,20 @@ const Page = () => {
                                         key={user.userId}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell component="th" scope="row" align="right">
+                                        <TableCell component="th" scope="row" className='max-w-20 w-20 truncate text-left'>
                                             {user.username}
                                         </TableCell>
-                                        <TableCell align="right">{user?.email}</TableCell>
-                                        <TableCell align="right"> <div>
+                                        <TableCell className='max-w-20 w-20 truncate text-left'>{user?.email}</TableCell>
+                                        <TableCell className='max-w-20 w-20 truncate text-left'> <div>
                                             Ordered on  {new Date(user?.orderDate).toLocaleDateString('en-US', {
                                                 day: '2-digit',
                                                 month: 'short',
                                                 year: 'numeric',
                                             })}
                                         </div></TableCell>
-                                        <TableCell align="right">{user?.products?.length}</TableCell>
-                                        <TableCell align="right">{user?.subTotal}</TableCell>
-                                        <TableCell align="right">
+                                        <TableCell  className='max-w-20 w-20 truncate text-left' >{user?.products?.length}</TableCell>
+                                        <TableCell  className='max-w-20 w-20 truncate text-left' >{user?.subTotal}</TableCell>
+                                        <TableCell  className='max-w-20 w-20 truncate text-left' >
                                             {user?.status === "pending" &&
                                                 <Button onClick={() => oderdelevered(user?._id)}>delivered</Button>
                                             }
