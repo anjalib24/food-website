@@ -34,7 +34,7 @@ const getBestSeller = asyncHandler(async (req, res) => {
       .populate("origin_country", "_id name")
       .populate("category", "_id name")
       .select(
-        "_id title short_description images price video_url rank best_seller weight"
+        "_id title short_description images price video_url rank best_seller weight zipFile"
       );
 
     const bestsellerData = await Promise.all(
@@ -145,6 +145,7 @@ const productSearch = asyncHandler(async (req, res) => {
         best_seller: 1,
         weight: 1,
         country_name: "$origin_country.name",
+        zipFile: 1,
       },
     },
   ];
@@ -201,7 +202,7 @@ const getProductList = asyncHandler(async (req, res) => {
     page,
     lean: true,
     select:
-      "_id title short_description images price video_url rank best_seller weight",
+      "_id title short_description images price video_url rank best_seller weight zipFile",
     populate: "origin_country",
   };
 
