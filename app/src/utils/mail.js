@@ -90,8 +90,6 @@ const sendOrderConfirmationEmail = async (recipientEmail, name, orderId) => {
       },
     });
 
-    const emailBannerDataURI = readImageAsDataURI(emailBannerPath);
-
     const htmlContent = `
       <p>Dear ${name},</p>
       <p>Thank you for placing an order with Ethnic Ecommerce. Your order (${orderId}) has been confirmed!</p>
