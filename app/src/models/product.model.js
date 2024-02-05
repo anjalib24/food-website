@@ -76,6 +76,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    zipFile: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

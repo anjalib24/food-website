@@ -433,16 +433,16 @@ const createProductData = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while creating product data");
   }
 
-  const productZipFileData = await ProductZipFile.create({
-    product: newProduct?._id,
-    zipFile: extractedZipFilesData,
-  });
+  if (newProduct?._id && extractedZipFilesData) {
+    const productZipFileData = await ProductZipFile.create({
+      product: newProduct?._id,
+      zipFile: extractedZipFilesData,
+    });
 
-  if (!productZipFileData) {
-    throw new ApiError(
-      500,
-      "Something went wrong while creating product zipfile data"
-    );
+    if (productZipFileData.zipFile) {
+      newProduct.zipFile = true;
+      newProduct.save();
+    }
   }
 
   return res
@@ -454,7 +454,10 @@ const createProductData = asyncHandler(async (req, res) => {
 const deleteProductData = asyncHandler(async (req, res) => {
   const { id } = req.params;
   if (id) {
-    const deleteProduct = await Product.findByIdAndDelete({ _id: id });
+    const deleteProduct = await Product.findByIdAndDelete(
+      { _id: id },
+      { new: true }
+    );
 
     if (!deleteProduct) {
       throw new ApiError(500, "Something went wrong while deleting product");
@@ -606,13 +609,6 @@ const updateProductData = asyncHandler(async (req, res) => {
     fs.readdirSync(uploadDir);
   }
 
-  if (!(Object.keys(extractedZipFilesData).length === 0)) {
-    productData = {
-      ...productData,
-      zipFile: extractedZipFilesData,
-    };
-  }
-
   if (id) {
     const updateProduct = await Product.findByIdAndUpdate(
       { _id: id },
@@ -626,24 +622,65 @@ const updateProductData = asyncHandler(async (req, res) => {
       throw new ApiError(500, "Something went wrong while updating product");
     }
 
-    const productZipFileData = await ProductZipFile.findOneAndUpdate(
-      { product: updateProduct?._id },
-      {
-        zipFile: extractedZipFilesData,
-      }
-    );
-
-    if (!productZipFileData) {
-      throw new ApiError(
-        500,
-        "Something went wrong while creating product zipfile data"
-      );
-    }
-
     const __dirname = path.resolve();
 
-    if (video && updateProduct?.video_url) {
-      const dirPath = path.join(__dirname, "/public", updateProduct?.video_url);
+    if (updateProduct?._id && updateProduct?.zipFile && extractedZipFilesData) {
+      const productZipFileData = await ProductZipFile.findOneAndUpdate(
+        { product: updateProduct?._id },
+        {
+          zipFile: extractedZipFilesData,
+        }
+      );
+
+      if (!productZipFileData) {
+        throw new ApiError(
+          500,
+          "Something went wrong while creating product zipfile data"
+        );
+      }
+
+      if (
+        !(Object.keys(extractedZipFilesData).length === 0) &&
+        productZipFileData?.zipFile?.zipfileDirUrl
+      ) {
+        const dirPath = path.join(
+          __dirname,
+          "/public",
+          productZipFileData?.zipFile?.zipfileDirUrl
+        );
+
+        try {
+          rimraf(dirPath);
+
+          console.log("Directory deleted successfully.");
+        } catch (error) {
+          console.error("Error deleting directory:", error.message);
+        }
+      }
+    }
+
+    if (
+      updateProduct?._id &&
+      !updateProduct?.zipFile &&
+      !(Object.keys(extractedZipFilesData).length === 0)
+    ) {
+      const productZipFileData = await ProductZipFile.create({
+        product: updateProduct?._id,
+        zipFile: extractedZipFilesData,
+      });
+
+      if (productZipFileData.zipFile) {
+        updateProduct.zipFile = true;
+        updateProduct.save();
+      }
+    }
+
+    if (video && isProductExist?.video_url) {
+      const dirPath = path.join(
+        __dirname,
+        "/public",
+        isProductExist?.video_url
+      );
       fs.unlink(dirPath, (err) => {
         if (err) {
           console.error("Error deleting video file:", err.message);
@@ -656,10 +693,10 @@ const updateProductData = asyncHandler(async (req, res) => {
     if (
       imageArray &&
       imageArray.length &&
-      updateProduct?.images &&
-      updateProduct.images.length > 0
+      isProductExist?.images &&
+      isProductExist.images.length > 0
     ) {
-      updateProduct.images.forEach((imageUrl) => {
+      isProductExist.images.forEach((imageUrl) => {
         const dirPath = path.join(__dirname, "/public", imageUrl);
         fs.unlink(dirPath, (err) => {
           if (err) {
@@ -669,25 +706,6 @@ const updateProductData = asyncHandler(async (req, res) => {
           }
         });
       });
-    }
-
-    if (
-      !(Object.keys(extractedZipFilesData).length === 0) &&
-      productZipFileData?.zipFile?.zipfileDirUrl
-    ) {
-      const dirPath = path.join(
-        __dirname,
-        "/public",
-        productZipFileData?.zipFile?.zipfileDirUrl
-      );
-
-      try {
-        rimraf(dirPath);
-
-        console.log("Directory deleted successfully.");
-      } catch (error) {
-        console.error("Error deleting directory:", error.message);
-      }
     }
 
     return res
