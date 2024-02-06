@@ -6,6 +6,10 @@ let ItemSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
     },
+    title: {
+      type: String,
+      required: true,
+    },
     quantity: {
       type: Number,
       required: true,

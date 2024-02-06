@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema(
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     username: {
       type: String,
@@ -17,11 +18,13 @@ const orderSchema = new mongoose.Schema(
     },
     pyamentOrderId: {
       type: String,
+      required: true,
     },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
+        required: true,
       },
     ],
     status: {
@@ -31,6 +34,13 @@ const orderSchema = new mongoose.Schema(
     orderDate: {
       type: Date,
       default: Date.now,
+    },
+    items: {
+      type: Array,
+      required: true,
+    },
+    shipment_delivery_message: {
+      type: String,
     },
     tax: {
       type: Number,

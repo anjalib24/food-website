@@ -62,9 +62,11 @@ const orderProductPaymentWithStripe = asyncHandler(async (req, res) => {
       products: productIds,
       pyamentOrderId: stripeOrderData.id,
       status: "pending",
-      tax: cartData.tax,
-      shippingCharge: cartData.shippingCharge,
-      subTotal: cartData.subTotal,
+      items: cartData?.items,
+      shipment_delivery_message: cartData?.shipment_delivery_message,
+      tax: cartData?.tax,
+      shippingCharge: cartData?.shippingCharge,
+      subTotal: cartData?.subTotal,
     });
     orderData = await order.save();
 
@@ -126,8 +128,9 @@ const stripeWebHookHandler = asyncHandler(async (req, response) => {
       if (orderData) {
         await sendOrderConfirmationEmail(
           orderData?.email,
-          orderData?.username,
-          orderData?._id
+          orderData?._id,
+          orderData?.subTotal,
+          orderData?.items
         );
       }
       break;

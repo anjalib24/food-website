@@ -860,6 +860,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
             cart.items[existingItemIndex].quantity > 1 &&
             existingItemIndex !== -1
           ) {
+            cart.items[existingItemIndex].title += productDetails.title;
             cart.items[existingItemIndex].quantity += quantity;
             cart.items[existingItemIndex].total =
               cart.items[existingItemIndex].quantity * productDetails.price;
@@ -889,6 +890,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
           );
 
           if (indexFound !== -1) {
+            cart.items[indexFound].title += productDetails.title;
             cart.items[indexFound].quantity += quantity;
             cart.items[indexFound].total =
               cart.items[indexFound].quantity * productDetails.price;
@@ -913,6 +915,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
             // If the item is not found and quantity is greater than 0, add a new item
             cart.items.push({
               productId: productId,
+              title: productDetails.title,
               quantity: quantity,
               price: productDetails.price,
               total: parseInt(productDetails.price * quantity),
@@ -953,6 +956,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
           items: [
             {
               productId: productId,
+              title: productDetails.title,
               quantity: quantity,
               total: parseInt(productDetails.price * quantity),
               price: productDetails.price,
