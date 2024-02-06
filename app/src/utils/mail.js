@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs";
 import { ApiError } from "./ApiError.js";
+import { Credential } from "../models/credentials.model.js";
 const __dirname = path.resolve();
 const emailBannerPath = path.join(
   __dirname,
@@ -14,17 +15,44 @@ const readImageAsDataURI = (imagePath) => {
   return `data:image/png;base64,${imageBase64}`;
 };
 
-const sendUserRegistrationConfirmationEmail = async (recipientEmail, name) => {
+const getEmailTransport = async () => {
   try {
+    let auth;
+    const getCredencials = await Credential.findOne();
+
+    if (
+      getCredencials &&
+      getCredencials?.sendEmail &&
+      getCredencials?.sendEmailPassword
+    ) {
+      auth = {
+        user: getCredencials?.sendEmail,
+        pass: getCredencials?.sendEmailPassword,
+      };
+    } else if (process.env.STRIPE_SECRET_KEY) {
+      auth = {
+        user: process.env.SEND_EMAIL,
+        pass: process.env.SEND_EMAIL_PASSWORD,
+      };
+    } else {
+      throw new ApiError(404, "Send email mail and password not found.");
+    }
+
     const transporter = nodemailer.createTransport({
       host: process.env.HOST_EMAIL,
       port: 587,
       secure: false,
-      auth: {
-        user: process.env.SEND_EMAIL,
-        pass: process.env.SEND_EMAIL_PASSWORD,
-      },
+      auth: auth,
     });
+    return transporter;
+  } catch (error) {
+    throw new ApiError(404, error.message || error);
+  }
+};
+
+const sendUserRegistrationConfirmationEmail = async (recipientEmail, name) => {
+  try {
+    const transporter = await getEmailTransport();
 
     const shopLink = "https://www.ethnicfoods.com";
     const emailBannerDataURI = readImageAsDataURI(emailBannerPath);
@@ -84,15 +112,7 @@ const sendOrderConfirmationEmail = async (
   items
 ) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.HOST_EMAIL,
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.SEND_EMAIL,
-        pass: process.env.SEND_EMAIL_PASSWORD,
-      },
-    });
+    const transporter = await getEmailTransport();
 
     const shopLink = "https://www.ethnicfoods.com";
     const emailBannerDataURI = readImageAsDataURI(emailBannerPath);
@@ -148,15 +168,7 @@ const sendOrderConfirmationEmail = async (
 
 const sendContactUsEmail = async (recipientEmail, name) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.HOST_EMAIL,
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.SEND_EMAIL,
-        pass: process.env.SEND_EMAIL_PASSWORD,
-      },
-    });
+    const transporter = await getEmailTransport();
 
     const emailBannerDataURI = readImageAsDataURI(emailBannerPath);
 

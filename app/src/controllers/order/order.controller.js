@@ -10,6 +10,7 @@ import { OrderHistory } from "../../models/orderHistory.model.js";
 import { emptyCartAfterOrder } from "../../services/repository.js";
 import { Product } from "../../models/product.model.js";
 import { sendOrderConfirmationEmail } from "../../utils/mail.js";
+import { Credential } from "../../models/credentials.model.js";
 
 const getProductIds = async (products) => {
   const productPromises = products.map(async (product) => product.productId);
@@ -105,16 +106,26 @@ const stripeWebHookHandler = asyncHandler(async (req, response) => {
     return;
   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  let stripe;
+  let stripeEndpointSecret;
 
+  const getCredencials = await Credential.findOne();
+
+  if (getCredencials && getCredencials.stripeSecretKey) {
+    stripe = new Stripe(getCredencials.stripeSecretKey);
+    stripeEndpointSecret = getCredencials?.stripeEndpointSecret;
+  } else if (process.env.STRIPE_SECRET_KEY) {
+    stripe = new Stripe(
+      process.env.STRIPE_SECRET_KEY && process.env.STIPE_ENDPOINT_SECRET
+    );
+    stripeEndpointSecret = process.env.STIPE_ENDPOINT_SECRET;
+  } else {
+    throw new ApiError(404, "Stripe secret key not found.");
+  }
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(
-      payload,
-      sig,
-      process.env.STIPE_ENDPOINT_SECRET
-    );
+    event = stripe.webhooks.constructEvent(payload, sig, stripeEndpointSecret);
   } catch (err) {
     console.error("Webhook signature verification failed.", err);
     response.status(400).send(`Webhook Error: ${err.message}`);

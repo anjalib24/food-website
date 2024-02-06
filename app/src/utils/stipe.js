@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { Product } from "../models/product.model.js";
 import { ApiError } from "./ApiError.js";
 import dotenv from "dotenv";
+import { Credential } from "../models/credentials.model.js";
 dotenv.config();
 
 const orderWithStripeCheckOutPayment = async (
@@ -11,7 +12,17 @@ const orderWithStripeCheckOutPayment = async (
   shippingCharge = 0
 ) => {
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    let stripe;
+
+    const getCredencials = await Credential.findOne();
+
+    if (getCredencials && getCredencials.stripeSecretKey) {
+      stripe = new Stripe(getCredencials.stripeSecretKey);
+    } else if (process.env.STRIPE_SECRET_KEY) {
+      stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    } else {
+      throw new ApiError(404, "Stripe secret key not found.");
+    }
 
     const customer = await stripe.customers.create({
       name: username,
@@ -26,7 +37,7 @@ const orderWithStripeCheckOutPayment = async (
           price_data: {
             currency: "usd",
             product_data: {
-              name: productData.title,
+              name: productData?.title,
             },
             unit_amount: product.price * 100, // convert to cent unit_amount: product.price * 100,
           },
@@ -57,7 +68,6 @@ const orderWithStripeCheckOutPayment = async (
       success_url: "https://ethnicfoods.com/paymentsucess",
       cancel_url: "https://ethnicfoods.com/paymentcancle",
     });
-
     return stripeData;
   } catch (error) {
     throw new ApiError(

@@ -4,13 +4,14 @@ import {
   getAllCredentials,
   updateCredential,
 } from "../controllers/user/credentials.controller.js";
+import { adminAuth } from "../middlewares/adminAuth.js";
 
 const router = Router();
 
 router
   .route("/")
-  .post(createCredential)
-  .get(getAllCredentials)
-  .put(updateCredential);
+  .post(adminAuth, createCredential)
+  .get(adminAuth, getAllCredentials)
+  .put(adminAuth, updateCredential);
 
 export default router;

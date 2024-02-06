@@ -26,18 +26,6 @@ const createCredential = async (req, res) => {
 // Update an existing credential
 const updateCredential = async (req, res) => {
   try {
-    const { stripePublishableKey } = req.body;
-
-    if (!stripePublishableKey) {
-      return res.json(
-        new ApiResponse(
-          400,
-          null,
-          "stripePublishableKey is required for the update."
-        )
-      );
-    }
-
     const update = { $set: req.body };
     const options = { new: true };
 
@@ -73,7 +61,9 @@ const updateCredential = async (req, res) => {
 // Get all credentials
 const getAllCredentials = async (req, res) => {
   try {
-    const credentials = await Credential.findOne();
+    const credentials = await Credential.findOne().select(
+      "stripePublishableKey"
+    );
     return res.json(
       new ApiResponse(200, credentials, "Credentials retrieved successfully.")
     );
