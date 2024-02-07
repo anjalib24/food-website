@@ -209,6 +209,10 @@ const userOrderHistory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, getUserOrderHistoryData, "User Logout!"));
 });
 
+const forgotPassword = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, null, "User Logout!"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -217,4 +221,5 @@ export {
   updateUser,
   logoutUser,
   userOrderHistory,
+  forgotPassword,
 };

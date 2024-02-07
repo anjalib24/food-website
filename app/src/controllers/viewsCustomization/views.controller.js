@@ -137,8 +137,7 @@ const createViews = asyncHandler(async (req, res) => {
   blog_image = blog_image && `/images/${blog_image}`;
   logo = logo && `/logo/${logo}`;
 
-  loginBackgoundImg =
-    loginBackgoundImg && `/loginBackgoundImg/${loginBackgoundImg}`;
+  loginBackgoundImg = loginBackgoundImg && `/images/${loginBackgoundImg}`;
 
   const viewsObject = {
     hero_section: {
@@ -724,7 +723,7 @@ const updateLoginBackgroundImg = asyncHandler(async (req, res) => {
   if (loginBackgoundImg) {
     loginBackgoundImage = {
       ...loginBackgoundImage,
-      loginBackgoundImg: `/loginBackgoundImg/${loginBackgoundImg}`,
+      loginBackgoundImg: `/images/${loginBackgoundImg}`,
     };
   }
 
