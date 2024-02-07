@@ -7,6 +7,9 @@ import {
   updateUser,
   logoutUser,
   userOrderHistory,
+  forgotPassword,
+  resetPassword,
+  getResetPassword,
 } from "../controllers/user/user.controller.js";
 import { userAuth } from "../middlewares/userAuth.js";
 
@@ -18,6 +21,12 @@ router.route("/register").post(registerUser);
 router.route("/update-user/:id").put(userAuth, updateUser);
 router.route("/login").post(loginUser);
 router.route("/logout").get(logoutUser);
+router.route("/forgot-password").post(forgotPassword);
+router
+  .route("/reset-password/:token")
+  .get(getResetPassword)
+  .post(resetPassword);
+
 router.route("/get-user-order-history").get(userAuth, userOrderHistory);
 
 export default router;

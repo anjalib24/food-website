@@ -5,7 +5,10 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userRegistrationValidation } from "../../utils/Validation.js";
-import { sendUserRegistrationConfirmationEmail } from "../../utils/mail.js";
+import {
+  sendResetPasswordEmail,
+  sendUserRegistrationConfirmationEmail,
+} from "../../utils/mail.js";
 import { OrderHistory } from "../../models/orderHistory.model.js";
 
 //get all user
@@ -97,7 +100,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(200, createdUser, "User registered Successfully"));
+    .json(new ApiResponse(201, createdUser, "User registered Successfully"));
 });
 
 //update user
@@ -210,8 +213,86 @@ const userOrderHistory = asyncHandler(async (req, res) => {
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
-  return res.status(200).json(new ApiResponse(200, null, "User Logout!"));
+  const { email } = req.body;
+  if (!email) {
+    throw new ApiError(400, "Email is required!");
+  }
+
+  const isUserExist = await User.findOne({ email });
+  if (!isUserExist) {
+    return res.status(200).json(new ApiResponse(404, null, "User not exist!"));
+  }
+
+  const tokenPayload = {
+    _id: isUserExist?._id,
+    email: isUserExist?.email,
+    role: isUserExist?.role,
+  };
+
+  const expiresIn = 600;
+
+  const accessToken = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn,
+  });
+
+  await sendResetPasswordEmail(
+    isUserExist?.email,
+    isUserExist?.username,
+    isUserExist?._id,
+    accessToken
+  );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        accessToken,
+        "Email send successully for reset password."
+      )
+    );
 });
+
+const getResetPassword = asyncHandler(async (req, res) => {
+  const token = req.params.token;
+  if (!token) {
+    throw new ApiError(400, "Token not found.");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, token, "Password reset successfully."));
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { newPassword, confirmPassword, token } = req.body;
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(400, "New password and confirm password do not match.");
+  }
+
+  const isValidToken = await validateToken(token);
+  if (!isValidToken) {
+    throw new ApiError(400, "Invalid or expired token.");
+  }
+
+  const data = await User.findByIdAndUpdate(isValidToken?._id, {
+    password: newPassword,
+  });
+  if (!data) {
+    throw new ApiError(400, "Something went wrong while reset password.");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, accessToken, "Password reset successfully."));
+});
+
+const validateToken = async (token) => {
+  const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  if (!user) {
+    return null;
+  }
+  return user;
+};
 
 export {
   registerUser,
@@ -222,4 +303,6 @@ export {
   logoutUser,
   userOrderHistory,
   forgotPassword,
+  resetPassword,
+  getResetPassword,
 };

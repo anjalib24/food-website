@@ -201,8 +201,51 @@ const sendContactUsEmail = async (recipientEmail, name) => {
   }
 };
 
+const sendResetPasswordEmail = async (recipientEmail, name, userId, token) => {
+  try {
+    const transporter = await getEmailTransport();
+    const emailBannerDataURI = readImageAsDataURI(emailBannerPath);
+
+    const resetLink = `http://127.0.0.1:8000/api/v1/users/reset-password/${token}`;
+
+    const htmlContent = `
+      <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+        <div style="background-color: #fff; padding: 20px; border-radius: 8px;">
+          <img src="cid:Banner-Email-Ethnic-Foods.png" alt="Ethnic Foods Banner" style="max-width: 100%; height: auto;">
+          <h2 style="font-size: 24px; font-weight: bold; margin-top: 20px; color: #007bff;">Reset Your Password</h2>
+          <p style="font-size: 16px;">Hello ${name},</p>
+          <p style="font-size: 16px;">We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
+          <p style="font-size: 16px;">To reset your password, please click on the following link:</p>
+          <p style="font-size: 16px;"><a href="${resetLink}" style="color: #007bff;">Reset Password</a></p>
+          <p style="font-size: 16px;">If the above link doesn't work, you can copy and paste the following URL into your browser:</p>
+          <p style="font-size: 16px;">${resetLink}</p>
+          <p style="font-size: 16px;">If you need further assistance, please contact our support team.</p>
+          <p style="font-size: 16px;">Best regards,<br>EthnicFoods Team</p>
+        </div>
+      </div>
+    `;
+
+    const info = await transporter.sendMail({
+      from: process.env.SEND_EMAIL,
+      to: recipientEmail,
+      subject: "Reset Your Password",
+      attachments: [
+        {
+          filename: "Banner-Email-Ethnic-Foods.png",
+          path: emailBannerDataURI,
+          cid: "Banner-Email-Ethnic-Foods.png",
+        },
+      ],
+      html: htmlContent,
+    });
+  } catch (error) {
+    throw new ApiError(500, `Reset password email error: ${error.message}`);
+  }
+};
+
 export {
   sendUserRegistrationConfirmationEmail,
   sendOrderConfirmationEmail,
   sendContactUsEmail,
+  sendResetPasswordEmail,
 };
