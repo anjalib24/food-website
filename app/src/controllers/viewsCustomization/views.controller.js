@@ -93,6 +93,11 @@ const createViews = asyncHandler(async (req, res) => {
 
   let logo = (req.files["logo"] && req.files["logo"][0].filename) || "";
 
+  let loginBackgoundImg =
+    (req.files["loginBackgoundImg"] &&
+      req.files["loginBackgoundImg"][0].filename) ||
+    "";
+
   if (!hero_section_image) {
     throw new ApiError(400, "Hero section image is required!");
   }
@@ -117,6 +122,10 @@ const createViews = asyncHandler(async (req, res) => {
     throw new ApiError(400, "logo is required!");
   }
 
+  if (!loginBackgoundImg) {
+    throw new ApiError(400, "Login backgound img is required!");
+  }
+
   hero_section_image = hero_section_image && `/images/${hero_section_image}`;
 
   about_us_video = about_us_video && `/videos/${about_us_video}`;
@@ -127,6 +136,9 @@ const createViews = asyncHandler(async (req, res) => {
 
   blog_image = blog_image && `/images/${blog_image}`;
   logo = logo && `/logo/${logo}`;
+
+  loginBackgoundImg =
+    loginBackgoundImg && `/loginBackgoundImg/${loginBackgoundImg}`;
 
   const viewsObject = {
     hero_section: {
@@ -162,6 +174,7 @@ const createViews = asyncHandler(async (req, res) => {
       },
     ],
     logo: logo,
+    loginBackgoundImg: loginBackgoundImg,
   };
 
   // const { error } = viewsCustomiseValidationSchema.validate(viewsObject);
@@ -675,10 +688,8 @@ const deleteFAQ = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, deleteFAQ, "FAQ deleted successfully"));
 });
 
-//---------------------update FAQ section------------------------
+//---------------------update logo section------------------------
 const updateLogo = asyncHandler(async (req, res) => {
-  const { question, answer } = req.body;
-
   const logo = (req.files["logo"] && req.files["logo"][0].filename) || "";
   let logoImage = {};
   if (logo) {
@@ -702,6 +713,46 @@ const updateLogo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updateLogo, "logo updated successfully"));
 });
 
+//---------------------update login background image section------------------------
+
+const updateLoginBackgroundImg = asyncHandler(async (req, res) => {
+  const loginBackgoundImg =
+    (req.files["loginBackgoundImg"] &&
+      req.files["loginBackgoundImg"][0].filename) ||
+    "";
+  let loginBackgoundImage = {};
+  if (loginBackgoundImg) {
+    loginBackgoundImage = {
+      ...loginBackgoundImage,
+      loginBackgoundImg: `/loginBackgoundImg/${loginBackgoundImg}`,
+    };
+  }
+
+  const updateloginBackgoundImg = await ViewsCustomise.findOneAndUpdate(
+    {},
+    {
+      $set: loginBackgoundImage,
+    },
+    { new: true }
+  );
+
+  if (!updateloginBackgoundImg) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "loginBackgoundImg not found"));
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updateloginBackgoundImg,
+        "loginBackgoundImg updated successfully"
+      )
+    );
+});
+
 export {
   createViews,
   getViews,
@@ -717,4 +768,5 @@ export {
   deleteBlog,
   deleteFAQ,
   deleteReviews,
+  updateLoginBackgroundImg,
 };

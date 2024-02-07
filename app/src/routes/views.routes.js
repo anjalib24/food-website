@@ -14,6 +14,7 @@ import {
   deleteReviews,
   deleteBlog,
   deleteFAQ,
+  updateLoginBackgroundImg,
 } from "../controllers/viewsCustomization/views.controller.js";
 import { upload } from "../middlewares/uploadMediaFile.js";
 
@@ -26,6 +27,7 @@ router.route("/create-views").post(
     { name: "about_us_image", maxCount: 1 },
     { name: "blog_image", maxCount: 1 },
     { name: "logo", maxCount: 1 },
+    { name: "loginBackgoundImg", maxCount: 1 },
     { name: "about_us_video", maxCount: 1 },
   ]),
   createViews
@@ -73,5 +75,12 @@ router.route("/delete-faq-views/:id").delete(deleteFAQ);
 router
   .route("/update-logo-views")
   .put(upload.fields([{ name: "logo", maxCount: 1 }]), updateLogo);
+
+router
+  .route("/update-login-background-image")
+  .put(
+    upload.fields([{ name: "loginBackgoundImg", maxCount: 1 }]),
+    updateLoginBackgroundImg
+  );
 
 export default router;

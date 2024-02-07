@@ -12,7 +12,8 @@ const storage = multer.diskStorage({
         file.fieldname === "reviews_image" ||
         file.fieldname === "about_us_image" ||
         file.fieldname === "blog_image" ||
-        file.fieldname === "images") &&
+        file.fieldname === "images" ||
+        file.fieldname === "loginBackgoundImg") &&
       (file.mimetype === "image/jpeg" ||
         file.mimetype === "image/jpg" ||
         file.mimetype === "image/png")

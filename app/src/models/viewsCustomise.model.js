@@ -106,6 +106,10 @@ const viewsCustomiseSchema = new Schema(
       type: String,
       required: true,
     },
+    loginBackgoundImg: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
