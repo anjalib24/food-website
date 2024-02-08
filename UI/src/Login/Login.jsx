@@ -43,10 +43,11 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/v1/users/forgot-password', {
+      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'api/v1/users/forgot-password', {
         email: email,
       });
-      showAlert("success", "Reset password email sent successfully.");
+      showAlert("success", "Please check your email");
+      resetForm(); // Reset the form fields here
     } catch (error) {
       showAlert("danger", error.response.data.error);
     } finally {
@@ -245,7 +246,7 @@ const Login = () => {
                               />
                             </div>
                             <button type="submit" className="btn btn-primary" disabled={loading}>
-                              Send Reset Link
+                              submit
                             </button>
                           </form>
                           <p>

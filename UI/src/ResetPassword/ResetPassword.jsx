@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Alert from '@/router/Shop/Alert';
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const ResetPassword = () => {
   const { token } = useParams();
+  const history = useHistory();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-
+  const [alert, setAlert] = useState(null);
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+    setTimeout(() => {
+      setAlert(null);
+    },  5000);
+  };
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
@@ -26,23 +33,25 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/v1/users/reset-password', {
+      const response = await axios.post(import.meta.env.VITE_APP_BASE_API +'/api/v1/users/reset-password', {
         newPassword: password,
         confirmPassword: confirmPassword,
         token: token
       });
-      setSuccess(true);
-      setError('');
+      showAlert("success", "password reset successfully");
+      setTimeout(() => {
+        history.push('/shop'); 
+      },  1000);
     } catch (error) {
       setError('Error resetting password. Please try again.');
     }
   };
 
-  if (success) {
-    return <div>Password reset successfully!</div>;
-  }
+  
 
   return (
+    <>
+    {alert && <Alert type={alert.type} message={alert.message} />}
     <form autoComplete="off" id="form_submit" className="row g-3 mx-auto p-2" style={{ width: "650px" }} onSubmit={handleResetPassword}>
       <div className="container border border-1 p-4" style={{ marginTop: "100px" }}>
         <div className="row">
@@ -63,6 +72,7 @@ const ResetPassword = () => {
         </div>
       </div>
     </form>
+    </>
   );
 };
 

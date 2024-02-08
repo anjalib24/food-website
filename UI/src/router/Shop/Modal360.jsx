@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import WR360 from "@webrotate360/imagerotator";
 import "@webrotate360/imagerotator/build/css/all.css";
 import { useProductState } from './context/ProductContext';
@@ -8,54 +8,41 @@ const Modal360 = ({ data }) => {
     const { show360Modal, setShow360Modal } = useProductState();
     const viewerRef = useRef(null); 
   console.log(data?.product?._id,"idddddddddddddd");
-  const [viewer, setViewer] = useState(null); // State to hold the viewer instance
+    useEffect(() => {
+        const apiss = async () => {
+            try {
+                const response = await axios.get(import.meta.env.VITE_APP_BASE_API + `/api/v1/products/get-product-zifile/${data?.product?._id}`, {
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    mode: 'cors'
+                });
+              
+                const viewer = WR360.ImageRotator.Create("webrotate360");
+                viewer.licenseCode = "your-license-code";
+                viewer.settings.configFileURL = await import.meta.env.VITE_APP_BASE_API + response.data.data.zipFile?.xml_url;
+                viewer.settings.graphicsPath = await import.meta.env.VITE_APP_BASE_API + data?.zipFile?.image_url;
+                viewer.settings.alt = "Your alt image description";
+                viewer.settings.responsiveBaseWidth = 800;
+                viewer.settings.responsiveMinHeight = 300;
 
-  const fetchDataAndInitializeViewer = async () => {
-      try {
-          const response = await axios.get(import.meta.env.VITE_APP_BASE_API + `/api/v1/products/get-product-zifile/${data?.product?._id}`, {
-              headers: {
-                  "Content-Type": "application/json"
-              },
-              mode: 'cors'
-          });
-
-          const configFileURL = await import.meta.env.VITE_APP_BASE_API + response.data.data.zipFile?.xml_url
-          const graphicsPath = await import.meta.env.VITE_APP_BASE_API + data?.zipFile?.image_url;
-
-          const newViewer = WR360.ImageRotator.Create("webrotate360");
-          newViewer.licenseCode = "your-license-code";
-          newViewer.settings.configFileURL =configFileURL ;
-          newViewer.settings.graphicsPath = graphicsPath;
-          newViewer.settings.alt = "Your alt image description";
-          newViewer.settings.responsiveBaseWidth = 800;
-          newViewer.settings.responsiveMinHeight = 300;
-
-          newViewer.settings.apiReadyCallback = (api, isFullScreen) => {
-              api.images.onDrag((event) => {
-                  console.log(
-                      `${event.action}; current image index = ${api.images.getCurrentImageIndex()}`
-                  );
-              });
-          };
-          newViewer.runImageRotator();
-
-          setViewer(newViewer); // Set the viewer instance in state
-      } catch (error) {
-          console.error('Error fetching product:', error);
-      }
-  };
-
-  useEffect(() => {
-      if (show360Modal) {
-          fetchDataAndInitializeViewer();
-      } else {
-          // Dispose the viewer instance when modal is closed
-          if (viewer) {
-              viewer.dispose();
-              setViewer(null); // Reset viewer state
-          }
-      }
-  }, [show360Modal,data?.product?._id]);
+                viewer.settings.apiReadyCallback = (api, isFullScreen) => {
+                    this.viewerApi = api;
+                    this.viewerApi.hotspots.onAction(hotspotConfig => {
+                        console.log(JSON.stringify(hotspotConfig, null, 4));
+                        return false; // Returning false indicates that you don't want to override a default hotspot action.
+                    });
+                }
+                viewer.runImageRotator();
+            } catch (error) {
+                console.error('Error fetching product:', error);
+            } finally {
+                // setProductLoad(false);
+            }
+        }
+        apiss()
+       
+    }, [show360Modal]);
 
     const handleClose = () => {
         // Remove modal backdrop

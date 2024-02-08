@@ -161,9 +161,19 @@ const [shipmentmsg,setShipmentmsg] = useState()
   };
 
   const payment = async () => {
+
     try {
       setIsLoading(true);
-      const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
+      const stripeKeyResponse = await axios.get(import.meta.env.VITE_APP_BASE_API +'/api/v1/credentials', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        mode: "cors"
+      });
+   
+      const stripePublicKey = stripeKeyResponse?.data.data.stripePublishableKey; 
+      const stripe = await loadStripe(stripePublicKey);
       const response = await axios.post(import.meta.env.VITE_APP_BASE_API + `/api/v1/order/create-order/${cartId}`, {}, {
         headers: {
           'Authorization': `Bearer ${token}`,
