@@ -24,7 +24,7 @@ const adminAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    res.status(error.statusCode || 500).json(error.toJSON());
+    res.status(error.statusCode || 500).json(error?.message);
   }
 };
 
