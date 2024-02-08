@@ -43,7 +43,7 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'api/v1/users/forgot-password', {
+      const response = await axios.post(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/forgot-password', {
         email: email,
       });
       showAlert("success", "Please check your email");
