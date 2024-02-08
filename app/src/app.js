@@ -25,7 +25,11 @@ const app = express();
 // }
 
 app.use(cors());
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 app.use(compression());
 app.use(morgan("dev"));
 app.use((req, res, next) => {
