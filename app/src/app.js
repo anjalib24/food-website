@@ -26,16 +26,20 @@ const app = express();
 
 app.use(cors());
 app.use(helmet());
-// app.use(compression());
+app.use(compression());
 app.use(morgan("dev"));
 app.use((req, res, next) => {
   if (req.originalUrl === "/api/v1/order/stripe-webhook") {
     next();
   } else {
-    express.json()(req, res, next);
+    express.json({ extended: false, limit: "50mb" })(req, res, next);
   }
 });
-app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  express.urlencoded({ limit: "50mb", extended: false, parameterLimit: 50000 })
+);
+
 app.use(express.static("public"));
 app.use(cookieParser());
 
