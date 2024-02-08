@@ -25,12 +25,12 @@ const app = express();
 // }
 
 app.use(cors());
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false,
-  })
-);
-app.use(compression());
+// app.use(
+//   helmet({
+//     crossOriginResourcePolicy: false,
+//   })
+// );
+// app.use(compression());
 app.use(morgan("dev"));
 app.use((req, res, next) => {
   if (req.originalUrl === "/api/v1/order/stripe-webhook") {
