@@ -11,7 +11,7 @@ const router = Router();
 router
   .route("/")
   .post(adminAuth, createCredential)
-  .get(adminAuth, getAllCredentials)
+  .get(getAllCredentials)
   .put(adminAuth, updateCredential);
 
 export default router;
