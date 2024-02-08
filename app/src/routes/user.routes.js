@@ -22,10 +22,7 @@ router.route("/update-user/:id").put(userAuth, updateUser);
 router.route("/login").post(loginUser);
 router.route("/logout").get(logoutUser);
 router.route("/forgot-password").post(forgotPassword);
-router
-  .route("/reset-password/:token")
-  .get(getResetPassword)
-  .post(resetPassword);
+router.route("/reset-password").post(resetPassword);
 
 router.route("/get-user-order-history").get(userAuth, userOrderHistory);
 

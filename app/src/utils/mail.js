@@ -206,7 +206,8 @@ const sendResetPasswordEmail = async (recipientEmail, name, userId, token) => {
     const transporter = await getEmailTransport();
     const emailBannerDataURI = readImageAsDataURI(emailBannerPath);
 
-    const resetLink = `http://127.0.0.1:8000/api/v1/users/reset-password/${token}`;
+    // const localResetLink = `http://localhost:5173/reset-password/${token}`;
+    const resetLink = `https://ethnicfoods.com//reset-password/${token}`;
 
     const htmlContent = `
       <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">

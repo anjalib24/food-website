@@ -269,30 +269,30 @@ const resetPassword = asyncHandler(async (req, res) => {
     throw new ApiError(400, "New password and confirm password do not match.");
   }
 
-  const isValidToken = await validateToken(token);
-  if (!isValidToken) {
+  let isValidToken;
+
+  try {
+    isValidToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if (!isValidToken) {
+      throw new ApiError(400, "Invalid or expired token.");
+    }
+  } catch (error) {
     throw new ApiError(400, "Invalid or expired token.");
   }
 
+  const hashPassword = await bcrypt.hash(newPassword, 10);
+
   const data = await User.findByIdAndUpdate(isValidToken?._id, {
-    password: newPassword,
-  });
+    password: hashPassword,
+  }).select("-password");
   if (!data) {
     throw new ApiError(400, "Something went wrong while reset password.");
   }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, accessToken, "Password reset successfully."));
+    .json(new ApiResponse(200, data, "Password reset successfully."));
 });
-
-const validateToken = async (token) => {
-  const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  if (!user) {
-    return null;
-  }
-  return user;
-};
 
 export {
   registerUser,
