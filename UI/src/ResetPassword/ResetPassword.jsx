@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom'; // Assuming you're using React Router
-import axios from 'axios'; // You may need to install axios using npm or yarn
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const ResetPassword = () => {
-  const { userId, token } = useParams(); // Extract userId and token from the URL params
+  const { token } = useParams();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const handleResetPassword = async () => {
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleConfirmPasswordChange = (event) => {
+    setConfirmPassword(event.target.value);
+  };
+
+  const handleResetPassword = async (event) => {
+    event.preventDefault();
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -17,9 +27,9 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/v1/users/reset-password', {
-        userId,
-        token,
-        password
+        newPassword: password,
+        confirmPassword: confirmPassword,
+        token: token
       });
       setSuccess(true);
       setError('');
@@ -33,31 +43,27 @@ const ResetPassword = () => {
   }
 
   return (
- 
-     
-<form autocomplete="off" id="form_submit" class="row g-3 mx-auto p-2" style={{ width: "650px" }} onsubmit={handleResetPassword}>
-  <div class="container border border-1 p-4" style={{ marginTop: "100px" }}>
-    <div class="row">
-      <div class="col-md-10">
-        <h1 id="h1" class="text-center">Password</h1>
+    <form autoComplete="off" id="form_submit" className="row g-3 mx-auto p-2" style={{ width: "650px" }} onSubmit={handleResetPassword}>
+      <div className="container border border-1 p-4" style={{ marginTop: "100px" }}>
+        <div className="row">
+          <div className="col-md-10">
+            <h1 id="h1" className="text-center">Password</h1>
+          </div>
+          <div className="col-md-10">
+            <label htmlFor="inputPassword" className="form-label">Password</label>
+            <input type="password" className="form-control" id="inputPassword" name="inputPassword" value={password} onChange={handlePasswordChange} required />
+          </div>
+          <div className="col-md-10">
+            <label htmlFor="inputConfirmPassword" className="form-label">Confirm Password</label>
+            <input type="password" className="form-control" id="inputConfirmPassword" name="inputConfirmPassword" value={confirmPassword} onChange={handleConfirmPasswordChange} required />
+          </div>
+          <div className="col-10 mt-5 form_action--button">
+            <button type="submit" className="btn btn-primary">Submit</button>
+          </div>
+        </div>
       </div>
-      <div class="col-md-10">
-        <label for="inputPassword" class="form-label">Password</label>
-        <input type="password" class="form-control" id="inputPassword" name="inputPassword" required />
-      </div>
-      <div class="col-md-10">
-        <label for="inputConfirmPassword" class="form-label">Confirm Password</label>
-        <input type="password" class="form-control" id="inputConfirmPassword" name="inputConfirmPassword" required />
-      </div>
-      <div class="col-10 mt-5 form_action--button">
-        <button type="submit" class="btn btn-primary">submit</button>
-      </div>
-    </div>
-  </div>
-</form>
-
-
+    </form>
   );
 };
 
-export default ResetPassword; 
+export default ResetPassword;
