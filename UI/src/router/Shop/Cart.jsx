@@ -157,10 +157,12 @@ const [shipmentmsg,setShipmentmsg] = useState()
     } else {
       payment()
     }
+
   };
 
   const payment = async () => {
     try {
+      setIsLoading(true);
       const stripe = await loadStripe("pk_test_51OH1OpSIyMxB5x7k2X8IKDlmuOOQUSW6OZhUHTOf19w9V8mufbMwJYiGZn02U1SelvQmZFHq6yotMk8FPzKEiN74003RN1uHXW");
       const response = await axios.post(import.meta.env.VITE_APP_BASE_API + `/api/v1/order/create-order/${cartId}`, {}, {
         headers: {
@@ -178,6 +180,8 @@ const [shipmentmsg,setShipmentmsg] = useState()
       }
     } catch (error) {
       console.error('Error during payment:', error);
+    } finally {
+      setIsLoading(false); // Reset the loading state here
     }
   };
   // if (token) {

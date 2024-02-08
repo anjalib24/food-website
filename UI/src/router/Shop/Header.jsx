@@ -13,7 +13,7 @@ import { FaYoutube, FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaPinteres
 
 
 const Header = ({ hideCart, hidebutton }) => {
-  const [socialMedia,setSocialMedia] = useState()
+  const [socialMedia, setSocialMedia] = useState()
   const navStyles = {
     display: 'flex',
     alignItems: 'center',
@@ -35,7 +35,7 @@ const Header = ({ hideCart, hidebutton }) => {
 
   const socialMediaLinks = {
     youtube: socialMedia?.youtube?.link,
-    facebook: socialMedia?.facebook?.link    ,
+    facebook: socialMedia?.facebook?.link,
     instagram: socialMedia?.instagram.link,
     linkedin: socialMedia?.linkedin.link,
     tiktok: socialMedia?.tiktok.link,
@@ -46,15 +46,15 @@ const Header = ({ hideCart, hidebutton }) => {
 
   useEffect(() => {
     fetch(import.meta.env.VITE_APP_BASE_API + '/api/v1/social-media-link')
-       .then((response) => response.json())
-       .then((data) => {
-         const { facebook, twitter, instagram, linkedin, youtube, pinterest, snapchat, tiktok } = data.data;
-         setSocialMedia({ facebook, twitter, instagram, linkedin, youtube, pinterest, snapchat, tiktok });
-       })
-       .catch((error) => {
-         console.error('Error fetching social media links:', error);
-       });
-   }, []);
+      .then((response) => response.json())
+      .then((data) => {
+        const { facebook, twitter, instagram, linkedin, youtube, pinterest, snapchat, tiktok } = data.data;
+        setSocialMedia({ facebook, twitter, instagram, linkedin, youtube, pinterest, snapchat, tiktok });
+      })
+      .catch((error) => {
+        console.error('Error fetching social media links:', error);
+      });
+  }, []);
   const showAlert = (type, message) => {
     setAlert({ type, message });
     setTimeout(() => {
@@ -124,7 +124,7 @@ const Header = ({ hideCart, hidebutton }) => {
       {alert && <Alert type={alert.type} message={alert.message} />}
       <header>
         <div className="main-header">
-          <div style={{display:"flex", flexDirection:"row",alignItems:"center"}}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <div className="container">
               <nav style={navStyles}>
                 <Link to="/">
@@ -132,12 +132,12 @@ const Header = ({ hideCart, hidebutton }) => {
                 </Link>
                 <ul style={{ 'margin': 0 }}>
                   <li><Link to="/">Home</Link></li>
-                  <li onClick={() => scrollToBestseller()}><Link to="/shop">Shop</Link></li>
+                  <li><Link to="/shop">Shop</Link></li>
                   <li><Link to="/#About">About Us</Link></li>
                   <li><Link to="/#review">Review</Link></li>
                   <li><Link to="/#Blog">Blog</Link></li>
                   <li><Link to="/#FAQ">FAQ</Link></li>
-                  <li onClick={() => scrollToSection('footer')} style={{ cursor: "pointer" }}>Contact</li>
+                  <li><Link to="/#footer">Contact</Link></li>
                 </ul>
                 <div className="d-flex justify-content-center align-items-center" style={{ flexDirection: 'row', gap: '5px' }}>
                   {!hideCart && (

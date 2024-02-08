@@ -116,7 +116,7 @@ const EditProduct = () => {
           setAlert({errType:"success", errMsg:"Edit Sucessfully", isError: true});
         setProducts((products) => {
           return products.map((prod) => {
-            if (prod._id === data._id) {
+            if (prod._id === data?._id) {
               return product;
             }
             return prod;

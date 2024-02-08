@@ -85,9 +85,10 @@ export const Blog = (props) => {
               <div className="col-md-12">
                 <div id="blog_main">
                      {props?.blog?.length > 0 ? (
+                        <div style={{ cursor: 'pointer' }}>
                         <Slider ref={slickRef} {...settings} afterChange={handleAfterChange}>
                         {props?.blog?.map((blogItem, index) => (
-                          <div key={index} className="single-box"  onClick={() => history.push("/blogs", { selectedBlog: blogItem })}>
+                          <div key={index} className="single-box" style={{cursor:"pointer"}}  onClick={() => history.push("/blogs", { selectedBlog: blogItem })}>
                             <div className="img-area">
                               <img src={import.meta.env.VITE_APP_BASE_API+blogItem.image} alt={`Blog ${index + 1}`}  style={{height: '220px'}}/>
                             </div>
@@ -118,6 +119,7 @@ export const Blog = (props) => {
                           </div>
                         ))}
                       </Slider>
+                      </div>
                ) : (
                 <p style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>There is no blog now</p>
                 )}

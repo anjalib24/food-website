@@ -60,7 +60,7 @@ const fetchCredentials = () => {
        console.error('Error updating social media links:', error);
      });
  };
- console.log(credentials,"cedentiallll");
+
  return (
   <>
    {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}

@@ -10,7 +10,8 @@ const WithAuth = (props) => {
   const unprotectedRoutes = [
     'paymentsucess',
     'PaymentCancel',
-    'productdetail'
+    'productdetail',
+    'reset-password'
   ]
 
 useEffect(() => {

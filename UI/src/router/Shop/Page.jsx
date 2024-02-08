@@ -15,12 +15,17 @@ import PaymentCancel from "./PaymentCancel";
 import UserOrderDetails from "./UserOrderDetails";
 import WithAuth from "@/components/WithAuth";
 import Blogs from "./Blogs";
-
+import ResetPassword from "@/ResetPassword/ResetPassword";
 const Page = () => {
   return (
-    <>
+    <>                                    
+     {/* const resetLink = `http://127.0.0.1:8000/api/v1/users/reset-password/${userId}/${token}`; */}
+
     <Switch>
     <ProductContexts>
+    <Route exact path="/reset-password/:token">
+          <ResetPassword/>
+        </Route>
     <Route exact path="/productdetail/:id">
           <Productdetailpage />
         </Route>
