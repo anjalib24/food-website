@@ -33,7 +33,7 @@ export const Allproduct = ({ getProduct }) => {
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [country, setCountry] = useState()
-  const { handleaddtocard, showvideomodal, videodata, showAlert, setShowAlert, productload, setProductLoad, show360Modal, alertmsg, setAlertMsg, showcard, setShowCard, cart, setCart, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
+  const { handleaddtocard, showvideomodal, videodata, showAlert, setShowAlert, productload, setProductLoad, show360Modal, alertmsg, handleExploreClicks, handleSocialmedia, handleVideomodal, setSelectedItem, selectedItem, setProductId, productId, showsocial, setShowSocial, loading, setLoading } = useProductState();
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -47,12 +47,13 @@ export const Allproduct = ({ getProduct }) => {
     } else {
       fetchDataFromApi();
     }
-  }, [selectedOrigin, selectedPriceRange, searchInput]);
+  }, [selectedOrigin, selectedPriceRange, searchInput, currentPage]);
 
-  useEffect(() => {
 
-    fetchDataFromApi();
-  }, [currentPage]);
+  // useEffect(() => {
+
+  //   fetchDataFromApi();
+  // }, []);
 
   useEffect(() => {
     if (data !== null) {
@@ -166,6 +167,7 @@ export const Allproduct = ({ getProduct }) => {
     setData(result.data.product);
     setTotalItems(result?.data?.totalDocs);
   };
+
   return (
     <>
       {productload && <Loader />}
@@ -410,16 +412,22 @@ export const Allproduct = ({ getProduct }) => {
                         </div>
                         <div className="product-actions">
                           <div className='d-flex flex-row '>
-                            {item.product?.zipFile && <div className="mr-3">
-                              <img
-                                src={png360}
-                                alt="png360"
-                                onClick={() => handleExploreClicks(item)}
-                                data-toggle="modal"
-                                data-target="#explore360Modal"
-                                style={{ cursor: 'pointer' }}
-                              />
-                            </div>}
+
+                            {item.product?.zipFile ? (
+                              <div className="mr-3">
+                                <img
+                                  src={png360}
+                                  alt="png360"
+                                  onClick={() => handleExploreClicks(item)}
+                                  data-toggle="modal"
+                                  data-target="#explore360Modal"
+                                  style={{ cursor: 'pointer' }}
+                                />
+                              </div>
+                            ) : (
+                              <></>
+                            )}
+
                             <div>
                               <div className="mr-3">
                                 <img alt='vector' src={vectorimg}
@@ -464,7 +472,7 @@ export const Allproduct = ({ getProduct }) => {
                           </button>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Stack spacing={1}>
-                              <Rating name="half-rating-read" defaultValue={item.rating} precision={0.5} readOnly />
+                              <Rating name="half-rating-read" defaultValue={item?.productRewiev[0]?.productOverAllReviews} precision={0.5} readOnly />
                             </Stack>
                           </div>
                         </div>

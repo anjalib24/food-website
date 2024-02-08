@@ -14,6 +14,7 @@ import Loader from "@/components/Loader";
 import Logo from "./Logo";
 import { useAdminState } from "@/contexts/AdminContext";
 import Alert from "@/router/Shop/Alert";
+import LoginPageImage from "./LoginPageImage";
 
 const Page = () => {
   const match = useRouteMatch();
@@ -98,6 +99,18 @@ const Page = () => {
           </AccordionSummary>
           <AccordionDetails>
             <AboutSection data={data["about_us"]} />
+          </AccordionDetails>
+        </Accordion>
+        <Accordion expanded>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography fontSize="24px">Log in page image</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <LoginPageImage data={data["loginBackgoundImg"]} />
           </AccordionDetails>
         </Accordion>
       </Route>

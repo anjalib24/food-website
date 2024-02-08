@@ -129,7 +129,7 @@ const handleZipcode = async (event) => {
   try {
     const formData = new FormData();
     formData.append('csvFile', freezipcode.csvFile);
-    const response = await fetch("http://127.0.0.1:8000/api/v1/free-zip-codes/csv-file-upload",
+    const response = await fetch( import.meta.env.VITE_APP_BASE_API +"/api/v1/free-zip-codes/csv-file-upload",
       {
         method: "POST",
         body: formData,

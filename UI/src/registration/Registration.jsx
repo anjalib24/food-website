@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import "./registration.css";
 import { Button } from "react-bootstrap";
@@ -10,6 +10,7 @@ import { Footer } from "@/router/Shop/Footer";
 import Header from "@/router/Shop/Header";
 import Loader from "@/components/Loader";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { getshowingdata } from "@/router/Shop/services/Api";
 
 const registrationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -37,6 +38,7 @@ const initialValues = {
 const Registration = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const [image,setImage] = useState()
 
   const {
     values,
@@ -66,7 +68,6 @@ const Registration = () => {
       };
 
       try {
-       
         const response = await axios.post(import.meta.env.VITE_APP_BASE_API+"/api/v1/users/register", requestData);
         // Check the response and show the appropriate alert
         if (response.status === 201) {
@@ -92,7 +93,19 @@ const Registration = () => {
       setAlert(null);
     }, 5000);
   };
+  useEffect(() => {
+    fetchDataFromApi()
+  }, []);
 
+  const fetchDataFromApi = async () => {
+    try {
+      const result = await getshowingdata("views/get-views");
+      setImage(result.data[0]?.loginBackgoundImg,"setimage");
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+    }
+  };
   return (
     <>
         {loading && <Loader/>}
@@ -276,7 +289,7 @@ const Registration = () => {
                               Zipcode
                             </label>
                             <input
-                            type="number"
+                            type="text"
                               id="zipcode"
                               name="zipcode"
                               className="form-control"
@@ -320,7 +333,7 @@ const Registration = () => {
                     </div>
                     <div className="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2 mt-auto mb-auto">
                       <img
-                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                        src={import.meta.env.VITE_APP_BASE_API + image} 
                         className="img-fluid"
                         alt=""
                       />

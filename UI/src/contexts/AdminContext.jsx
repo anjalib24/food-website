@@ -78,7 +78,7 @@ export const AdminContext = ({ children }) => {
     };
     fetchCategoriesAndCountries();
   }, []);
-console.log(alert,"alertofadmincontext");
+
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
     <StateContext.Provider

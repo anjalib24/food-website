@@ -10,9 +10,9 @@ export const ProductContexts = ({ children }) => {
   const [showcard, setShowCard] = useState(false)
   const [cart, setCart] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [show360Modal, setShow360Modal] = useState(false);
+  const [show360Modal, setShow360Modal] = useState(null);
   const [productId, setProductId] = useState(null)
-  const [showsocial, setShowSocial] = useState(false)
+  const [showsocial, setShowSocial] = useState(null)
   const [showvideomodal, setShowvideomodal] = useState(null);
   const [videodata, setVideoData] = useState()
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,6 @@ export const ProductContexts = ({ children }) => {
   const [allproductLoader,setallproductLoader] = useState()
   const [productload,setProductLoad] = useState()
 
-  
   const handleaddtocard = async (item) => {
     try {
       const token = localStorage.getItem('token');
@@ -96,8 +95,9 @@ export const ProductContexts = ({ children }) => {
     return { __html: DOMPurify.sanitize(htmlContent) };
   };
   const handleExploreClicks = (item) => {
-    setSelectedItem(item);
     setShow360Modal(true);
+    setSelectedItem(item);
+   
   };
   const handleSocialmedia = (item) => {
     setProductId(item.product._id)
@@ -107,6 +107,7 @@ export const ProductContexts = ({ children }) => {
     setVideoData(item.product);
     setShowvideomodal(true);
   };
+
   return (
     <ProductContext.Provider
       value={{

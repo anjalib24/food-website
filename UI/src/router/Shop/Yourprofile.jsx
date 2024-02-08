@@ -36,7 +36,7 @@ const Yourprofile = () => {
       const token = localStorage.getItem("token");
       try {
 
-        await axios.put(import.meta.env.VITE_APP_BASE_API+`/api/v1/users/update-user/${userData._id}`, {
+        await axios.put(import.meta.env.VITE_APP_BASE_API + `/api/v1/users/update-user/${userData._id}`, {
           userData: userData,
         }, {
           headers: {
@@ -53,7 +53,7 @@ const Yourprofile = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoading(true); // Start loading
-    axios.get(import.meta.env.VITE_APP_BASE_API+"/api/v1/users/get-current", {
+    axios.get(import.meta.env.VITE_APP_BASE_API + "/api/v1/users/get-current", {
       headers: {
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json"
@@ -67,10 +67,10 @@ const Yourprofile = () => {
         console.error('Error fetching data: ', error);
       })
       .finally(() => {
-        setIsLoading(false); 
+        setIsLoading(false);
       });
 
-    axios.get(import.meta.env.VITE_APP_BASE_API+'/api/v1/users/get-user-order-history', {
+    axios.get(import.meta.env.VITE_APP_BASE_API + '/api/v1/users/get-user-order-history', {
       headers: {
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json"
@@ -84,14 +84,13 @@ const Yourprofile = () => {
         console.error('Error fetching order history: ', error);
       })
       .finally(() => {
-        setIsLoading(false); 
+        setIsLoading(false);
       });
   }, []);
 
   return (
     <div>
-            {isLoading && <Loader />}
-
+      {isLoading && <Loader />}
       <Header />
       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
       <div className="container">
@@ -206,7 +205,7 @@ const Yourprofile = () => {
                         <div className="form-group">
                           <label className="col-md-2  col-sm-3 col-xs-12 control-label">Zip code</label>
                           <div className="col-md-10 col-sm-9 col-xs-12">
-                            <input type="number"className="form-control" value={userData.zipcode} readOnly={!isEditable}
+                            <input type="number" className="form-control" value={userData.zipcode} readOnly={!isEditable}
                               onChange={handleInputChange}
                               name="zipcode"
                             />
@@ -226,51 +225,48 @@ const Yourprofile = () => {
                 {selectedOption === 'orders' && (
                   <>
                     {
-                    
-                    orderHistory?.length > 0 ? (
-                    
-                    orderHistory?.map((item) => {
-                      return (
-                        <>
-                          <div className="row product" onClick={() => handleClick(item)}>
-                            <div className="col-md-2">
-                              <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={import.meta.env.VITE_APP_BASE_API +`${item?.productDetails[0]?.images[0]}`} />
-                            </div>
-                            <div className="col-md-6 product-detail" style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-                              <div>
-                                {
-                                  item?.productDetails[0]?.title
-                                }
-                              </div>
-                              <div>$
-                                {item?.productDetails[0]?.price
-                                }
-                              </div>
-                            </div>
-                            <div className="col-md-4 product-detail" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                              {item?.orderDetails?.status === 'pending' ? (
-                                <div className='reddot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#dc3545', border: '2px solid #dc3545', display: 'inline-block', marginRight: '8px' }}></div>
 
-                              ) : (
-                                <div className='greendot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#26a541', border: '2px solid #26a541', display: 'inline-block', marginRight: '8px' }}></div>
+                      orderHistory?.length > 0 ? (
+                        orderHistory?.map((item) => {
+                          return (
+                            <>
+                              <div className="row product" onClick={() => handleClick(item)} style={{cursor:"pointer"}}>
+                                <div className="col-md-2">
+                                  <img alt="Sample Image" style={{ maxHeight: "75px", width: "auto" }} src={import.meta.env.VITE_APP_BASE_API + `${item?.productDetails[0]?.images[0]}`} />
+                                </div>
+                                <div className="col-md-6 product-detail" style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                                  <div>
+                                    {
+                                      item?.productDetails[0]?.title
+                                    }
+                                  </div>
+                                  <div>$
+                                    {item?.productDetails[0]?.price
+                                    }
+                                  </div>
+                                </div>
+                                <div className="col-md-4 product-detail" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                  {item?.orderDetails?.status === 'pending' ? (
+                                    <div className='reddot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#dc3545', border: '2px solid #dc3545', display: 'inline-block', marginRight: '8px' }}></div>
 
-                              )}
-                              <div>
-                                {item?.orderDetails?.status}
+                                  ) : (
+                                    <div className='greendot' style={{ height: '10px', width: '10px', borderRadius: '50%', backgroundColor: '#26a541', border: '2px solid #26a541', display: 'inline-block', marginRight: '8px' }}></div>
+
+                                  )}
+                                  <div>
+                                    {item?.orderDetails?.status}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </>
+                            </>
+                          )
+
+                        }
+                        )
+                      ) : (
+                        <div>There are no orders present.</div>
                       )
-
                     }
-                    )
-                  
-                    ):(
-
-                      <div>There are no orders present.</div>
-                      )
-                  }
                   </>
                 )}
               </div>
