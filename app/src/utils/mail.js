@@ -14,6 +14,7 @@ const readImageAsDataURI = (imagePath) => {
   const imageBase64 = imageBuffer.toString("base64");
   return `data:image/png;base64,${imageBase64}`;
 };
+import handlebars from "handlebars";
 
 const getEmailTransport = async () => {
   try {
@@ -244,9 +245,54 @@ const sendResetPasswordEmail = async (recipientEmail, name, userId, token) => {
   }
 };
 
+// const sendEmailUsingTemplate = async (
+//   recipientEmail = "shakil.patel@r-one.in",
+//   name = "shakil",
+//   resetLink = "https://youtube.com"
+// ) => {
+//   try {
+//     const transporter = await getEmailTransport();
+
+//     const htmls = `
+//     <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+//       <div style="background-color: #fff; padding: 20px; border-radius: 8px;">
+//         <img src="cid:Banner-Email-Ethnic-Foods.png" alt="Ethnic Foods Banner" style="max-width: 100%; height: auto;">
+//         <h2 style="font-size: 24px; font-weight: bold; margin-top: 20px; color: #007bff;">Reset Your Password</h2>
+//         <p style="font-size: 16px;">Hello {{name}},</p>
+//         <p style="font-size: 16px;">We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
+//         <p style="font-size: 16px;">To reset your password, please click on the following link:</p>
+//         <p style="font-size: 16px;"><a href="{{resetLink}}" style="color: #007bff;">Reset Password</a></p>
+//         <p style="font-size: 16px;">If the above link doesn't work, you can copy and paste the following URL into your browser:</p>
+//         <p style="font-size: 16px;">{{resetLink}}</p>
+//         <p style="font-size: 16px;">If you need further assistance, please contact our support team.</p>
+//         <p style="font-size: 16px;">Best regards,<br>EthnicFoods Team</p>
+//       </div>
+//     </div>
+//   `;
+
+//     const template = handlebars.compile(htmls);
+
+//     const emailHtml = template({ name, resetLink });
+
+//     // Send email
+//     const info = await transporter.sendMail({
+//       from: process.env.SEND_EMAIL,
+//       to: recipientEmail,
+//       subject: "Reset Your Password",
+
+//       html: emailHtml,
+//     });
+
+//     console.log("Email sent: " + info.response);
+//   } catch (error) {
+//     console.error("Error sending email:", error);
+//   }
+// };
+
 export {
   sendUserRegistrationConfirmationEmail,
   sendOrderConfirmationEmail,
   sendContactUsEmail,
   sendResetPasswordEmail,
+  // sendEmailUsingTemplate,
 };
