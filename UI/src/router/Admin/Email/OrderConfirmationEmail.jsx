@@ -72,7 +72,7 @@ const OrderConfirmationEmail = ({OrderEmailData}) => {
         [{ 'color': [] }, { 'background': [] }],
         [{ 'font': [] }],
         [{ 'align': [] }],
-  
+        ['link'],
         ['clean']
       ],
     };

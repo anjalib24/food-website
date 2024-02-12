@@ -11,6 +11,7 @@ import OrderConfirmationEmail from "./OrderConfirmationEmail";
 import RegistrationEmail from "./RegistrationEmail";
 import QueryAdminEmail from "./CustomerQueryAdminEmail"
 import QueryUserEmail from "./CustomerQueryEmail"
+import ResetPasswordEmail from "./ResetPasswordEmail";
 
 
 
@@ -109,7 +110,7 @@ const Page = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <QueryAdminEmail ResetPassword={ResetPassword}/>
+          <ResetPasswordEmail ResetPassword={ResetPassword}/>
         </AccordionDetails>
       </Accordion>
     </>

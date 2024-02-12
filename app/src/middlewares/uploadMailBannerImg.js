@@ -7,7 +7,6 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log(file);
     if (
       file.fieldname === "bannerImg" &&
       (file.mimetype === "image/jpeg" ||

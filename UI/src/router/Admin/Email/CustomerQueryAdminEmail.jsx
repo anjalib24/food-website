@@ -63,7 +63,7 @@ const CustomerQueryAdminEmail = ({AdminQuery}) => {
         [{ 'color': [] }, { 'background': [] }],
         [{ 'font': [] }],
         [{ 'align': [] }],
-  
+        ['link'],
         ['clean']
       ],
     };

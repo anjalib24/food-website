@@ -63,7 +63,7 @@ const RegistrationEmail = ({registrationEmailData}) => {
       [{ 'color': [] }, { 'background': [] }],
       [{ 'font': [] }],
       [{ 'align': [] }],
-
+      ['link'],
       ['clean']
     ],
   };
