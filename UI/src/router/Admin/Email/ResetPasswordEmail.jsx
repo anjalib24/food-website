@@ -3,15 +3,15 @@ import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-const ResetPasswordEmail = () => {
+const ResetPasswordEmail = ({ResetPassword}) => {
     const [bannerImage, setBannerImage] = useState(null); 
     const [subject, setSubject] = useState('');
     const [body, setBody] = useState('');
   
     useEffect(() => {
-      setSubject(OrderEmailData?.subject);
-      setBody(OrderEmailData?.body);
-    }, [OrderEmailData]);
+      setSubject(ResetPassword?.subject);
+      setBody(ResetPassword?.body);
+    }, [ResetPassword]);
     const handleBannerImageChange = (e) => {
       const file = e.target.files[0];
       setBannerImage(file);
