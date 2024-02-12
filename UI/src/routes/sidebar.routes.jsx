@@ -94,6 +94,10 @@ export const links = [
         name: "Query",
         to: "/admin/query",
         icon: <FiShoppingBag />,
+      },{
+        name: "Email Formate",
+        to: "/admin/emailformate",
+        icon: <FiShoppingBag />,
       },
     ],
   },

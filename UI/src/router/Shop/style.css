@@ -152,7 +152,7 @@ nav .dropdown-menu {
     width: 100% !important;
     transform: translate(0) !important;
     left: -100% !important;
-    top: 87px !important;
+    top: 79px !important;
     overflow: auto;
     transition: all 0.3s ease-in;
     display: block;
