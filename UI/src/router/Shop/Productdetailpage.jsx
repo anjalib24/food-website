@@ -132,6 +132,7 @@ const Productdetailpage = () => {
       console.error(error);
     }
   };
+  console.log(product?.product[0].product.reviews,"revierww");
   return (
     <>
       {productload && <Loader />}
@@ -211,18 +212,16 @@ const Productdetailpage = () => {
                   </div>
                 }
                 {
-                  product?.reviews?.length > 0 &&
+                 product?.product[0]?.product?.reviews?.length > 0 &&
                   <>
                     <div style={{ marginTop: "10px" }}>
                       <h5>
                         Reviews
                       </h5>
-
                     </div>
                     <div style={{ marginTop: "30px" }}>
-
                       {
-                        product.reviews.map((item) => (
+                       product?.product[0]?.product?.reviews?.map((item) => (
                           <>
                             <div className="row" style={{ display: "flex", flexDirection: "column", margin: "auto", marginTop: "10px" }}  >
                               <div className="col-md-4 " style={{ display: "flex", gap: "10px" }}>

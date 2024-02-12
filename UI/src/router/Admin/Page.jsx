@@ -28,6 +28,7 @@ import Adminprofile from "./AdminProfile/Page"
 import Query from "./Query/Page"
 import Socialmedia from "./Socialmedia/Page"
 import Credential from "./Cedential/Page"
+import Emailformate from "./Email/Page"
 import Alert from "../Shop/Alert";
 const Page = () => {
   let match = useRouteMatch();
@@ -37,6 +38,9 @@ const Page = () => {
         <Layout
           Page={
             <Switch>
+               <Route path={`${match.path}/emailformate`}>
+                <Emailformate/>
+              </Route>
                    <Route path={`${match.path}/credentials`}>
                 <Credential/>
               </Route>

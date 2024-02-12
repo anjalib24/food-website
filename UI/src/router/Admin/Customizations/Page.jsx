@@ -38,7 +38,7 @@ const Page = () => {
   }, []);
 
   if (!data) return <Loader />;
-
+console.log(data,"dataa");
   return (
     <>
     {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}

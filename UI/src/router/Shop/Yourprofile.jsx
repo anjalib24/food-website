@@ -240,9 +240,8 @@ const Yourprofile = () => {
                                       item?.productDetails[0]?.title
                                     }
                                   </div>
-                                  <div>$
-                                    {item?.productDetails[0]?.price
-                                    }
+                                  <div>
+                                    items ({item?.productDetails?.length})
                                   </div>
                                 </div>
                                 <div className="col-md-4 product-detail" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
