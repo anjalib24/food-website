@@ -5,7 +5,6 @@ import handlebars from "handlebars";
 import { ApiError } from "./ApiError.js";
 import { Credential } from "../models/credentials.model.js";
 import Mail from "../models/mail.model.js";
-import handlebars from "handlebars";
 
 const __dirname = path.resolve();
 
