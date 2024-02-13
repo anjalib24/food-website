@@ -4,7 +4,7 @@ const Noproductincart = () => {
   const history = useHistory();
 
   const handleShopNowClick = () => {
-    history.push('/shop'); 
+    history.push('/'); 
   };
     return (
       <>

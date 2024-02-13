@@ -36,7 +36,7 @@ const check = history.location.pathname.split("/")[1]
     return 
   }
 
-  history.push("/shop");
+  history.push("/");
 }, []);
 
   return <>{props.children}</>;

@@ -22,14 +22,10 @@ const ResetPasswordEmail = ({ResetPassword}) => {
     };
   
     const handleSubmit = async (e) => {
-      e.preventDefault();
-  
-      // Create a FormData object to send the file
+      e.preventDefault();  
       const formData = new FormData();
       formData.append('bannerImg', bannerImage);
-  
-      // Append other form data
-      formData.append('mailType', "reset-password-email"
+        formData.append('mailType', "reset-password-email"
       );
       formData.append('subject', subject);
       formData.append('body', body);
@@ -52,6 +48,7 @@ const ResetPasswordEmail = ({ResetPassword}) => {
   
     const modules = {
       toolbar: [
+        
         ['bold', 'italic', 'underline', 'strike'],
         ['blockquote', 'code-block'],
   

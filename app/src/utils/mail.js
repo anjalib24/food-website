@@ -14,7 +14,7 @@ const readImageAsDataURI = (imagePath) => {
   const imageBase64 = imageBuffer.toString("base64");
   return `data:image/png;base64,${imageBase64}`;
 };
-import handlebars from "handlebars";
+// import handlebars from "handlebars";
 
 const getEmailTransport = async () => {
   try {

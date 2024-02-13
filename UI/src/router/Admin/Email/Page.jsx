@@ -11,6 +11,8 @@ import OrderConfirmationEmail from "./OrderConfirmationEmail";
 import RegistrationEmail from "./RegistrationEmail";
 import QueryAdminEmail from "./CustomerQueryAdminEmail"
 import QueryUserEmail from "./CustomerQueryEmail"
+import Alert from "@/router/Shop/Alert";
+import { useAdminState } from "@/contexts/AdminContext";
 
 
 
@@ -34,6 +36,7 @@ const Page = () => {
     // Call the function to fetch data
     fetchData();
   }, []);
+  const {setAlert, alert } = useAdminState();
   const registrationEmailData = data?.find(item => item.mailType === 'registration-confirmation-email');
   const OrderEmailData = data?.find(item => item.mailType === 'order-confirmation-email');
   const UserQuery = data?.find(item => item.mailType === 'customer-query-email');
@@ -46,6 +49,7 @@ const Page = () => {
 
   return (
     <>
+          {alert.isError && <Alert type={alert.errType} message={alert.errMsg} />}
       <Accordion expanded>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

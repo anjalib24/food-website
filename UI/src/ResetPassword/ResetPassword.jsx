@@ -40,7 +40,7 @@ const ResetPassword = () => {
       });
       showAlert("success", "password reset successfully");
       setTimeout(() => {
-        history.push('/shop'); 
+        history.push('/'); 
       },  1000);
     } catch (error) {
       setError('Error resetting password. Please try again.');

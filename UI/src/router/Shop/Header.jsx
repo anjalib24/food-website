@@ -132,7 +132,7 @@ const Header = ({ hideCart, hidebutton }) => {
                 </Link>
                 <ul style={{ 'margin': 0 }}>
                   <li><Link to="/">Home</Link></li>
-                  <li><Link to="/shop">Shop</Link></li>
+                  <li><Link to="/#Herosection">Shop</Link></li>
                   <li><Link to="/#About">About Us</Link></li>
                   <li><Link to="/#review">Review</Link></li>
                   <li><Link to="/#Blog">Blog</Link></li>
@@ -170,7 +170,7 @@ const Header = ({ hideCart, hidebutton }) => {
                   <i className="fa-solid fa-bars dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                   <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a className="dropdown-item"><Link to="/" style={{ color: 'green' }}>Home</Link></a>
-                    <a className="dropdown-item"><Link to="/shop" style={{ color: 'green' }}>Shop</Link></a>
+                    <a className="dropdown-item"><Link to="/banner" style={{ color: 'green' }}>Shop</Link></a>
                     <a className="dropdown-item"><Link to="/#About" style={{ color: 'green' }}>About Us</Link></a>
                     <a className="dropdown-item"><Link to="/#review" style={{ color: 'green' }}>Review</Link></a>
                     <a className="dropdown-item"><Link to="/#Blog" style={{ color: 'green' }}>Blog</Link></a>
