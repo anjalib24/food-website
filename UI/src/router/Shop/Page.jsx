@@ -16,9 +16,15 @@ import UserOrderDetails from "./UserOrderDetails";
 import WithAuth from "@/components/WithAuth";
 import Blogs from "./Blogs";
 import ResetPassword from "@/ResetPassword/ResetPassword";
+import { Helmet } from 'react-helmet';
+
 const Page = () => {
   return (
-    <>                                    
+    <>       
+    <Helmet>
+        <title>Ethnic Foods</title>
+        <meta name="description" content="Get your favorite food" />
+      </Helmet>                             
     <Switch>
     <ProductContexts>
     <Route exact path="/reset-password/:token">
@@ -70,7 +76,6 @@ const Page = () => {
         <Route exact path="/yourprofile">
           <Yourprofile />
         </Route>
-        
         <Route exact path="/">
           <Home />
         </Route>

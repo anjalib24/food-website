@@ -107,7 +107,7 @@ export const ProductContexts = ({ children }) => {
     setVideoData(item.product);
     setShowvideomodal(true);
   };
-
+console.log(show360Modal,"contextvala showw");
   return (
     <ProductContext.Provider
       value={{

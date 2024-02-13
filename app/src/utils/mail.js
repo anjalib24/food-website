@@ -5,6 +5,7 @@ import handlebars from "handlebars";
 import { ApiError } from "./ApiError.js";
 import { Credential } from "../models/credentials.model.js";
 import Mail from "../models/mail.model.js";
+import handlebars from "handlebars";
 
 const __dirname = path.resolve();
 
@@ -13,6 +14,8 @@ const readImageAsDataURI = (imagePath) => {
   const imageBase64 = imageBuffer.toString("base64");
   return `data:image/png;base64,${imageBase64}`;
 };
+
+
 
 const getEmailTransport = async () => {
   try {

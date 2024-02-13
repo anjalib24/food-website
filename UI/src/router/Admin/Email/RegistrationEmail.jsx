@@ -1,3 +1,4 @@
+import { useAdminState } from "@/contexts/AdminContext";
 import { Button, TextField, Box } from "@mui/material";
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
@@ -7,6 +8,7 @@ const RegistrationEmail = ({registrationEmailData}) => {
   const [bannerImage, setBannerImage] = useState(null); // State for the banner image
   const [body, setBody] = useState(registrationEmailData?.body);
   const [subject, setSubject] = useState(registrationEmailData?.subject);
+  const {  setAlert, alert } = useAdminState();
 
   useEffect(() => {
     setSubject(registrationEmailData?.subject);
@@ -40,7 +42,7 @@ const RegistrationEmail = ({registrationEmailData}) => {
         throw new Error('Failed to send email.');
       }
 
-      console.log('Email sent successfully.');
+      setAlert({errType:"success", errMsg:"Submit Sucessfully", isError: true});
     } catch (error) {
       console.error('Error sending email:', error.message);
     }

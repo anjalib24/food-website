@@ -1,11 +1,6 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Button, TextField, Box } from "@mui/material";
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
-import Typography from "@mui/material/Typography";
 import 'react-quill/dist/quill.snow.css';
 
 const OrderConfirmationEmail = ({OrderEmailData}) => {
