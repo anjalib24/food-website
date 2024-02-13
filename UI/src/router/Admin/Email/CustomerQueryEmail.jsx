@@ -69,7 +69,7 @@ const CustomerQueryEmail = ({UserQuery}) => {
         [{ 'color': [] }, { 'background': [] }],
         [{ 'font': [] }],
         [{ 'align': [] }],
-  
+        ['link'],
         ['clean']
       ],
     };

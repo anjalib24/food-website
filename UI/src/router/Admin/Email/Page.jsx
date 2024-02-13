@@ -13,6 +13,8 @@ import QueryAdminEmail from "./CustomerQueryAdminEmail"
 import QueryUserEmail from "./CustomerQueryEmail"
 import Alert from "@/router/Shop/Alert";
 import { useAdminState } from "@/contexts/AdminContext";
+import ResetPasswordEmail from "./ResetPasswordEmail";
+
 
 
 
@@ -113,7 +115,7 @@ const Page = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <QueryAdminEmail ResetPassword={ResetPassword}/>
+          <ResetPasswordEmail ResetPassword={ResetPassword}/>
         </AccordionDetails>
       </Accordion>
     </>
