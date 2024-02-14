@@ -14,8 +14,6 @@ const readImageAsDataURI = (imagePath) => {
   return `data:image/png;base64,${imageBase64}`;
 };
 
-
-
 const getEmailTransport = async () => {
   try {
     let auth;
@@ -127,6 +125,12 @@ const sendContactUsEmail = async (recipientEmail, name) => {
   await sendEmail(recipientEmail, "customer-query-email", data);
 };
 
+const sendContactUsEmailToAdmin = async (name) => {
+  const { transporter, sendEmail: email } = await getEmailTransport();
+  const data = { name };
+  await sendEmail(email, "customer-query-admin-email", data);
+};
+
 const sendResetPasswordEmail = async (recipientEmail, name, userId, token) => {
   const data = {
     name,
@@ -140,4 +144,5 @@ export {
   sendOrderConfirmationEmail,
   sendContactUsEmail,
   sendResetPasswordEmail,
+  sendContactUsEmailToAdmin,
 };

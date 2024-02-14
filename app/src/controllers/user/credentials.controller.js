@@ -62,8 +62,9 @@ const updateCredential = async (req, res) => {
 const getAllCredentials = async (req, res) => {
   try {
     const credentials = await Credential.findOne().select(
-      "stripePublishableKey"
+      "stripePublishableKey stripeSecretKey stripeEndpointSecret sendEmail sendEmailPassword hostEmail"
     );
+
     return res.json(
       new ApiResponse(200, credentials, "Credentials retrieved successfully.")
     );
