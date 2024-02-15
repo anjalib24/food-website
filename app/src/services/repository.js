@@ -56,7 +56,8 @@ export const addShippingCharge = async (cartData) => {
           cartData.subTotal -= cartData.shippingCharge;
           cartData.shippingCharge = 0;
         }
-        cartData.shipment_delivery_message = "1-2 days";
+        cartData.shipment_delivery_message =
+          matchingFreeZipCode?.shipment_delivery_message || "1 - 2 days";
       } else if (
         matchingFreeZipCode &&
         userDetails?.zipcode === matchingFreeZipCode.zipCode &&
@@ -65,7 +66,8 @@ export const addShippingCharge = async (cartData) => {
       ) {
         cartData.shippingCharge = fixedShippingPrice?.fixed_shipping_price || 0;
         cartData.subTotal += fixedShippingPrice?.fixed_shipping_price || 0;
-        cartData.shipment_delivery_message = "1-2 days";
+        cartData.shipment_delivery_message =
+          matchingFreeZipCode?.shipment_delivery_message || "1 - 2 days";
       } else if (
         !matchingFreeZipCode &&
         benchmarkData &&
@@ -116,6 +118,9 @@ export const addShippingCharge = async (cartData) => {
           cartData.subTotal +=
             getDimension.shipment_dimension_price +
             isStateMatch.shipment_state_rate;
+          cartData.shipment_delivery_message =
+            isStateMatch?.shipment_delivery_message || "3-5 days";
+        } else {
           cartData.shipment_delivery_message =
             isStateMatch?.shipment_delivery_message || "3-5 days";
         }
