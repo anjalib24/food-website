@@ -3,7 +3,7 @@ import "./style.css"
 
 export const Shopnow = (props) => {
   const sectionStyle = {
-    backgroundImage: `url('https://www.ethnicfoods.com/api${props?.herosection?.image}')`,
+    backgroundImage: `url('http://localhost:8000${props?.herosection?.image}')`,
   };
   const scrollToBestseller = () => {
     const bestsellerSection = document.getElementById('bestsellers');
